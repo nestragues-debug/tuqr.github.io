@@ -33,5 +33,12 @@
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "99887766"
+      },
+  "ItauCC": {
+    "banco": "Banco Itau",
+    "rut": "10270304-9",
+    "nombre": "Juan Lopez",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "12345678"
   }
 }
