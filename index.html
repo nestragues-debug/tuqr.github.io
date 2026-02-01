@@ -120,15 +120,13 @@ function clean(s) {
 
 function buildText(d) {
   const lines = [
-    `Nombre: ${clean(d.nombre)}`,
-    `RUT: ${clean(d.rut)}`,
-    `Banco: ${clean(d.banco)}`,
-    `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
-    `Número de cuenta 1: ${clean(d.numeroCuenta)}`
+    clean(d.nombre),
+    clean(d.rut),
+    clean(d.banco),
+    `${clean(d.tipoCuenta)} ${clean(d.numeroCuenta)}`
   ];
   return lines.join('\n');
 }
-
 // Copiado universal robusto
 async function copyTextUniversal(text) {
 
