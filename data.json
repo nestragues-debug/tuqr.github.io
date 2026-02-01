@@ -4,7 +4,8 @@
     "rut": "10270304-9",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta RUT",
-    "numeroCuenta": "12345678"
+    "numeroCuenta": "12345678",
+    "correo": "juan.lopez@email.com"
   },
   "SantanderCC": {
     "banco": "Banco Santander",
@@ -18,7 +19,8 @@
     "rut": "10270304-9",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Vista",
-    "numeroCuenta": "12345678"
+    "numeroCuenta": "12345678",
+    "correo": "juan.lopez@email.com"
   },
   "TenpoVista": {
     "banco": "Banco Tenpo",
@@ -33,12 +35,13 @@
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "99887766"
-      },
+  },
   "ItauCC": {
     "banco": "Banco Itau",
     "rut": "10270304-9",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "12345678"
+    "numeroCuenta": "12345678",
+    "correo": "juan.lopez@email.com"
   }
 }
