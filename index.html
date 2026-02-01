@@ -9,18 +9,57 @@
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
-    function gtag(){dataLayer.push(arguments);}
+    function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
     gtag('config', 'G-D9TN01T1R0');
   </script>
 
   <style>
-    body { font-family: system-ui, -apple-system, Arial; margin: 0; padding: 24px; background:#fff; }
-    .card { max-width: 520px; margin: 0 auto; border: 1px solid #eee; border-radius: 16px; padding: 18px; }
-    h1 { font-size: 22px; margin: 0 0 8px; }
-    p { margin: 0 0 14px; color: #444; }
-    pre { background: #f6f6f6; padding: 14px; border-radius: 12px; white-space: pre-wrap; word-break: break-word; font-size: 15px; }
-    button { width: 100%; padding: 14px; font-size: 18px; border: 0; border-radius: 12px; cursor: pointer; }
+    body {
+      font-family: system-ui, -apple-system, Arial;
+      margin: 0;
+      padding: 24px;
+      background: #ffffff;
+    }
+    .card {
+      max-width: 520px;
+      margin: 0 auto;
+      border: 1px solid #eee;
+      border-radius: 16px;
+      padding: 18px;
+    }
+    h1 {
+      font-size: 22px;
+      margin: 0 0 8px;
+    }
+    p {
+      margin: 0 0 14px;
+      color: #444;
+    }
+    pre {
+      background: #f6f6f6;
+      padding: 14px;
+      border-radius: 12px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 15px;
+      -webkit-text-size-adjust: 100%; /* Evita zoom autos */
+    }
+    button {
+      width: 100%;
+      padding: 16px;
+      font-size: 18px;
+      border: 0;
+      border-radius: 12px;
+      cursor: pointer;
+      background: #0078ff;
+      color: white;
+      font-weight: 600;
+    }
+    button:disabled {
+      background: #999;
+      cursor: not-allowed;
+    }
     .ok { margin-top: 10px; color: #0a7; font-weight: 700; display:none; }
     .err { margin-top: 10px; color: #b00; font-weight: 700; display:none; }
     .small { margin-top: 12px; font-size: 12px; color: #777; }
@@ -37,42 +76,47 @@
     <pre id="datos">Cargando…</pre>
 
     <button id="copiar" disabled>📋 Copiar datos para transferir</button>
+
     <div id="ok" class="ok">Copiado ✅</div>
     <div id="err" class="err">No encontramos este cobrador</div>
 
     <div id="tip" class="tip">
-      Si tu app no deja pegar el bloque completo (pasa en algunas), pega primero en <b>Notas</b> y luego vuelve a copiar desde ahí.
+      Si tu app no deja pegar el bloque completo, pega primero en <b>Notas</b> y vuelve a copiar desde ahí.
     </div>
 
-    <div class="small">TuQR solo muestra datos. <b>La transferencia se hace en tu banco.<b> </div>
+    <div class="small">
+      TuQR solo muestra datos. <b>La transferencia se hace en tu banco.</b>
+    </div>
   </div>
 
-  <script>
-    const params = new URLSearchParams(location.search);
-    const id = (params.get('id') || '').trim();
+<script>
+const params = new URLSearchParams(location.search);
+const id = (params.get('id') || '').trim();
 
-    const datosEl = document.getElementById('datos');
-    const btn = document.getElementById('copiar');
-    const okEl = document.getElementById('ok');
-    const errEl = document.getElementById('err');
-    const title = document.getElementById('title');
-    const tip = document.getElementById('tip');
+const datosEl = document.getElementById('datos');
+const btn = document.getElementById('copiar');
+const okEl = document.getElementById('ok');
+const errEl = document.getElementById('err');
+const title = document.getElementById('title');
+const tip = document.getElementById('tip');
 
-    // Detectores simples (para mostrar tip cuando corresponde)
-    const ua = navigator.userAgent || '';
-    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-    const isAndroid = /Android/.test(ua);
-    const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
+// UA detections
+const ua = navigator.userAgent || '';
+const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+const isAndroid = /Android/.test(ua);
+const isSamsung = /SamsungBrowser/i.test(ua);
+const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
 
-    // Limpieza: deja texto "tipo WhatsApp": solo texto + saltos de línea reales
-    function clean(s) {
-      return String(s ?? '')
-        .normalize('NFC')
-        .replace(/\u00A0/g, ' ')      // NBSP -> espacio normal
-        .replace(/\r\n/g, '\n')       // CRLF -> LF
-        .replace(/[ \t]+$/gm, '')     // sin espacios al final de cada línea
-        .trim();
-    }
+// Limpieza extra estricta
+function clean(s) {
+  return String(s ?? '')
+    .normalize('NFC')
+    .replace(/\u00A0/g, ' ')       // NBSP
+    .replace(/[\u200B-\u200F]/g, '') // Zero-width chars
+    .replace(/\r\n/g, '\n')        // CRLF -> LF
+    .replace(/[ \t]+$/gm, '')      // trailing spaces
+    .trim();
+}
 
 function buildText(d) {
   const lines = [
@@ -84,118 +128,97 @@ function buildText(d) {
   ];
   return lines.join('\n');
 }
-    // Copiado robusto para Android + iOS
-    async function copyTextUniversal(text) {
-      // A) Clipboard API (mejor en Android Chrome / iOS Safari en HTTPS)
-      if (navigator.clipboard && window.isSecureContext) {
-        await navigator.clipboard.writeText(text);
-        return { method: 'clipboard' };
-      }
 
-      // B) Fallback 1: textarea (suele funcionar bien en iOS/Android)
+// Copiado universal robusto
+async function copyTextUniversal(text) {
+
+  // Clipboard API
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return;
+  }
+
+  // Fallback: textarea
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.readOnly = true;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+
+    ta.select();
+    ta.setSelectionRange(0, text.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+
+    if (ok) return;
+  } catch(e) {}
+
+  // Fallback: contenteditable
+  const el = document.createElement('div');
+  el.textContent = text;
+  el.contentEditable = true;
+  el.style.position = 'fixed';
+  el.style.opacity = '0';
+  document.body.appendChild(el);
+
+  const range = document.createRange();
+  range.selectNodeContents(el);
+  const sel = window.getSelection();
+  sel.removeAllRanges();
+  sel.addRange(range);
+  const ok2 = document.execCommand('copy');
+
+  document.body.removeChild(el);
+  if (!ok2) throw new Error('copy_failed');
+}
+
+function showCopied() {
+  okEl.style.display = 'block';
+  setTimeout(() => okEl.style.display = 'none', 1500);
+}
+
+async function init() {
+  try {
+    const res = await fetch('./data.json', { cache: 'no-store' });
+    const all = await res.json();
+    const d = all[id];
+
+    if (!id || !d) {
+      datosEl.textContent = 'Código inválido';
+      errEl.style.display = 'block';
+      return;
+    }
+
+    title.textContent = `Paga a ${clean(d.nombre)}`;
+    const text = buildText(d);
+    datosEl.textContent = text;
+    btn.disabled = false;
+
+    gtag('event', 'payer_page_view', { merchant_id: id });
+
+    if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
+
+    btn.addEventListener('click', async () => {
       try {
-        const ta = document.createElement('textarea');
-        ta.value = text;
-        ta.setAttribute('readonly', '');
-        ta.style.position = 'fixed';
-        ta.style.top = '0';
-        ta.style.left = '0';
-        ta.style.opacity = '0';
-        ta.style.width = '1px';
-        ta.style.height = '1px';
-        ta.style.pointerEvents = 'none';
-        document.body.appendChild(ta);
+        await copyTextUniversal(text);
+        showCopied();
 
-        ta.focus();
-        ta.select();
-        ta.setSelectionRange(0, ta.value.length); // iOS necesita esto
-        const ok = document.execCommand('copy');
-
-        document.body.removeChild(ta);
-        if (ok) return { method: 'execCommand-textarea' };
-      } catch (e) {}
-
-      // C) Fallback 2 (extra iOS/WebView): contenteditable
-      const el = document.createElement('div');
-      el.textContent = text;
-      el.setAttribute('contenteditable', 'true');
-      el.style.position = 'fixed';
-      el.style.top = '0';
-      el.style.left = '0';
-      el.style.opacity = '0';
-      el.style.pointerEvents = 'none';
-      el.style.whiteSpace = 'pre-wrap';
-      document.body.appendChild(el);
-
-      const range = document.createRange();
-      range.selectNodeContents(el);
-      const sel = window.getSelection();
-      sel.removeAllRanges();
-      sel.addRange(range);
-
-      const ok2 = document.execCommand('copy');
-      document.body.removeChild(el);
-
-      if (!ok2) throw new Error('copy_failed');
-      return { method: 'execCommand-contenteditable' };
-    }
-
-    function showCopied() {
-      okEl.style.display = 'block';
-      setTimeout(() => okEl.style.display = 'none', 1500);
-    }
-
-    async function init() {
-      try {
-        const res = await fetch('./data.json', { cache: 'no-store' });
-        const all = await res.json();
-        const d = all[id];
-
-        if (!id || !d) {
-          datosEl.textContent = 'Código inválido';
-          errEl.style.display = 'block';
-          return;
-        }
-
-        title.textContent = `Paga a ${clean(d.nombre)}`;
-        const text = buildText(d);
-        datosEl.textContent = text;
-        btn.disabled = false;
-
-        // ✅ registrar visita por cobrador
-        gtag('event', 'payer_page_view', { merchant_id: id });
-
-        // Mostrar tip en escenarios donde el pegado suele ser más problemático
-        if (isIOS || isInAppWebView) {
-          tip.style.display = 'block';
-        }
-
-        btn.addEventListener('click', async () => {
-          try {
-            await copyTextUniversal(text);
-            showCopied();
-
-            // ✅ registrar click copiar por cobrador
-            gtag('event', 'copy_click', { merchant_id: id });
-            gtag('event', 'copy_method', {
-              merchant_id: id,
-              platform: isIOS ? 'ios' : (isAndroid ? 'android' : 'other'),
-              in_app_webview: isInAppWebView ? 'yes' : 'no',
-              secure_context: window.isSecureContext ? 'yes' : 'no'
-            });
-
-          } catch (e) {
-            // Último recurso: instrucción simple para el usuario
-            alert('No pudimos copiar automáticamente. Mantén presionado el texto, selecciona "Copiar", y luego pégalo en tu app.');
-          }
-        });
-
-      } catch (e) {
-        datosEl.textContent = 'Error cargando datos';
+        gtag('event', 'copy_click', { merchant_id: id });
+      } catch(e) {
+        alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
       }
-    }
+    });
 
-    init();
-  </script>
+  } catch(e) {
+    datosEl.textContent = 'Error cargando datos';
+    errEl.style.display = 'block';
+  }
+}
+
+init();
+</script>
+
 </body>
 </html>
