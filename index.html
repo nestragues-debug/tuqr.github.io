@@ -119,12 +119,14 @@ function clean(s) {
 }
 
 function buildText(d) {
-  const lines = [
-    clean(d.nombre),
-    clean(d.rut),
-    clean(d.banco),
-    `${clean(d.tipoCuenta)} ${clean(d.numeroCuenta)}`
-  ];
+  return (
+    clean(d.nombre) + '\n' +
+    clean(d.rut) + '\n' +
+    clean(d.banco) + '\n' +
+    clean(d.tipoCuenta) + '\n' +
+    clean(d.numeroCuenta)
+  );
+}
   return lines.join('\n');
 }
 // Copiado universal robusto
