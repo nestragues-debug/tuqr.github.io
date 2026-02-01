@@ -1,29 +1,36 @@
 {
-  "donpepe": {
+  "EstadoRut": {
     "banco": "Estado",
     "rut": "10270304-9",
-    "nombre": "Almacén Don Pepe",
+    "nombre": "Estado Rut",
     "tipoCuenta": "RUT",
     "numeroCuenta": "12345678"
   },
-  "verduleria123": {
+  "SantanderCC": {
     "banco": "Santander",
     "rut": "9.876.543-2",
-    "nombre": "Verdulería La Esquina",
+    "nombre": "Santander CC",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
   },
-    "elzana": {
-    "banco": "Tapp",
+    "TappVista": {
+    "banco": "Tapp Caja Los Andes",
     "rut": "10270304-9",
-    "nombre": "El Zanahoria",
+    "nombre": "Tapp CCLA",
     "tipoCuenta": "Vista",
     "numeroCuenta": "12345678"
   },
-  "pancito": {
+    "TenpoVista": {
+    "banco": "Tenpo",
+    "rut": "10270304-9",
+    "nombre": "Tenpo Vista",
+    "tipoCuenta": "Vista",
+    "numeroCuenta": "12345678"
+  },
+  "BCICorriente: {
     "banco": "BCI",
     "rut": "9.876.543-2",
-    "nombre": "Pancito La Esquina",
+    "nombre": "BCI CC",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
   }
