@@ -1,0 +1,16 @@
+{
+  "donpepe": {
+    "banco": "BancoEstado",
+    "rut": "12.345.678-9",
+    "nombre": "Almacén Don Pepe",
+    "tipoCuenta": "Cuenta RUT",
+    "numeroCuenta": "12345678"
+  },
+  "verduleria123": {
+    "banco": "Santander",
+    "rut": "9.876.543-2",
+    "nombre": "Verdulería La Esquina",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "99887766"
+  }
+}
