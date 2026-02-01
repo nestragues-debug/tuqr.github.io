@@ -51,12 +51,25 @@
     const err = document.getElementById('err');
     const title = document.getElementById('title');
 
+    // Limpia caracteres invisibles / espacios raros que algunas apps odian al pegar
+    function clean(s) {
+      return String(s ?? '')
+        .normalize('NFC')
+        .replace(/\u00A0/g, ' ')     // NBSP -> espacio normal
+        .replace(/[ \t]+$/gm, '')   // elimina espacios al final de cada línea
+        .trim();
+    }
+
+    // Construye texto "tipo WhatsApp": SOLO texto + saltos de línea reales
     function buildText(d) {
-      return `Nombre: ${d.nombre} 
-Rut: ${d.rut}
-Banco: ${d.banco}
-Tipo de cuenta: ${d.tipoCuenta}
-Número de cuenta: ${d.numeroCuenta}`;
+      const lines = [
+        `Nombre: ${clean(d.nombre)}`,
+        `RUT: ${clean(d.rut)}`,
+        `Banco: ${clean(d.banco)}`,
+        `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
+        `Numero de cuenta: ${clean(d.numeroCuenta)}`
+      ];
+      return lines.join('\n');
     }
 
     async function init() {
@@ -71,7 +84,7 @@ Número de cuenta: ${d.numeroCuenta}`;
           return;
         }
 
-        title.textContent = `Paga a ${d.nombre}`;
+        title.textContent = `Paga a ${clean(d.nombre)}`;
         const text = buildText(d);
         datosEl.textContent = text;
         btn.disabled = false;
@@ -83,13 +96,21 @@ Número de cuenta: ${d.numeroCuenta}`;
           try {
             await navigator.clipboard.writeText(text);
           } catch {
+            // Fallback más robusto (iOS / apps estrictas)
             const ta = document.createElement('textarea');
             ta.value = text;
+            ta.setAttribute('readonly', '');
+            ta.style.position = 'fixed';
+            ta.style.top = '-9999px';
+            ta.style.left = '-9999px';
             document.body.appendChild(ta);
+            ta.focus();
             ta.select();
+            ta.setSelectionRange(0, ta.value.length);
             document.execCommand('copy');
             document.body.removeChild(ta);
           }
+
           ok.style.display = 'block';
           setTimeout(() => ok.style.display = 'none', 1500);
 
