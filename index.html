@@ -120,11 +120,11 @@ function clean(s) {
 
 function buildText(d) {
   const lines = [
-    `Número de cuenta 1: ${clean(d.numeroCuenta)}`,
-    `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
-    `Banco: ${clean(d.banco)}`,
+    `Nombre: ${clean(d.nombre)}`,
     `RUT: ${clean(d.rut)}`,
-    `Nombre: ${clean(d.nombre)}`
+    `Banco: ${clean(d.banco)}`,
+    `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
+    `Número de cuenta 1: ${clean(d.numeroCuenta)}`
   ];
   return lines.join('\n');
 }
