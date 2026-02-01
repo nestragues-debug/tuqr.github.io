@@ -12,7 +12,7 @@
     "nombre": "Verdulería La Esquina",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
-  }
+  },
     "elzana": {
     "banco": "Tapp",
     "rut": "10270304-9",
@@ -27,5 +27,4 @@
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
   }
-
 }
