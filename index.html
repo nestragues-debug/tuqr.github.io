@@ -43,7 +43,7 @@
       white-space: pre-wrap;
       word-break: break-word;
       font-size: 15px;
-      -webkit-text-size-adjust: 100%; /* Evita zoom autos */
+      -webkit-text-size-adjust: 100%;
     }
     button {
       width: 100%;
@@ -111,10 +111,10 @@ const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua
 function clean(s) {
   return String(s ?? '')
     .normalize('NFC')
-    .replace(/\u00A0/g, ' ')       // NBSP
+    .replace(/\u00A0/g, ' ')        // NBSP
     .replace(/[\u200B-\u200F]/g, '') // Zero-width chars
-    .replace(/\r\n/g, '\n')        // CRLF -> LF
-    .replace(/[ \t]+$/gm, '')      // trailing spaces
+    .replace(/\r\n/g, '\n')         // CRLF -> LF
+    .replace(/[ \t]+$/gm, '')       // trailing spaces
     .trim();
 }
 
@@ -127,8 +127,7 @@ function buildText(d) {
     clean(d.numeroCuenta)
   );
 }
-  return lines.join('\n');
-}
+
 // Copiado universal robusto
 async function copyTextUniversal(text) {
 
@@ -204,7 +203,6 @@ async function init() {
       try {
         await copyTextUniversal(text);
         showCopied();
-
         gtag('event', 'copy_click', { merchant_id: id });
       } catch(e) {
         alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
