@@ -111,33 +111,38 @@ const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua
 function clean(s) {
   return String(s ?? '')
     .normalize('NFC')
-    .replace(/\u00A0/g, ' ')        // NBSP
-    .replace(/[\u200B-\u200F]/g, '') // Zero-width chars
-    .replace(/\r\n/g, '\n')         // CRLF -> LF
-    .replace(/[ \t]+$/gm, '')       // trailing spaces
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u200B-\u200F]/g, '')
+    .replace(/\r\n/g, '\n')
+    .replace(/[ \t]+$/gm, '')
     .trim();
 }
 
+// 🔹 BLOQUE COPIADO (correo OPCIONAL)
 function buildText(d) {
-  return (
-    clean(d.nombre) + '\n' +
-    clean(d.rut) + '\n' +
-    clean(d.banco) + '\n' +
-    clean(d.tipoCuenta) + '\n' +
+  const lines = [
+    clean(d.nombre),
+    clean(d.rut),
+    clean(d.banco),
+    clean(d.tipoCuenta),
     clean(d.numeroCuenta)
-  );
+  ];
+
+  if (d.correo && clean(d.correo)) {
+    lines.push(clean(d.correo));
+  }
+
+  return lines.join('\n');
 }
 
 // Copiado universal robusto
 async function copyTextUniversal(text) {
 
-  // Clipboard API
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
     return;
   }
 
-  // Fallback: textarea
   try {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -150,11 +155,9 @@ async function copyTextUniversal(text) {
     ta.setSelectionRange(0, text.length);
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
-
     if (ok) return;
   } catch(e) {}
 
-  // Fallback: contenteditable
   const el = document.createElement('div');
   el.textContent = text;
   el.contentEditable = true;
