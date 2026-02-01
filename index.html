@@ -24,6 +24,8 @@
     .ok { margin-top: 10px; color: #0a7; font-weight: 700; display:none; }
     .err { margin-top: 10px; color: #b00; font-weight: 700; display:none; }
     .small { margin-top: 12px; font-size: 12px; color: #777; }
+    .tip { margin-top: 10px; font-size: 12px; color: #666; display:none; }
+    .tip b { color:#333; }
   </style>
 </head>
 
@@ -38,6 +40,10 @@
     <div id="ok" class="ok">Copiado ✅</div>
     <div id="err" class="err">No encontramos este cobrador</div>
 
+    <div id="tip" class="tip">
+      Si tu app no deja pegar el bloque completo (pasa en algunas), pega primero en <b>Notas</b> y luego vuelve a copiar desde ahí.
+    </div>
+
     <div class="small">TuQR solo muestra datos. La transferencia se hace en tu banco.</div>
   </div>
 
@@ -47,29 +53,97 @@
 
     const datosEl = document.getElementById('datos');
     const btn = document.getElementById('copiar');
-    const ok = document.getElementById('ok');
-    const err = document.getElementById('err');
+    const okEl = document.getElementById('ok');
+    const errEl = document.getElementById('err');
     const title = document.getElementById('title');
+    const tip = document.getElementById('tip');
 
-    // Limpia caracteres invisibles / espacios raros que algunas apps odian al pegar
+    // Detectores simples (para mostrar tip cuando corresponde)
+    const ua = navigator.userAgent || '';
+    const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isAndroid = /Android/.test(ua);
+    const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
+
+    // Limpieza: deja texto "tipo WhatsApp": solo texto + saltos de línea reales
     function clean(s) {
       return String(s ?? '')
         .normalize('NFC')
-        .replace(/\u00A0/g, ' ')     // NBSP -> espacio normal
-        .replace(/[ \t]+$/gm, '')   // elimina espacios al final de cada línea
+        .replace(/\u00A0/g, ' ')      // NBSP -> espacio normal
+        .replace(/\r\n/g, '\n')       // CRLF -> LF
+        .replace(/[ \t]+$/gm, '')     // sin espacios al final de cada línea
         .trim();
     }
 
-    // Construye texto "tipo WhatsApp": SOLO texto + saltos de línea reales
     function buildText(d) {
       const lines = [
         `Nombre: ${clean(d.nombre)}`,
         `RUT: ${clean(d.rut)}`,
         `Banco: ${clean(d.banco)}`,
         `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
-        `Número de cuenta: ${clean(d.numeroCuenta)}`
+        `Numero de cuenta: ${clean(d.numeroCuenta)}`
       ];
       return lines.join('\n');
+    }
+
+    // Copiado robusto para Android + iOS
+    async function copyTextUniversal(text) {
+      // A) Clipboard API (mejor en Android Chrome / iOS Safari en HTTPS)
+      if (navigator.clipboard && window.isSecureContext) {
+        await navigator.clipboard.writeText(text);
+        return { method: 'clipboard' };
+      }
+
+      // B) Fallback 1: textarea (suele funcionar bien en iOS/Android)
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = text;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '0';
+        ta.style.left = '0';
+        ta.style.opacity = '0';
+        ta.style.width = '1px';
+        ta.style.height = '1px';
+        ta.style.pointerEvents = 'none';
+        document.body.appendChild(ta);
+
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length); // iOS necesita esto
+        const ok = document.execCommand('copy');
+
+        document.body.removeChild(ta);
+        if (ok) return { method: 'execCommand-textarea' };
+      } catch (e) {}
+
+      // C) Fallback 2 (extra iOS/WebView): contenteditable
+      const el = document.createElement('div');
+      el.textContent = text;
+      el.setAttribute('contenteditable', 'true');
+      el.style.position = 'fixed';
+      el.style.top = '0';
+      el.style.left = '0';
+      el.style.opacity = '0';
+      el.style.pointerEvents = 'none';
+      el.style.whiteSpace = 'pre-wrap';
+      document.body.appendChild(el);
+
+      const range = document.createRange();
+      range.selectNodeContents(el);
+      const sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+
+      const ok2 = document.execCommand('copy');
+      document.body.removeChild(el);
+
+      if (!ok2) throw new Error('copy_failed');
+      return { method: 'execCommand-contenteditable' };
+    }
+
+    function showCopied() {
+      okEl.style.display = 'block';
+      setTimeout(() => okEl.style.display = 'none', 1500);
     }
 
     async function init() {
@@ -80,7 +154,7 @@
 
         if (!id || !d) {
           datosEl.textContent = 'Código inválido';
-          err.style.display = 'block';
+          errEl.style.display = 'block';
           return;
         }
 
@@ -92,30 +166,29 @@
         // ✅ registrar visita por cobrador
         gtag('event', 'payer_page_view', { merchant_id: id });
 
+        // Mostrar tip en escenarios donde el pegado suele ser más problemático
+        if (isIOS || isInAppWebView) {
+          tip.style.display = 'block';
+        }
+
         btn.addEventListener('click', async () => {
           try {
-            await navigator.clipboard.writeText(text);
-          } catch {
-            // Fallback más robusto (iOS / apps estrictas)
-            const ta = document.createElement('textarea');
-            ta.value = text;
-            ta.setAttribute('readonly', '');
-            ta.style.position = 'fixed';
-            ta.style.top = '-9999px';
-            ta.style.left = '-9999px';
-            document.body.appendChild(ta);
-            ta.focus();
-            ta.select();
-            ta.setSelectionRange(0, ta.value.length);
-            document.execCommand('copy');
-            document.body.removeChild(ta);
+            await copyTextUniversal(text);
+            showCopied();
+
+            // ✅ registrar click copiar por cobrador
+            gtag('event', 'copy_click', { merchant_id: id });
+            gtag('event', 'copy_method', {
+              merchant_id: id,
+              platform: isIOS ? 'ios' : (isAndroid ? 'android' : 'other'),
+              in_app_webview: isInAppWebView ? 'yes' : 'no',
+              secure_context: window.isSecureContext ? 'yes' : 'no'
+            });
+
+          } catch (e) {
+            // Último recurso: instrucción simple para el usuario
+            alert('No pudimos copiar automáticamente. Mantén presionado el texto, selecciona "Copiar", y luego pégalo en tu app.');
           }
-
-          ok.style.display = 'block';
-          setTimeout(() => ok.style.display = 'none', 1500);
-
-          // ✅ registrar click copiar por cobrador
-          gtag('event', 'copy_click', { merchant_id: id });
         });
 
       } catch (e) {
