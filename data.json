@@ -8,7 +8,7 @@
   },
   "SantanderCC": {
     "banco": "Santander",
-    "rut": "9.876.543-2",
+    "rut": "9876543-2",
     "nombre": "Santander CC",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
@@ -29,7 +29,7 @@
   },
   "BCICorriente": {
     "banco": "BCI",
-    "rut": "9.876.543-2",
+    "rut": "9876543-2",
     "nombre": "BCI CC",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
