@@ -74,17 +74,16 @@
         .trim();
     }
 
-    function buildText(d) {
-      const lines = [
-        `Nombre: ${clean(d.nombre)}`,
-        `RUT: ${clean(d.rut)}`,
-        `Banco: ${clean(d.banco)}`,
-        `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
-        `Numero de cuenta: ${clean(d.numeroCuenta)}`
-      ];
-      return lines.join('\n');
-    }
-
+function buildText(d) {
+  const lines = [
+    `Numero de cuenta: ${clean(d.numeroCuenta)}`,
+    `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
+    `Banco: ${clean(d.banco)}`,
+    `RUT: ${clean(d.rut)}`,
+    `Nombre: ${clean(d.nombre)}`
+  ];
+  return lines.join('\n');
+}
     // Copiado robusto para Android + iOS
     async function copyTextUniversal(text) {
       // A) Clipboard API (mejor en Android Chrome / iOS Safari en HTTPS)
