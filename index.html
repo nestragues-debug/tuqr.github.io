@@ -52,11 +52,12 @@
     const title = document.getElementById('title');
 
     function buildText(d) {
-      return `Banco ${d.banco}
-Rut ${d.rut}
-Nombre ${d.nombre}
-Tipo de cuenta ${d.tipoCuenta}
-Número de cuenta ${d.numeroCuenta}`;
+      return `
+      Nombre: ${d.nombre}
+      Rut: ${d.rut}
+      Banco: ${d.banco}
+      Tipo de cuenta: ${d.tipoCuenta}
+      Número de cuenta: ${d.numeroCuenta}`;
     }
 
     async function init() {
