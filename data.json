@@ -1,6 +1,6 @@
 {
   "EstadoRut": {
-    "banco": "BancoEstado",
+    "banco": "Banco Estado",
     "rut": "10270304-9",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta RUT",
