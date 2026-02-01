@@ -27,7 +27,7 @@
     "tipoCuenta": "Vista",
     "numeroCuenta": "12345678"
   },
-  "BCICorriente: {
+  "BCICorriente": {
     "banco": "BCI",
     "rut": "9.876.543-2",
     "nombre": "BCI CC",
