@@ -5,14 +5,15 @@
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta RUT",
     "numeroCuenta": "12345678",
-    "correo": "juan.lopez@email.com"
+    "correo": "juan.lopez+estado@email.com"
   },
   "SantanderCC": {
     "banco": "Banco Santander",
     "rut": "9876543-2",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "99887766"
+    "numeroCuenta": "99887766",
+    "correo": "juan.lopez+santander@email.com"
   },
   "TappVista": {
     "banco": "Tapp Caja Los Andes",
@@ -20,21 +21,23 @@
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "12345678",
-    "correo": "juan.lopez@email.com"
+    "correo": "juan.lopez+tapp@email.com"
   },
   "TenpoVista": {
     "banco": "Banco Tenpo",
     "rut": "10270304-9",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Vista",
-    "numeroCuenta": "12345678"
+    "numeroCuenta": "12345678",
+    "correo": "juan.lopez+tenpo@email.com"
   },
   "BCICorriente": {
     "banco": "Banco BCI",
     "rut": "9876543-2",
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "99887766"
+    "numeroCuenta": "99887766",
+    "correo": "juan.lopez+bci@email.com"
   },
   "ItauCC": {
     "banco": "Banco Itau",
@@ -42,6 +45,7 @@
     "nombre": "Juan Lopez",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "12345678",
-    "correo": "juan.lopez@email.com"
+    "correo": "juan.lopez+itau@email.com"
   }
 }
+
