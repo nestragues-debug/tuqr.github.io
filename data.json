@@ -1,37 +1,38 @@
 {
   "EstadoRut": {
-    "banco": "Estado",
+    "banco": "Banco Estado",
     "rut": "10270304-9",
-    "nombre": "Juan lopez",
+    "nombre": "Juan Lopez",
     "tipoCuenta": "RUT",
     "numeroCuenta": "12345678"
   },
   "SantanderCC": {
-    "banco": "Santander",
+    "banco": "Banco Santander",
     "rut": "9876543-2",
-    "nombre": "Juan lopez",
+    "nombre": "Juan Lopez",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
   },
-    "TappVista": {
-    "banco": "Tapp Caja Los Andes",
+  "TappVista": {
+    "banco": "Banco Tapp Caja Los Andes",
     "rut": "10270304-9",
-    "nombre": "Juan lopez",
+    "nombre": "Juan Lopez",
     "tipoCuenta": "Vista",
     "numeroCuenta": "12345678"
   },
-    "TenpoVista": {
-    "banco": "Tenpo",
+  "TenpoVista": {
+    "banco": "Banco Tenpo",
     "rut": "10270304-9",
-    "nombre": "Juan lopez",
+    "nombre": "Juan Lopez",
     "tipoCuenta": "Vista",
     "numeroCuenta": "12345678"
   },
   "BCICorriente": {
-    "banco": "BCI",
+    "banco": "Banco BCI",
     "rut": "9876543-2",
-    "nombre": "Juan lopez",
+    "nombre": "Juan Lopez",
     "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
   }
 }
+
