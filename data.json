@@ -3,14 +3,29 @@
     "banco": "Estado",
     "rut": "10270304-9",
     "nombre": "Almacén Don Pepe",
-    "tipoCuenta": "Cuenta RUT",
+    "tipoCuenta": "RUT",
     "numeroCuenta": "12345678"
   },
   "verduleria123": {
     "banco": "Santander",
     "rut": "9.876.543-2",
     "nombre": "Verdulería La Esquina",
-    "tipoCuenta": "Cuenta Corriente",
+    "tipoCuenta": "Corriente",
     "numeroCuenta": "99887766"
   }
+    "elzana": {
+    "banco": "Tapp",
+    "rut": "10270304-9",
+    "nombre": "El Zanahoria",
+    "tipoCuenta": "Vista",
+    "numeroCuenta": "12345678"
+  },
+  "pancito": {
+    "banco": "BCI",
+    "rut": "9.876.543-2",
+    "nombre": "Pancito La Esquina",
+    "tipoCuenta": "Corriente",
+    "numeroCuenta": "99887766"
+  }
+
 }
