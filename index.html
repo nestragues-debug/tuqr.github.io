@@ -6,7 +6,7 @@
   <title>TuQR — Datos para transferir</title>
 
   <!-- GA4 -->
-  https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -15,64 +15,71 @@
   </script>
 
   <style>
-    body{
-      font-family: system-ui, -apple-system, Arial;
-      margin:0; padding:24px; background:#fff;
-      color:#111;
+    :root {
+      color-scheme: light dark;
     }
-    .card{
-      max-width:520px; margin:0 auto;
-      border:1px solid #eee; border-radius:16px; padding:18px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.03);
-    }
-    h1{ font-size:22px; margin:0 0 8px; }
-    p{ margin:0 0 14px; color:#444; }
-    pre{
-      background:#f6f6f6; padding:14px; border-radius:12px;
-      white-space:pre-wrap; word-break:break-word;
-      font-size:15px; -webkit-text-size-adjust:100%;
-      user-select:text; -webkit-user-select:text; -ms-user-select:text;
+    html, body {
+      margin:0; padding:0; height:100%;
+      background:#fff; color:#111;
+      font-family: system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
       -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
-    button{
-      width:100%; padding:16px; font-size:18px;
+    .wrap {
+      max-width:640px; margin:0 auto; padding:20px 16px 32px;
+      display:flex; flex-direction:column; gap:14px;
+    }
+    h1 { font-size:18px; margin:10px 0 0; font-weight:700; color:#222; }
+    .desc { font-size:14px; color:#555; margin:0; }
+    pre#datos {
+      margin:0;
+      padding:16px;
+      border-radius:12px;
+      background:#f6f6f6;
+      white-space:pre-wrap; word-break:break-word;
+      font-size:16px; line-height:1.25;
+      user-select:text; -webkit-user-select:text; -ms-user-select:text;
+      min-height:110px;
+    }
+    button#copiar {
+      width:100%;
+      padding:16px; font-size:17px; font-weight:700;
       border:0; border-radius:12px; cursor:pointer;
-      background:#0078ff; color:#fff; font-weight:600;
+      background:#0078ff; color:#fff;
       -webkit-tap-highlight-color: transparent;
     }
-    button:active{ filter: brightness(0.95); }
-    button:disabled{ background:#999; cursor:not-allowed; }
-    .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
-    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
-    .small{ margin-top:12px; font-size:12px; color:#777; }
-    .tip{ margin-top:10px; font-size:12px; color:#666; display:none; }
-    .tip b{ color:#333; }
+    button#copiar:disabled { background:#999; cursor:not-allowed; }
+    button#copiar:active { filter: brightness(0.95); }
+    .ok { color:#0a7; font-weight:700; display:none; }
+    .err { color:#b00; font-weight:700; display:none; }
+    .tip { font-size:12px; color:#666; display:none; }
+    .small { font-size:12px; color:#777; }
   </style>
 </head>
 
 <body>
-  <div class="card">
+  <div class="wrap">
     <h1 id="title">Paga con transferencia</h1>
-    <p>Copia y pega estos datos en tu aplicación bancaria.</p>
+    <p class="desc">Copia y pega estos datos en tu aplicación bancaria.</p>
 
+    <!-- Solo contenido de datos (valores), sin etiquetas -->
     <pre id="datos">Cargando…</pre>
 
-    <!-- Recomendación: sin emoji para evitar comportamientos raros en algunos WebViews -->
+    <!-- Un solo botón -->
     <button id="copiar" disabled>Copiar datos para transferir</button>
 
     <div id="ok" class="ok">Copiado ✅</div>
     <div id="err" class="err">No encontramos este cobrador</div>
-
     <div id="tip" class="tip">
       Si tu app no deja pegar el bloque completo, pega primero en <b>Notas</b> y vuelve a copiar desde ahí.
     </div>
-
     <div class="small">
       En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
     </div>
   </div>
 
   <script>
+    // --- Utilidades/Detección ---
     const params = new URLSearchParams(location.search);
     const id = (params.get('id') || '').trim();
 
@@ -83,7 +90,6 @@
     const title = document.getElementById('title');
     const tip = document.getElementById('tip');
 
-    // UA detections (solo para mostrar tip)
     const ua = navigator.userAgent || '';
     const isIOS =
       /iPad|iPhone|iPod/.test(ua) ||
@@ -91,20 +97,20 @@
     const isSamsung = /SamsungBrowser/i.test(ua);
     const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
 
-    // Limpieza ultra estricta para “texto tipo WhatsApp”
     function clean(s) {
       return String(s ?? '')
         .normalize('NFC')
-        .replace(/\u00A0/g, ' ')                 // NBSP
+        .replace(/\u00A0/g, ' ')                 // NBSP -> espacio
         .replace(/[\u200B-\u200D\uFEFF]/g, '')   // zero-width + BOM
-        .replace(/\r\n/g, '\n')                  // normaliza a \n
+        .replace(/\r\n/g, '\n')                  // normaliza internamente a \n
         .replace(/\r/g, '\n')
         .replace(/[ \t]+$/gm, '')                // trim fin de línea
         .trim();
     }
 
-    // Construcción de líneas clave:valor
-    function buildLines(d) {
+    // --- Construcción SOLO valores (sin etiquetas) ---
+    // Orden sugerido: Nombre, Rut, Banco, Tipo, Número, Correo (si existe)
+    function buildValuesLines(d) {
       const nombre = clean(d.nombre);
       const rut    = clean(d.rut);
       const banco  = clean(d.banco);
@@ -112,34 +118,26 @@
       const numero = clean(d.numeroCuenta);
       const correo = d.correo ? clean(d.correo) : '';
 
-      const lines = [
-        `Nombre: ${nombre}`,
-        `Rut: ${rut}`,
-        `Banco: ${banco}`,
-        `Tipo: ${tipo}`,
-        `Número Cuenta: ${numero}`,
-      ];
-      if (correo) lines.push(`Correo: ${correo}`);
+      const lines = [nombre, rut, banco, tipo, numero];
+      if (correo) lines.push(correo);
       return lines;
     }
 
-    // Texto plano: usar CRLF en iOS para compatibilidad con apps bancarias/WebViews
+    // Texto plano: usar CRLF en iOS para compatibilidad máxima en WebViews/bancos
     function buildPlainText(lines) {
       const sep = isIOS ? '\r\n' : '\n';
       return lines.join(sep);
     }
 
-    // HTML simple (sin estilos), con <br> para forzar salto de línea
+    // HTML minimalista con <br> (muchas apps respetan mejor los saltos al pegar)
     function buildHTML(lines) {
-      const escaped = lines.map(l =>
-        l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
-      );
-      return `<div>${escaped.join('<br>')}</div>`;
+      const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      return `<div>${lines.map(esc).join('<br>')}</div>`;
     }
 
     // Copiado multiformato con fallbacks
     async function copyMultiFormat({ textPlain, htmlText }) {
-      // 1) ClipboardItem con text/plain + text/html (más cercano a WhatsApp)
+      // 1) text/plain + text/html
       if (navigator.clipboard && window.ClipboardItem) {
         try {
           const item = new ClipboardItem({
@@ -148,19 +146,15 @@
           });
           await navigator.clipboard.write([item]);
           return true;
-        } catch (e) {
-          // continuar con fallback
-        }
+        } catch (e) {}
       }
-
-      // 2) writeText (solo text/plain)
+      // 2) writeText (solo texto plano)
       if (navigator.clipboard && window.isSecureContext) {
         try {
           await navigator.clipboard.writeText(textPlain);
           return true;
         } catch (e) {}
       }
-
       // 3) textarea + execCommand('copy') con texto plano
       try {
         const ta = document.createElement('textarea');
@@ -170,24 +164,21 @@
         ta.style.top = '-1000px';
         ta.style.opacity = '0';
         document.body.appendChild(ta);
-
         ta.focus();
         ta.select();
         ta.setSelectionRange(0, ta.value.length);
-
         const ok = document.execCommand('copy');
         document.body.removeChild(ta);
         if (ok) return true;
       } catch (e) {}
-
-      // 4) contentEditable + execCommand con HTML (para forzar multilínea)
+      // 4) contentEditable + execCommand con HTML (fuerza multilínea)
       try {
         const el = document.createElement('div');
         el.contentEditable = 'true';
         el.style.position = 'fixed';
         el.style.top = '-1000px';
         el.style.opacity = '0';
-        el.innerHTML = htmlText; // usar HTML con <br> ayuda a respetar los saltos
+        el.innerHTML = htmlText;
         document.body.appendChild(el);
 
         const range = document.createRange();
@@ -200,7 +191,6 @@
         document.body.removeChild(el);
         if (ok2) return true;
       } catch (e) {}
-
       return false;
     }
 
@@ -224,15 +214,15 @@
           return;
         }
 
-        // Título: puede ser largo, se mantiene tal cual
+        // Título informativo
         title.textContent = `Paga a ${clean(d.nombre)}`;
 
-        // Construcción inicial del contenido
-        currentLines = buildLines(d);
+        // Armar solo valores (sin etiquetas)
+        currentLines = buildValuesLines(d);
         const textPlain = buildPlainText(currentLines);
         const htmlText  = buildHTML(currentLines);
 
-        // Mostrar al usuario (texto plano visible)
+        // Mostrar solo el contenido de los datos en pantalla
         datosEl.textContent = textPlain;
 
         // Habilitar botón
@@ -241,16 +231,16 @@
         // GA4
         gtag('event', 'payer_page_view', { merchant_id: id });
 
-        // Tip donde suele fallar pegado
+        // Tip en entornos con más fricción de pegado
         if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
 
-        // Único botón: copiar multiformato con fallbacks
+        // Único botón
         btn.addEventListener('click', async () => {
           try {
-            // Recalcular por si data.json cambió después de recargar
-            const lines   = currentLines.length ? currentLines : buildLines(d);
-            const plain   = buildPlainText(lines);
-            const html    = buildHTML(lines);
+            // Recalcular por si data.json se actualiza tras recargar
+            const lines = currentLines.length ? currentLines : buildValuesLines(d);
+            const plain = buildPlainText(lines);
+            const html  = buildHTML(lines);
 
             const ok = await copyMultiFormat({ textPlain: plain, htmlText: html });
             if (!ok) throw new Error('copy_failed');
