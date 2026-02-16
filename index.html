@@ -127,21 +127,19 @@ function buildText(d) {
   const numero = clean(d.numeroCuenta);
   const correo = d.correo ? clean(d.correo) : '';
 
-  const lines = [
-    `Nombre: ${nombre}`,
-    `Rut: ${rut}`,
-    `Banco: ${banco}`,
-    `Tipo: ${tipo}`,
-    `Número Cuenta: ${numero}`
-  ];
+  let text =
+`Nombre: ${nombre}
+Rut: ${rut}
+Banco: ${banco}
+Tipo: ${tipo}
+Número Cuenta: ${numero}`;
 
   if (correo) {
-    lines.push(`Correo: ${correo}`);
+    text += `\nCorreo: ${correo}`;
   }
 
-  return lines.join('\n');
+  return text;
 }
-
 
 // Copiado universal robusto
 async function copyTextUniversal(text) {
