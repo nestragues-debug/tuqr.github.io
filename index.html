@@ -15,64 +15,91 @@
   </script>
 
   <style>
-    :root {
-      color-scheme: light dark;
-    }
+    :root { color-scheme: light dark; }
     html, body {
       margin:0; padding:0; height:100%;
       background:#fff; color:#111;
-      font-family: system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
-    .wrap {
-      max-width:640px; margin:0 auto; padding:20px 16px 32px;
-      display:flex; flex-direction:column; gap:14px;
+    .card{
+      max-width:620px; margin:0 auto; padding:20px 16px 28px;
+      border:1px solid #eee; border-radius:16px; background:#fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03); margin-top:8px;
     }
-    h1 { font-size:18px; margin:10px 0 0; font-weight:700; color:#222; }
-    .desc { font-size:14px; color:#555; margin:0; }
-    pre#datos {
-      margin:0;
-      padding:16px;
-      border-radius:12px;
-      background:#f6f6f6;
+    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
+    p{ margin:0 0 14px; color:#444; }
+    pre#datos{
+      background:#f6f6f6; padding:14px; border-radius:12px;
       white-space:pre-wrap; word-break:break-word;
-      font-size:16px; line-height:1.25;
+      font-size:15px; line-height:1.25; min-height:112px;
       user-select:text; -webkit-user-select:text; -ms-user-select:text;
-      min-height:110px;
     }
-    button#copiar {
-      width:100%;
-      padding:16px; font-size:17px; font-weight:700;
+    button{
+      width:100%; padding:16px; font-size:17px; font-weight:700;
       border:0; border-radius:12px; cursor:pointer;
       background:#0078ff; color:#fff;
       -webkit-tap-highlight-color: transparent;
     }
-    button#copiar:disabled { background:#999; cursor:not-allowed; }
-    button#copiar:active { filter: brightness(0.95); }
-    .ok { color:#0a7; font-weight:700; display:none; }
-    .err { color:#b00; font-weight:700; display:none; }
-    .tip { font-size:12px; color:#666; display:none; }
-    .small { font-size:12px; color:#777; }
+    button:active{ filter: brightness(0.95); }
+    button:disabled{ background:#999; cursor:not-allowed; }
+    .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
+    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
+    .tip{ margin-top:10px; font-size:12px; color:#666; display:none; }
+    .tip b{ color:#333; }
+    .small{ margin-top:12px; font-size:12px; color:#777; }
+
+    /* Copia por campo (plan B) */
+    .byfield-wrap{
+      margin-top:16px;
+      border-top:1px dashed #e5e5e5;
+      padding-top:12px;
+    }
+    .byfield-title{
+      font-size:13px; color:#555; font-weight:700; margin:0 0 8px;
+    }
+    .grid{
+      display:grid; gap:10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (min-width:560px){
+      .grid{ grid-template-columns: 1fr 1fr 1fr; }
+    }
+    .btn-small{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px; font-size:14px; font-weight:700; line-height:1.1;
+      border-radius:10px; border:1px solid #e5e5e5; background:#fafafa; color:#222;
+    }
+    .btn-small:active{ filter: brightness(0.97); }
   </style>
 </head>
 
 <body>
-  <div class="wrap">
+  <div class="card">
     <h1 id="title">Paga con transferencia</h1>
-    <p class="desc">Copia y pega estos datos en tu aplicación bancaria.</p>
+    <p>Copia y pega estos datos en tu aplicación bancaria.</p>
 
-    <!-- Solo contenido de datos (valores), sin etiquetas -->
+    <!-- Bloque visible con etiquetas -->
     <pre id="datos">Cargando…</pre>
 
-    <!-- Un solo botón -->
+    <!-- Botón principal (multiformato) -->
     <button id="copiar" disabled>Copiar datos para transferir</button>
 
     <div id="ok" class="ok">Copiado ✅</div>
     <div id="err" class="err">No encontramos este cobrador</div>
+
     <div id="tip" class="tip">
-      Si tu app no deja pegar el bloque completo, pega primero en <b>Notas</b> y vuelve a copiar desde ahí.
+      Si tu app no deja pegar el bloque completo, pega primero en <b>Notas</b> y vuelve a copiar desde ahí,
+      o usa <b>copiar por campo</b> debajo.
     </div>
+
+    <!-- Plan B: copiar por campo -->
+    <div id="byfield" class="byfield-wrap" style="display:none;">
+      <div class="byfield-title">¿Faltó algo al pegar? Copia por campo:</div>
+      <div class="grid" id="byfield-grid"><!-- Botones por campo se inyectan aquí --></div>
+    </div>
+
     <div class="small">
       En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
     </div>
@@ -89,6 +116,8 @@
     const errEl = document.getElementById('err');
     const title = document.getElementById('title');
     const tip = document.getElementById('tip');
+    const byFieldWrap = document.getElementById('byfield');
+    const byFieldGrid = document.getElementById('byfield-grid');
 
     const ua = navigator.userAgent || '';
     const isIOS =
@@ -97,6 +126,7 @@
     const isSamsung = /SamsungBrowser/i.test(ua);
     const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
 
+    // Limpieza ultra estricta
     function clean(s) {
       return String(s ?? '')
         .normalize('NFC')
@@ -108,9 +138,8 @@
         .trim();
     }
 
-    // --- Construcción SOLO valores (sin etiquetas) ---
-    // Orden sugerido: Nombre, Rut, Banco, Tipo, Número, Correo (si existe)
-    function buildValuesLines(d) {
+    // Construcción de líneas con etiquetas
+    function buildLabeledLines(d) {
       const nombre = clean(d.nombre);
       const rut    = clean(d.rut);
       const banco  = clean(d.banco);
@@ -118,18 +147,24 @@
       const numero = clean(d.numeroCuenta);
       const correo = d.correo ? clean(d.correo) : '';
 
-      const lines = [nombre, rut, banco, tipo, numero];
-      if (correo) lines.push(correo);
+      const lines = [
+        `Nombre: ${nombre}`,
+        `Rut: ${rut}`,
+        `Banco: ${banco}`,
+        `Tipo: ${tipo}`,
+        `Número Cuenta: ${numero}`,
+      ];
+      if (correo) lines.push(`Correo: ${correo}`);
       return lines;
     }
 
-    // Texto plano: usar CRLF en iOS para compatibilidad máxima en WebViews/bancos
+    // Texto plano: usar CRLF en iOS para compat
     function buildPlainText(lines) {
       const sep = isIOS ? '\r\n' : '\n';
       return lines.join(sep);
     }
 
-    // HTML minimalista con <br> (muchas apps respetan mejor los saltos al pegar)
+    // HTML simple con <br> (muchas apps respetan mejor saltos así)
     function buildHTML(lines) {
       const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
       return `<div>${lines.map(esc).join('<br>')}</div>`;
@@ -137,7 +172,7 @@
 
     // Copiado multiformato con fallbacks
     async function copyMultiFormat({ textPlain, htmlText }) {
-      // 1) text/plain + text/html
+      // 1) ClipboardItem: text/plain + text/html
       if (navigator.clipboard && window.ClipboardItem) {
         try {
           const item = new ClipboardItem({
@@ -146,16 +181,16 @@
           });
           await navigator.clipboard.write([item]);
           return true;
-        } catch (e) {}
+        } catch (e) { /* continuar */ }
       }
-      // 2) writeText (solo texto plano)
+      // 2) writeText (solo texto)
       if (navigator.clipboard && window.isSecureContext) {
         try {
           await navigator.clipboard.writeText(textPlain);
           return true;
-        } catch (e) {}
+        } catch (e) { /* continuar */ }
       }
-      // 3) textarea + execCommand('copy') con texto plano
+      // 3) textarea + execCommand('copy')
       try {
         const ta = document.createElement('textarea');
         ta.value = textPlain;
@@ -164,13 +199,16 @@
         ta.style.top = '-1000px';
         ta.style.opacity = '0';
         document.body.appendChild(ta);
+
         ta.focus();
         ta.select();
         ta.setSelectionRange(0, ta.value.length);
+
         const ok = document.execCommand('copy');
         document.body.removeChild(ta);
         if (ok) return true;
-      } catch (e) {}
+      } catch (e) { /* continuar */ }
+
       // 4) contentEditable + execCommand con HTML (fuerza multilínea)
       try {
         const el = document.createElement('div');
@@ -190,13 +228,54 @@
         const ok2 = document.execCommand('copy');
         document.body.removeChild(el);
         if (ok2) return true;
-      } catch (e) {}
+      } catch (e) { /* continuar */ }
+
       return false;
     }
 
     function showCopied() {
       okEl.style.display = 'block';
       setTimeout(() => okEl.style.display = 'none', 1500);
+    }
+
+    // Inyecta botones de "copiar por campo"
+    function renderByFieldButtons(d) {
+      const fields = [
+        { key:'nombre', label:'Nombre', value: clean(d.nombre) },
+        { key:'rut',    label:'RUT',    value: clean(d.rut) },
+        { key:'banco',  label:'Banco',  value: clean(d.banco) },
+        { key:'tipo',   label:'Tipo',   value: clean(d.tipoCuenta) },
+        { key:'numero', label:'Número Cuenta', value: clean(d.numeroCuenta) },
+      ];
+      if (d.correo) fields.push({ key:'correo', label:'Correo', value: clean(d.correo) });
+
+      // Limpia y renderiza
+      byFieldGrid.innerHTML = '';
+      fields.forEach(f => {
+        if (!f.value) return;
+        const b = document.createElement('button');
+        b.className = 'btn-small';
+        b.type = 'button';
+        b.textContent = `Copiar ${f.label}`;
+        b.addEventListener('click', async () => {
+          const textPlain = f.value;                 // solo el valor
+          const htmlText  = `<div>${f.value
+                                .replace(/&/g,'&amp;')
+                                .replace(/</g,'&lt;')
+                                .replace(/>/g,'&gt;')}</div>`;
+          try {
+            const ok = await copyMultiFormat({ textPlain, htmlText });
+            if (!ok) throw new Error('copy_failed');
+            showCopied();
+            gtag('event', 'copy_field', { merchant_id: id, field: f.key });
+          } catch (e) {
+            alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
+          }
+        });
+        byFieldGrid.appendChild(b);
+      });
+
+      byFieldWrap.style.display = 'block';
     }
 
     let currentLines = [];
@@ -214,31 +293,31 @@
           return;
         }
 
-        // Título informativo
+        // Título
         title.textContent = `Paga a ${clean(d.nombre)}`;
 
-        // Armar solo valores (sin etiquetas)
-        currentLines = buildValuesLines(d);
+        // Construcción (etiquetas)
+        currentLines = buildLabeledLines(d);
         const textPlain = buildPlainText(currentLines);
         const htmlText  = buildHTML(currentLines);
 
-        // Mostrar solo el contenido de los datos en pantalla
+        // Mostrar al usuario (texto plano con etiquetas)
         datosEl.textContent = textPlain;
 
-        // Habilitar botón
+        // Habilitar botón principal
         btn.disabled = false;
 
         // GA4
         gtag('event', 'payer_page_view', { merchant_id: id });
 
-        // Tip en entornos con más fricción de pegado
+        // Tip donde suele fallar pegado
         if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
 
-        // Único botón
+        // Botón principal
         btn.addEventListener('click', async () => {
           try {
-            // Recalcular por si data.json se actualiza tras recargar
-            const lines = currentLines.length ? currentLines : buildValuesLines(d);
+            // Recalcular por si data.json cambió tras reload
+            const lines = currentLines.length ? currentLines : buildLabeledLines(d);
             const plain = buildPlainText(lines);
             const html  = buildHTML(lines);
 
@@ -252,7 +331,10 @@
           }
         });
 
-      } catch(e) {
+        // Renderiza botones por campo (plan B visible)
+        renderByFieldButtons(d);
+
+      } catch (e) {
         datosEl.textContent = 'Error cargando datos';
         errEl.style.display = 'block';
         btn.disabled = true;
