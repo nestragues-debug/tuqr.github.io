@@ -15,56 +15,33 @@
   </script>
 
   <style>
-    body {
+    body{
       font-family: system-ui, -apple-system, Arial;
-      margin: 0;
-      padding: 24px;
-      background: #ffffff;
+      margin:0; padding:24px; background:#fff;
     }
-    .card {
-      max-width: 520px;
-      margin: 0 auto;
-      border: 1px solid #eee;
-      border-radius: 16px;
-      padding: 18px;
+    .card{
+      max-width:520px; margin:0 auto;
+      border:1px solid #eee; border-radius:16px; padding:18px;
     }
-    h1 {
-      font-size: 22px;
-      margin: 0 0 8px;
+    h1{ font-size:22px; margin:0 0 8px; }
+    p{ margin:0 0 14px; color:#444; }
+    pre{
+      background:#f6f6f6; padding:14px; border-radius:12px;
+      white-space:pre-wrap; word-break:break-word;
+      font-size:15px; -webkit-text-size-adjust:100%;
+      user-select:text; -webkit-user-select:text;
     }
-    p {
-      margin: 0 0 14px;
-      color: #444;
+    button{
+      width:100%; padding:16px; font-size:18px;
+      border:0; border-radius:12px; cursor:pointer;
+      background:#0078ff; color:#fff; font-weight:600;
     }
-    pre {
-      background: #f6f6f6;
-      padding: 14px;
-      border-radius: 12px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 15px;
-      -webkit-text-size-adjust: 100%;
-    }
-    button {
-      width: 100%;
-      padding: 16px;
-      font-size: 18px;
-      border: 0;
-      border-radius: 12px;
-      cursor: pointer;
-      background: #0078ff;
-      color: white;
-      font-weight: 600;
-    }
-    button:disabled {
-      background: #999;
-      cursor: not-allowed;
-    }
-    .ok { margin-top: 10px; color: #0a7; font-weight: 700; display:none; }
-    .err { margin-top: 10px; color: #b00; font-weight: 700; display:none; }
-    .small { margin-top: 12px; font-size: 12px; color: #777; }
-    .tip { margin-top: 10px; font-size: 12px; color: #666; display:none; }
-    .tip b { color:#333; }
+    button:disabled{ background:#999; cursor:not-allowed; }
+    .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
+    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
+    .small{ margin-top:12px; font-size:12px; color:#777; }
+    .tip{ margin-top:10px; font-size:12px; color:#666; display:none; }
+    .tip b{ color:#333; }
   </style>
 </head>
 
@@ -100,25 +77,25 @@ const errEl = document.getElementById('err');
 const title = document.getElementById('title');
 const tip = document.getElementById('tip');
 
-// UA detections
+// UA detections (solo para mostrar tip)
 const ua = navigator.userAgent || '';
 const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const isAndroid = /Android/.test(ua);
 const isSamsung = /SamsungBrowser/i.test(ua);
 const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
 
-// Limpieza extra estricta
+// Limpieza ultra estricta para “texto tipo WhatsApp”
 function clean(s) {
   return String(s ?? '')
     .normalize('NFC')
-    .replace(/\u00A0/g, ' ')
-    .replace(/[\u200B-\u200F]/g, '')
+    .replace(/\u00A0/g, ' ')                 // NBSP
+    .replace(/[\u200B-\u200D\uFEFF]/g, '')   // zero-width + BOM
     .replace(/\r\n/g, '\n')
-    .replace(/[ \t]+$/gm, '')
+    .replace(/\r/g, '\n')
+    .replace(/[ \t]+$/gm, '')                // trim fin de línea
     .trim();
 }
 
-// 🔹 BLOQUE COPIADO (con etiquetas + correo opcional)
+// ✅ Formato WhatsApp (multilínea)
 function buildText(d) {
   const nombre = clean(d.nombre);
   const rut = clean(d.rut);
@@ -134,40 +111,45 @@ Banco: ${banco}
 Tipo: ${tipo}
 Número Cuenta: ${numero}`;
 
-  if (correo) {
-    text += `\nCorreo: ${correo}`;
-  }
-
+  if (correo) text += `\nCorreo: ${correo}`;
   return text;
 }
 
-// Copiado universal robusto
+// Copiado universal robusto (texto plano)
 async function copyTextUniversal(text) {
-
+  // Intento 1: Clipboard API
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
     return;
   }
 
+  // Intento 2: textarea + execCommand
   try {
     const ta = document.createElement('textarea');
     ta.value = text;
-    ta.readOnly = true;
+    ta.setAttribute('readonly', '');
     ta.style.position = 'fixed';
+    ta.style.top = '0';
+    ta.style.left = '0';
     ta.style.opacity = '0';
     document.body.appendChild(ta);
 
+    ta.focus();
     ta.select();
-    ta.setSelectionRange(0, text.length);
+    ta.setSelectionRange(0, ta.value.length);
+
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
     if (ok) return;
   } catch(e) {}
 
+  // Intento 3: contentEditable fallback
   const el = document.createElement('div');
   el.textContent = text;
-  el.contentEditable = true;
+  el.contentEditable = 'true';
   el.style.position = 'fixed';
+  el.style.top = '0';
+  el.style.left = '0';
   el.style.opacity = '0';
   document.body.appendChild(el);
 
@@ -176,8 +158,8 @@ async function copyTextUniversal(text) {
   const sel = window.getSelection();
   sel.removeAllRanges();
   sel.addRange(range);
-  const ok2 = document.execCommand('copy');
 
+  const ok2 = document.execCommand('copy');
   document.body.removeChild(el);
   if (!ok2) throw new Error('copy_failed');
 }
@@ -186,6 +168,8 @@ function showCopied() {
   okEl.style.display = 'block';
   setTimeout(() => okEl.style.display = 'none', 1500);
 }
+
+let currentText = '';
 
 async function init() {
   try {
@@ -196,21 +180,30 @@ async function init() {
     if (!id || !d) {
       datosEl.textContent = 'Código inválido';
       errEl.style.display = 'block';
+      btn.disabled = true;
       return;
     }
 
+    // Título: puede ser largo, pero mantenemos tal cual
     title.textContent = `Paga a ${clean(d.nombre)}`;
-    const text = buildText(d);
-    datosEl.textContent = text;
+
+    // Texto que se muestra y se copia
+    currentText = buildText(d);
+    datosEl.textContent = currentText; // texto plano, multilínea real
+
     btn.disabled = false;
 
+    // GA4
     gtag('event', 'payer_page_view', { merchant_id: id });
 
+    // Tip solo donde suele fallar pegar
     if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
 
     btn.addEventListener('click', async () => {
       try {
-        await copyTextUniversal(text);
+        // Recalcula por si cambiaste data.json y recargaste
+        const textToCopy = currentText || datosEl.textContent || '';
+        await copyTextUniversal(textToCopy);
         showCopied();
         gtag('event', 'copy_click', { merchant_id: id });
       } catch(e) {
@@ -221,6 +214,7 @@ async function init() {
   } catch(e) {
     datosEl.textContent = 'Error cargando datos';
     errEl.style.display = 'block';
+    btn.disabled = true;
   }
 }
 
