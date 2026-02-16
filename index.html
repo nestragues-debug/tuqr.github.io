@@ -118,22 +118,30 @@ function clean(s) {
     .trim();
 }
 
-// 🔹 BLOQUE COPIADO (correo OPCIONAL)
+// 🔹 BLOQUE COPIADO (con etiquetas + correo opcional)
 function buildText(d) {
+  const nombre = clean(d.nombre);
+  const rut = clean(d.rut);
+  const banco = clean(d.banco);
+  const tipo = clean(d.tipoCuenta);
+  const numero = clean(d.numeroCuenta);
+  const correo = d.correo ? clean(d.correo) : '';
+
   const lines = [
-    clean(d.nombre),
-    clean(d.rut),
-    clean(d.banco),
-    clean(d.tipoCuenta),
-    clean(d.numeroCuenta)
+    `Nombre: ${nombre}`,
+    `Rut: ${rut}`,
+    `Banco: ${banco}`,
+    `Tipo: ${tipo}`,
+    `Número Cuenta: ${numero}`
   ];
 
-  if (d.correo && clean(d.correo)) {
-    lines.push(clean(d.correo));
+  if (correo) {
+    lines.push(`Correo: ${correo}`);
   }
 
   return lines.join('\n');
 }
+
 
 // Copiado universal robusto
 async function copyTextUniversal(text) {
