@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>TuQR — Datos para transferir 23:10</title>
+  <title>TuQR — Datos para transferir</title>
 
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
@@ -18,10 +18,12 @@
     body{
       font-family: system-ui, -apple-system, Arial;
       margin:0; padding:24px; background:#fff;
+      color:#111;
     }
     .card{
       max-width:520px; margin:0 auto;
       border:1px solid #eee; border-radius:16px; padding:18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
     }
     h1{ font-size:22px; margin:0 0 8px; }
     p{ margin:0 0 14px; color:#444; }
@@ -29,13 +31,16 @@
       background:#f6f6f6; padding:14px; border-radius:12px;
       white-space:pre-wrap; word-break:break-word;
       font-size:15px; -webkit-text-size-adjust:100%;
-      user-select:text; -webkit-user-select:text;
+      user-select:text; -webkit-user-select:text; -ms-user-select:text;
+      -webkit-font-smoothing: antialiased;
     }
     button{
       width:100%; padding:16px; font-size:18px;
       border:0; border-radius:12px; cursor:pointer;
       background:#0078ff; color:#fff; font-weight:600;
+      -webkit-tap-highlight-color: transparent;
     }
+    button:active{ filter: brightness(0.95); }
     button:disabled{ background:#999; cursor:not-allowed; }
     .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
     .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
@@ -52,7 +57,8 @@
 
     <pre id="datos">Cargando…</pre>
 
-    <button id="copiar" disabled>📋 Copiar datos para transferir</button>
+    <!-- Recomendación: sin emoji para evitar comportamientos raros en algunos WebViews -->
+    <button id="copiar" disabled>Copiar datos para transferir</button>
 
     <div id="ok" class="ok">Copiado ✅</div>
     <div id="err" class="err">No encontramos este cobrador</div>
@@ -66,160 +72,204 @@
     </div>
   </div>
 
-<script>
-const params = new URLSearchParams(location.search);
-const id = (params.get('id') || '').trim();
+  <script>
+    const params = new URLSearchParams(location.search);
+    const id = (params.get('id') || '').trim();
 
-const datosEl = document.getElementById('datos');
-const btn = document.getElementById('copiar');
-const okEl = document.getElementById('ok');
-const errEl = document.getElementById('err');
-const title = document.getElementById('title');
-const tip = document.getElementById('tip');
+    const datosEl = document.getElementById('datos');
+    const btn = document.getElementById('copiar');
+    const okEl = document.getElementById('ok');
+    const errEl = document.getElementById('err');
+    const title = document.getElementById('title');
+    const tip = document.getElementById('tip');
 
-// UA detections (solo para mostrar tip)
-const ua = navigator.userAgent || '';
-const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
-const isSamsung = /SamsungBrowser/i.test(ua);
-const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
+    // UA detections (solo para mostrar tip)
+    const ua = navigator.userAgent || '';
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSamsung = /SamsungBrowser/i.test(ua);
+    const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
 
-// Limpieza ultra estricta para “texto tipo WhatsApp”
-function clean(s) {
-  return String(s ?? '')
-    .normalize('NFC')
-    .replace(/\u00A0/g, ' ')                 // NBSP
-    .replace(/[\u200B-\u200D\uFEFF]/g, '')   // zero-width + BOM
-    .replace(/\r\n/g, '\n')
-    .replace(/\r/g, '\n')
-    .replace(/[ \t]+$/gm, '')                // trim fin de línea
-    .trim();
-}
-
-// ✅ Formato WhatsApp (multilínea)
-function buildText(d) {
-  const nombre = clean(d.nombre);
-  const rut = clean(d.rut);
-  const banco = clean(d.banco);
-  const tipo = clean(d.tipoCuenta);
-  const numero = clean(d.numeroCuenta);
-  const correo = d.correo ? clean(d.correo) : '';
-
-  let text =
-`Nombre: ${nombre}
-Rut: ${rut}
-Banco: ${banco}
-Tipo: ${tipo}
-Número Cuenta: ${numero}`;
-
-  if (correo) text += `\nCorreo: ${correo}`;
-  return text;
-}
-
-// Copiado universal robusto (texto plano)
-async function copyTextUniversal(text) {
-  // Intento 1: Clipboard API
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return;
-  }
-
-  // Intento 2: textarea + execCommand
-  try {
-    const ta = document.createElement('textarea');
-    ta.value = text;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.top = '0';
-    ta.style.left = '0';
-    ta.style.opacity = '0';
-    document.body.appendChild(ta);
-
-    ta.focus();
-    ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-    if (ok) return;
-  } catch(e) {}
-
-  // Intento 3: contentEditable fallback
-  const el = document.createElement('div');
-  el.textContent = text;
-  el.contentEditable = 'true';
-  el.style.position = 'fixed';
-  el.style.top = '0';
-  el.style.left = '0';
-  el.style.opacity = '0';
-  document.body.appendChild(el);
-
-  const range = document.createRange();
-  range.selectNodeContents(el);
-  const sel = window.getSelection();
-  sel.removeAllRanges();
-  sel.addRange(range);
-
-  const ok2 = document.execCommand('copy');
-  document.body.removeChild(el);
-  if (!ok2) throw new Error('copy_failed');
-}
-
-function showCopied() {
-  okEl.style.display = 'block';
-  setTimeout(() => okEl.style.display = 'none', 1500);
-}
-
-let currentText = '';
-
-async function init() {
-  try {
-    const res = await fetch('./data.json', { cache: 'no-store' });
-    const all = await res.json();
-    const d = all[id];
-
-    if (!id || !d) {
-      datosEl.textContent = 'Código inválido';
-      errEl.style.display = 'block';
-      btn.disabled = true;
-      return;
+    // Limpieza ultra estricta para “texto tipo WhatsApp”
+    function clean(s) {
+      return String(s ?? '')
+        .normalize('NFC')
+        .replace(/\u00A0/g, ' ')                 // NBSP
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')   // zero-width + BOM
+        .replace(/\r\n/g, '\n')                  // normaliza a \n
+        .replace(/\r/g, '\n')
+        .replace(/[ \t]+$/gm, '')                // trim fin de línea
+        .trim();
     }
 
-    // Título: puede ser largo, pero mantenemos tal cual
-    title.textContent = `Paga a ${clean(d.nombre)}`;
+    // Construcción de líneas clave:valor
+    function buildLines(d) {
+      const nombre = clean(d.nombre);
+      const rut    = clean(d.rut);
+      const banco  = clean(d.banco);
+      const tipo   = clean(d.tipoCuenta);
+      const numero = clean(d.numeroCuenta);
+      const correo = d.correo ? clean(d.correo) : '';
 
-    // Texto que se muestra y se copia
-    currentText = buildText(d);
-    datosEl.textContent = currentText; // texto plano, multilínea real
+      const lines = [
+        `Nombre: ${nombre}`,
+        `Rut: ${rut}`,
+        `Banco: ${banco}`,
+        `Tipo: ${tipo}`,
+        `Número Cuenta: ${numero}`,
+      ];
+      if (correo) lines.push(`Correo: ${correo}`);
+      return lines;
+    }
 
-    btn.disabled = false;
+    // Texto plano: usar CRLF en iOS para compatibilidad con apps bancarias/WebViews
+    function buildPlainText(lines) {
+      const sep = isIOS ? '\r\n' : '\n';
+      return lines.join(sep);
+    }
 
-    // GA4
-    gtag('event', 'payer_page_view', { merchant_id: id });
+    // HTML simple (sin estilos), con <br> para forzar salto de línea
+    function buildHTML(lines) {
+      const escaped = lines.map(l =>
+        l.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')
+      );
+      return `<div>${escaped.join('<br>')}</div>`;
+    }
 
-    // Tip solo donde suele fallar pegar
-    if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
-
-    btn.addEventListener('click', async () => {
-      try {
-        // Recalcula por si cambiaste data.json y recargaste
-        const textToCopy = currentText || datosEl.textContent || '';
-        await copyTextUniversal(textToCopy);
-        showCopied();
-        gtag('event', 'copy_click', { merchant_id: id });
-      } catch(e) {
-        alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
+    // Copiado multiformato con fallbacks
+    async function copyMultiFormat({ textPlain, htmlText }) {
+      // 1) ClipboardItem con text/plain + text/html (más cercano a WhatsApp)
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          const item = new ClipboardItem({
+            'text/plain': new Blob([textPlain], { type: 'text/plain' }),
+            'text/html':  new Blob([htmlText],  { type: 'text/html'  }),
+          });
+          await navigator.clipboard.write([item]);
+          return true;
+        } catch (e) {
+          // continuar con fallback
+        }
       }
-    });
 
-  } catch(e) {
-    datosEl.textContent = 'Error cargando datos';
-    errEl.style.display = 'block';
-    btn.disabled = true;
-  }
-}
+      // 2) writeText (solo text/plain)
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(textPlain);
+          return true;
+        } catch (e) {}
+      }
 
-init();
-</script>
+      // 3) textarea + execCommand('copy') con texto plano
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = textPlain;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
 
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
+
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) return true;
+      } catch (e) {}
+
+      // 4) contentEditable + execCommand con HTML (para forzar multilínea)
+      try {
+        const el = document.createElement('div');
+        el.contentEditable = 'true';
+        el.style.position = 'fixed';
+        el.style.top = '-1000px';
+        el.style.opacity = '0';
+        el.innerHTML = htmlText; // usar HTML con <br> ayuda a respetar los saltos
+        document.body.appendChild(el);
+
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const ok2 = document.execCommand('copy');
+        document.body.removeChild(el);
+        if (ok2) return true;
+      } catch (e) {}
+
+      return false;
+    }
+
+    function showCopied() {
+      okEl.style.display = 'block';
+      setTimeout(() => okEl.style.display = 'none', 1500);
+    }
+
+    let currentLines = [];
+
+    async function init() {
+      try {
+        const res = await fetch('./data.json', { cache: 'no-store' });
+        const all = await res.json();
+        const d = all[id];
+
+        if (!id || !d) {
+          datosEl.textContent = 'Código inválido';
+          errEl.style.display = 'block';
+          btn.disabled = true;
+          return;
+        }
+
+        // Título: puede ser largo, se mantiene tal cual
+        title.textContent = `Paga a ${clean(d.nombre)}`;
+
+        // Construcción inicial del contenido
+        currentLines = buildLines(d);
+        const textPlain = buildPlainText(currentLines);
+        const htmlText  = buildHTML(currentLines);
+
+        // Mostrar al usuario (texto plano visible)
+        datosEl.textContent = textPlain;
+
+        // Habilitar botón
+        btn.disabled = false;
+
+        // GA4
+        gtag('event', 'payer_page_view', { merchant_id: id });
+
+        // Tip donde suele fallar pegado
+        if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
+
+        // Único botón: copiar multiformato con fallbacks
+        btn.addEventListener('click', async () => {
+          try {
+            // Recalcular por si data.json cambió después de recargar
+            const lines   = currentLines.length ? currentLines : buildLines(d);
+            const plain   = buildPlainText(lines);
+            const html    = buildHTML(lines);
+
+            const ok = await copyMultiFormat({ textPlain: plain, htmlText: html });
+            if (!ok) throw new Error('copy_failed');
+
+            showCopied();
+            gtag('event', 'copy_click', { merchant_id: id });
+          } catch (e) {
+            alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
+          }
+        });
+
+      } catch(e) {
+        datosEl.textContent = 'Error cargando datos';
+        errEl.style.display = 'block';
+        btn.disabled = true;
+      }
+    }
+
+    init();
+  </script>
 </body>
 </html>
