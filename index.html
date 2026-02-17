@@ -1,233 +1,275 @@
 <!doctype html>
 <html lang="es">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>TuQR — Datos para transferir</title>
+  <meta charset="utf-8" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1, maximum-scale=1"
+  />
+  <title>TuQR — Datos para transferir</title>
 
-<script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
-<script>
-window.dataLayer = window.dataLayer || [];
-function gtag(){dataLayer.push(arguments);}
-gtag('js', new Date());
-gtag('config','G-D9TN01T1R0');
-</script>
+  <!-- GA4 -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){ dataLayer.push(arguments); }
+    gtag('js', new Date());
+    gtag('config', 'G-D9TN01T1R0');
+  </script>
 
-<style>
-body{font-family:system-ui;margin:0;padding:24px;background:#fff}
-.card{max-width:520px;margin:auto;border:1px solid #eee;border-radius:16px;padding:18px}
-h1{font-size:22px;margin:0 0 8px}
-p{margin:0 0 14px;color:#444}
+  <style>
+    body{
+      font-family: system-ui, -apple-system, Arial;
+      margin:0; padding:24px; background:#fff;
+      -webkit-text-size-adjust: 100%;
+    }
+    .card{
+      max-width:520px; margin:0 auto;
+      border:1px solid #eee; border-radius:16px; padding:18px;
+    }
+    h1{ font-size:22px; margin:0 0 8px; }
+    p{ margin:0 0 14px; color:#444; }
+    pre{
+      background:#f6f6f6; padding:14px; border-radius:12px;
+      white-space:pre-wrap; word-break:break-word;
+      font-size:15px;
+      user-select:text; -webkit-user-select:text;
+    }
+    button{
+      width:100%; padding:16px; font-size:18px;
+      border:0; border-radius:12px; cursor:pointer;
+      background:#0078ff; color:#fff; font-weight:600;
+    }
+    button:disabled{ background:#999; cursor:not-allowed; }
+    .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
+    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
+    .small{ margin-top:12px; font-size:12px; color:#777; }
 
-pre{
-background:#f6f6f6;
-padding:14px;
-border-radius:12px;
-white-space:pre-wrap;
-font-size:15px;
-}
-
-button{
-width:100%;
-padding:16px;
-font-size:18px;
-border:0;
-border-radius:12px;
-cursor:pointer;
-background:#0078ff;
-color:#fff;
-font-weight:600;
-}
-
-.ok{margin-top:10px;color:#0a7;font-weight:700;display:none}
-.err{margin-top:10px;color:#b00;font-weight:700;display:none}
-
-.fields{margin-top:18px;border-top:1px solid #eee;padding-top:14px}
-.field{margin-bottom:12px}
-.lbl{font-size:12px;color:#555;margin-bottom:6px;display:block}
-
-.row{
-display:grid;
-grid-template-columns:1fr auto;
-gap:10px;
-align-items:center;
-}
-
-input{
-width:100%;
-padding:10px 12px;
-border-radius:10px;
-border:1px solid #e6e6e6;
-background:#f6f6f6;
-font-size:14px;
-}
-
-.small{margin-top:12px;font-size:12px;color:#777}
-</style>
+    /* ✅ Botones por campo (grilla 2 columnas) */
+    .fields{
+      margin-top:18px;
+      border-top:1px solid #eee;
+      padding-top:14px;
+      display:none;
+    }
+    .fields h2{
+      font-size:14px;
+      margin:0 0 10px;
+      color:#333;
+    }
+    .grid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:10px;
+    }
+    .btnField{
+      width:100%;
+      padding:12px 10px;
+      font-size:14px;
+      border-radius:12px;
+      background:#111;
+      color:#fff;
+      font-weight:700;
+    }
+    .hint{
+      margin:10px 0 0;
+      font-size:12px;
+      color:#666;
+    }
+  </style>
 </head>
 
 <body>
-<div class="card">
+  <div class="card">
+    <h1 id="title">Paga con transferencia</h1>
+    <p>Copia y pega estos datos en tu aplicación bancaria 22:15.</p>
 
-<h1 id="title">Paga con transferencia</h1>
-<p>Copia y pega estos datos en tu aplicación bancaria 22:03.</p>
+    <pre id="visual">Cargando…</pre>
 
-<pre id="visual">Cargando…</pre>
+    <button id="copyAll" disabled>📋 Copiar datos para transferir</button>
 
-<!-- textarea oculto para copiado seguro -->
-<textarea id="hiddenCopy" style="position:absolute;left:-9999px;top:-9999px"></textarea>
+    <div id="ok" class="ok">Copiado ✅</div>
+    <div id="err" class="err">No encontramos este cobrador</div>
 
-<button id="copyAll">📋 Copiar datos para transferir</button>
+    <!-- ✅ Botones por campo (sin mostrar valores) -->
+    <div id="fields" class="fields">
+      <h2>¿Tu banco pegó incompleto? Copia campo por campo:</h2>
+      <div class="grid">
+        <button class="btnField" id="b_nombre" type="button">Copiar Nombre</button>
+        <button class="btnField" id="b_rut" type="button">Copiar Rut</button>
+        <button class="btnField" id="b_banco" type="button">Copiar Banco</button>
+        <button class="btnField" id="b_tipo" type="button">Copiar Tipo</button>
+        <button class="btnField" id="b_numero" type="button">Copiar Número</button>
+        <button class="btnField" id="b_correo" type="button">Copiar Correo</button>
+      </div>
+      <p class="hint">Tip: si aún falla, pega primero en <b>Notas</b> y luego desde ahí a tu banco.</p>
+    </div>
 
-<div id="ok" class="ok">Copiado ✅</div>
-<div id="err" class="err">No encontramos este cobrador</div>
-
-<!-- copiar campo por campo -->
-<div id="fields" class="fields" style="display:none">
-
-<div class="field">
-<label class="lbl">Nombre</label>
-<div class="row">
-<input id="i_nombre" readonly>
-<button id="c_nombre">Copiar</button>
-</div>
-</div>
-
-<div class="field">
-<label class="lbl">Rut</label>
-<div class="row">
-<input id="i_rut" readonly>
-<button id="c_rut">Copiar</button>
-</div>
-</div>
-
-<div class="field">
-<label class="lbl">Banco</label>
-<div class="row">
-<input id="i_banco" readonly>
-<button id="c_banco">Copiar</button>
-</div>
-</div>
-
-<div class="field">
-<label class="lbl">Tipo</label>
-<div class="row">
-<input id="i_tipo" readonly>
-<button id="c_tipo">Copiar</button>
-</div>
-</div>
-
-<div class="field">
-<label class="lbl">Número Cuenta</label>
-<div class="row">
-<input id="i_numero" readonly>
-<button id="c_numero">Copiar</button>
-</div>
-</div>
-
-<div class="field" id="correoRow">
-<label class="lbl">Correo</label>
-<div class="row">
-<input id="i_correo" readonly>
-<button id="c_correo">Copiar</button>
-</div>
-</div>
-
-</div>
-
-<div class="small">
-En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
-</div>
-
-</div>
+    <div class="small">
+      En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
+    </div>
+  </div>
 
 <script>
-const id=new URLSearchParams(location.search).get('id')?.trim();
+  const params = new URLSearchParams(location.search);
+  const id = (params.get('id') || '').trim();
 
-const visual=document.getElementById('visual');
-const hidden=document.getElementById('hiddenCopy');
-const ok=document.getElementById('ok');
-const err=document.getElementById('err');
-const fields=document.getElementById('fields');
+  const titleEl = document.getElementById('title');
+  const visualEl = document.getElementById('visual');
+  const copyAllBtn = document.getElementById('copyAll');
+  const okEl = document.getElementById('ok');
+  const errEl = document.getElementById('err');
+  const fieldsWrap = document.getElementById('fields');
 
-function clean(s){
-return String(s??'')
-.normalize('NFC')
-.replace(/\u00A0/g,' ')
-.replace(/[\u200B-\u200D\uFEFF]/g,'')
-.replace(/\r\n/g,'\n')
-.trim();
-}
+  const b_nombre = document.getElementById('b_nombre');
+  const b_rut = document.getElementById('b_rut');
+  const b_banco = document.getElementById('b_banco');
+  const b_tipo = document.getElementById('b_tipo');
+  const b_numero = document.getElementById('b_numero');
+  const b_correo = document.getElementById('b_correo');
 
-function showOk(){
-ok.style.display='block';
-setTimeout(()=>ok.style.display='none',1200);
-}
+  function clean(s) {
+    return String(s ?? '')
+      .normalize('NFC')
+      .replace(/\u00A0/g, ' ')
+      .replace(/[\u200B-\u200D\uFEFF]/g, '')
+      .replace(/\r\n/g, '\n')
+      .replace(/\r/g, '\n')
+      .replace(/[ \t]+$/gm, '')
+      .trim();
+  }
 
-async function copy(text){
-hidden.value=text;
-hidden.focus();
-hidden.select();
-hidden.setSelectionRange(0,text.length);
+  function showCopied() {
+    okEl.style.display = 'block';
+    setTimeout(() => okEl.style.display = 'none', 1200);
+  }
 
-try{
-await navigator.clipboard.writeText(text);
-}catch{
-document.execCommand('copy');
-}
-showOk();
-}
+  // ✅ Copiado robusto + evita zoom: no dejamos foco en textarea
+  async function copyTextUniversal(text) {
+    const t = String(text || '');
 
-function buildText(d){
-let t=
+    // 1) Clipboard API
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(t);
+      return;
+    }
+
+    // 2) Fallback con textarea temporal (se crea, copia, se elimina y blur)
+    const prevScrollY = window.scrollY;
+    const ta = document.createElement('textarea');
+    ta.value = t;
+    ta.setAttribute('readonly', '');
+    ta.style.position = 'fixed';
+    ta.style.left = '-9999px';
+    ta.style.top = '0';
+    ta.style.opacity = '0';
+    ta.style.fontSize = '16px'; // clave para evitar zoom iOS
+    document.body.appendChild(ta);
+
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+
+    // quitar foco para evitar zoom persistente
+    if (document.activeElement && typeof document.activeElement.blur === 'function') {
+      document.activeElement.blur();
+    }
+    window.scrollTo(0, prevScrollY);
+
+    if (!ok) throw new Error('copy_failed');
+  }
+
+  function buildBlock(d) {
+    let text =
 `Nombre: ${d.nombre}
 Rut: ${d.rut}
 Banco: ${d.banco}
 Tipo: ${d.tipoCuenta}
 Número Cuenta: ${d.numeroCuenta}`;
-if(d.correo) t+=`\nCorreo: ${d.correo}`;
-return t;
-}
+    if (d.correo) text += `\nCorreo: ${d.correo}`;
+    return text;
+  }
 
-fetch('./data.json',{cache:'no-store'})
-.then(r=>r.json())
-.then(all=>{
-const d=all[id];
-if(!d){err.style.display='block';return;}
+  function wireFieldButton(btn, value, fieldName) {
+    btn.addEventListener('click', async () => {
+      try {
+        await copyTextUniversal(value || '');
+        showCopied();
+        gtag('event', 'copy_field_click', { merchant_id: id, field: fieldName });
+      } catch(e) {
+        alert('No pudimos copiar automáticamente. Mantén presionado y selecciona “Copiar”.');
+      }
+    });
+  }
 
-d.nombre=clean(d.nombre);
-d.rut=clean(d.rut);
-d.banco=clean(d.banco);
-d.tipoCuenta=clean(d.tipoCuenta);
-d.numeroCuenta=clean(d.numeroCuenta);
-d.correo=clean(d.correo);
+  async function init() {
+    try {
+      const res = await fetch('./data.json', { cache: 'no-store' });
+      const all = await res.json();
+      const raw = all[id];
 
-document.getElementById('title').textContent=`Paga a ${d.nombre}`;
+      if (!id || !raw) {
+        visualEl.textContent = 'Código inválido';
+        errEl.style.display = 'block';
+        copyAllBtn.disabled = true;
+        return;
+      }
 
-const text=buildText(d);
-visual.textContent=text;
+      const d = {
+        nombre: clean(raw.nombre),
+        rut: clean(raw.rut),
+        banco: clean(raw.banco),
+        tipoCuenta: clean(raw.tipoCuenta),
+        numeroCuenta: clean(raw.numeroCuenta),
+        correo: raw.correo ? clean(raw.correo) : ''
+      };
 
-fields.style.display='block';
+      titleEl.textContent = `Paga a ${d.nombre}`;
 
-i_nombre.value=d.nombre;
-i_rut.value=d.rut;
-i_banco.value=d.banco;
-i_tipo.value=d.tipoCuenta;
-i_numero.value=d.numeroCuenta;
-i_correo.value=d.correo;
+      const block = buildBlock(d);
+      visualEl.textContent = block;
 
-if(!d.correo) correoRow.style.display='none';
+      copyAllBtn.disabled = false;
+      copyAllBtn.addEventListener('click', async () => {
+        try {
+          await copyTextUniversal(block);
+          showCopied();
+          gtag('event', 'copy_click', { merchant_id: id });
+        } catch(e) {
+          alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
+        }
+      });
 
-copyAll.onclick=()=>copy(text);
-c_nombre.onclick=()=>copy(d.nombre);
-c_rut.onclick=()=>copy(d.rut);
-c_banco.onclick=()=>copy(d.banco);
-c_tipo.onclick=()=>copy(d.tipoCuenta);
-c_numero.onclick=()=>copy(d.numeroCuenta);
-c_correo.onclick=()=>copy(d.correo);
+      // Mostrar grilla de botones
+      fieldsWrap.style.display = 'block';
 
-gtag('event','payer_page_view',{merchant_id:id});
-});
+      // Botones por campo (sin mostrar valores)
+      wireFieldButton(b_nombre, d.nombre, 'nombre');
+      wireFieldButton(b_rut, d.rut, 'rut');
+      wireFieldButton(b_banco, d.banco, 'banco');
+      wireFieldButton(b_tipo, d.tipoCuenta, 'tipo');
+      wireFieldButton(b_numero, d.numeroCuenta, 'numero_cuenta');
+
+      if (d.correo) {
+        b_correo.style.display = 'block';
+        wireFieldButton(b_correo, d.correo, 'correo');
+      } else {
+        b_correo.style.display = 'none';
+      }
+
+      gtag('event', 'payer_page_view', { merchant_id: id });
+
+    } catch(e) {
+      visualEl.textContent = 'Error cargando datos';
+      errEl.style.display = 'block';
+      copyAllBtn.disabled = true;
+    }
+  }
+
+  init();
 </script>
 
 </body>
