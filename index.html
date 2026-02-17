@@ -5,8 +5,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TuQR — Datos para transferir</title>
 
-  <!-- GA4 -->
-  https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0</script>
+  <!-- GA4 (correcto y sin emojis) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -20,25 +20,27 @@
       margin:0; padding:0; height:100%;
       background:#fff; color:#111;
       font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
     .card{
-      max-width:640px; margin:8px auto; padding:20px 16px 28px;
+      max-width:640px; margin:0 auto; padding:20px 16px 28px;
       border:1px solid #eee; border-radius:16px; background:#fff;
-      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+      box-shadow: 0 1px 2px rgba(0,0,0,.03); margin-top:8px;
     }
     h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
     p{ margin:0 0 14px; color:#444; }
     pre#datos{
       background:#f6f6f6; padding:14px; border-radius:12px;
       white-space:pre-wrap; word-break:break-word;
-      font-size:16px; line-height:1.28; min-height:120px;
+      font-size:15px; line-height:1.25; min-height:112px;
       user-select:text; -webkit-user-select:text; -ms-user-select:text;
     }
     button{
       width:100%; padding:16px; font-size:17px; font-weight:700;
       border:0; border-radius:12px; cursor:pointer;
-      background:#0078ff; color:#fff; -webkit-tap-highlight-color: transparent;
+      background:#0078ff; color:#fff;
+      -webkit-tap-highlight-color: transparent;
     }
     button:active{ filter: brightness(0.95); }
     button:disabled{ background:#999; cursor:not-allowed; }
@@ -50,11 +52,20 @@
 
     /* Copiar por campo (plan B) */
     .byfield-wrap{
-      margin-top:16px; border-top:1px dashed #e5e5e5; padding-top:12px;
+      margin-top:16px;
+      border-top:1px dashed #e5e5e5;
+      padding-top:12px;
     }
-    .byfield-title{ font-size:13px; color:#555; font-weight:700; margin:0 0 8px; }
-    .grid{ display:grid; gap:10px; grid-template-columns:1fr 1fr; }
-    @media (min-width:560px){ .grid{ grid-template-columns: 1fr 1fr 1fr; } }
+    .byfield-title{
+      font-size:13px; color:#555; font-weight:700; margin:0 0 8px;
+    }
+    .grid{
+      display:grid; gap:10px;
+      grid-template-columns: 1fr 1fr;
+    }
+    @media (min-width:560px){
+      .grid{ grid-template-columns: 1fr 1fr 1fr; }
+    }
     .btn-small{
       display:inline-flex; align-items:center; justify-content:center;
       padding:12px; font-size:14px; font-weight:700; line-height:1.1;
@@ -69,23 +80,24 @@
     <h1 id="title">Paga con transferencia</h1>
     <p>Copia y pega estos datos en tu aplicación bancaria.</p>
 
-    <!-- Bloque visible, en formato etiqueta en una línea + valor en la siguiente -->
+    <!-- Bloque visible con etiquetas (sin acentos/diéresis/ñ) -->
     <pre id="datos">Cargando…</pre>
 
-    <!-- Botón principal -->
-    <button id="copiar" disabled>Copiar datos para transferir 22:32</button>
+    <!-- Botón principal (multiformato) -->
+    <button id="copiar" disabled>Copiar datos para transferir</button>
 
-    <div id="ok" class="ok">Copiado ✅</div>
+    <div id="ok" class="ok">Copiado</div>
     <div id="err" class="err">No encontramos este cobrador</div>
 
     <div id="tip" class="tip">
-      Si tu app no pega todo, intenta pegar primero en <b>Notas</b> y volver a copiar. También puedes usar <b>copiar por campo</b>.
+      Si tu app no deja pegar el bloque completo, pega primero en <b>Notas</b> y vuelve a copiar desde ahi,
+      o usa <b>copiar por campo</b> debajo.
     </div>
 
     <!-- Plan B: copiar por campo -->
     <div id="byfield" class="byfield-wrap" style="display:none;">
-      <div class="byfield-title">¿Faltó algo? Copia por campo:</div>
-      <div class="grid" id="byfield-grid"><!-- Botones por campo --></div>
+      <div class="byfield-title">¿Falto algo al pegar? Copia por campo:</div>
+      <div class="grid" id="byfield-grid"><!-- Botones por campo se inyectan aqui --></div>
     </div>
 
     <div class="small">
@@ -94,7 +106,7 @@
   </div>
 
   <script>
-    // --- Utilidades/Detección ---
+    // --- Utilidades/Deteccion ---
     const params = new URLSearchParams(location.search);
     const id = (params.get('id') || '').trim();
 
@@ -112,86 +124,278 @@
       /iPad|iPhone|iPod/.test(ua) ||
       (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
     const isSamsung = /SamsungBrowser/i.test(ua);
-    const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv|MACH)/i.test(ua);
+    const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv)/i.test(ua);
 
-    // Limpieza ultra estricta
-    function clean(s) {
+    // Limpieza base
+    function cleanBase(s) {
       return String(s ?? '')
         .normalize('NFC')
         .replace(/\u00A0/g, ' ')                 // NBSP -> espacio
         .replace(/[\u200B-\u200D\uFEFF]/g, '')   // zero-width + BOM
         .replace(/\r\n/g, '\n')                  // normaliza internamente a \n
         .replace(/\r/g, '\n')
-        .replace(/[ \t]+$/gm, '')                // trim fin de línea
+        .replace(/[ \t]+$/gm, '')                // trim fin de linea
         .trim();
     }
 
-    // Etiquetas al estilo “copiar datos” de banca (sin ":")
-    function labelMap() {
-      return {
-        nombre: 'Nombre destinatario',
-        rut: 'RUT',
-        banco: 'Banco',
-        tipoCuenta: 'Tipo de cuenta',
-        numeroCuenta: 'Número de cuenta',
-        correo: 'Correo electrónico'
-      };
+    // Quitar diacriticos (tilde, dieresis, etc.) y convertir ñ -> n
+    function toAsciiPreferred(s) {
+      const base = cleanBase(s);
+      // NFD: separa letras de sus marcas diacriticas; luego removemos las marcas
+      let ascii = base.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+      // Asegurar ñ -> n (por si llega en forma precompuesta o rara)
+      ascii = ascii.replace(/ñ/gi, 'n');
+      return ascii;
     }
 
-    // Líneas “pares” (Etiqueta en una línea, Valor en la siguiente)
-    function buildPairedLines(d) {
-      const L = labelMap();
-      const nombre = clean(d.nombre);
-      const rut    = clean(d.rut);
-      const banco  = clean(d.banco);
-      const tipo   = clean(d.tipoCuenta);
-      const numero = clean(d.numeroCuenta);
-      const correo = d.correo ? clean(d.correo) : '';
+    // Etiquetas para UI (sin acentos/diéresis/ñ)
+    const LABELS_DISPLAY = {
+      nombre: 'Nombre',
+      rut: 'RUT',
+      banco: 'Banco',
+      tipoCuenta: 'Tipo de cuenta',
+      numeroCuenta: 'Numero de cuenta',
+      correo: 'Correo'
+    };
+
+    // Claves TSV (ASCII/UPPERCASE) para max compat en apps bancarias
+    const LABELS_TSV = {
+      nombre: 'NOMBRE',
+      rut: 'RUT',
+      banco: 'BANCO',
+      tipoCuenta: 'TIPO DE CUENTA',
+      numeroCuenta: 'NUMERO DE CUENTA',
+      correo: 'CORREO'
+    };
+
+    // Lineas visibles (Etiqueta: Valor) — ambas partes en ASCII preferido
+    function buildDisplayLines(d) {
+      const nombre = toAsciiPreferred(d.nombre);
+      const rut    = toAsciiPreferred(d.rut);
+      const banco  = toAsciiPreferred(d.banco);
+      const tipo   = toAsciiPreferred(d.tipoCuenta);
+      const numero = toAsciiPreferred(d.numeroCuenta);
+      const correo = d.correo ? toAsciiPreferred(d.correo) : '';
 
       const lines = [
-        L.nombre, nombre,
-        L.rut, rut,
-        L.banco, banco,
-        L.tipoCuenta, tipo,
-        L.numeroCuenta, numero
+        `${LABELS_DISPLAY.nombre}: ${nombre}`,
+        `${LABELS_DISPLAY.rut}: ${rut}`,
+        `${LABELS_DISPLAY.banco}: ${banco}`,
+        `${LABELS_DISPLAY.tipoCuenta}: ${tipo}`,
+        `${LABELS_DISPLAY.numeroCuenta}: ${numero}`,
       ];
-      if (correo) { lines.push(L.correo, correo); }
+      if (correo) lines.push(`${LABELS_DISPLAY.correo}: ${correo}`);
       return lines;
     }
 
-    // Texto plano: CRLF en iOS
-    function buildPlainText(lines) {
+    // TSV (CLAVE<TAB>VALOR) — claves en UPPER ASCII; valores ASCII sin diacriticos/ñ
+    function buildTSVLines(d) {
+      const nombre = toAsciiPreferred(d.nombre);
+      const rut    = toAsciiPreferred(d.rut);
+      const banco  = toAsciiPreferred(d.banco);
+      const tipo   = toAsciiPreferred(d.tipoCuenta);
+      const numero = toAsciiPreferred(d.numeroCuenta);
+      const correo = d.correo ? toAsciiPreferred(d.correo) : '';
+
+      const tsv = [
+        `${LABELS_TSV.nombre}\t${nombre}`,
+        `${LABELS_TSV.rut}\t${rut}`,
+        `${LABELS_TSV.banco}\t${banco}`,
+        `${LABELS_TSV.tipoCuenta}\t${tipo}`,
+        `${LABELS_TSV.numeroCuenta}\t${numero}`,
+      ];
+      if (correo) tsv.push(`${LABELS_TSV.correo}\t${correo}`);
+      return tsv;
+    }
+
+    // Texto plano: CRLF en iOS; \n en otros
+    function joinPlain(lines) {
       const sep = isIOS ? '\r\n' : '\n';
       return lines.join(sep);
     }
 
-    // HTML “bank friendly”: <p><b>Etiqueta</b><br>Valor</p>
-    function buildHTMLFromPairs(lines) {
-      const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-      let html = '';
-      for (let i = 0; i < lines.length; i += 2) {
-        const label = esc(lines[i] ?? '');
-        const val   = esc(lines[i+1] ?? '');
-        if (!label && !val) continue;
-        html += `<p><b>${label}</b><br>${val}</p>`;
-      }
-      return `<div>${html}</div>`;
+    // HTML a partir de pares (tabla simple) para pegado en WebViews que usan text/html
+    function buildHTMLTableFromTSV(tsvLines) {
+      const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      const rows = tsvLines.map(line => {
+        const [k, v] = String(line).split('\t');
+        return `<tr><td>${esc(k || '')}</td><td>${esc(v || '')}</td></tr>`;
+      }).join('');
+      return `<table><tbody>${rows}</tbody></table>`;
     }
 
-    // También generamos un “texto visible” amigable para el <pre>
-    function buildVisibleBlock(lines) {
-      // Unimos como “Etiqueta: Valor” (solo para visualización¡Gracias por el update, Nicolás! Con lo que viste en **Banco de Chile** (no pega *Nombre*) y **MACH** (no pega *Nombre* ni *Banco*), el síntoma calza con parsers que:
+    // Copiado multiformato con fallbacks
+    async function copyMultiFormat({ textPlain, htmlText }) {
+      // 1) ClipboardItem: text/plain + text/html
+      if (navigator.clipboard && window.ClipboardItem) {
+        try {
+          const item = new ClipboardItem({
+            'text/plain': new Blob([textPlain], { type: 'text/plain' }),
+            'text/html':  new Blob([htmlText],  { type: 'text/html'  }),
+          });
+          await navigator.clipboard.write([item]);
+          return true;
+        } catch (e) { /* fallback */ }
+      }
+      // 2) writeText (solo texto)
+      if (navigator.clipboard && window.isSecureContext) {
+        try {
+          await navigator.clipboard.writeText(textPlain);
+          return true;
+        } catch (e) {}
+      }
+      // 3) textarea + execCommand('copy')
+      try {
+        const ta = document.createElement('textarea');
+        ta.value = textPlain;
+        ta.setAttribute('readonly', '');
+        ta.style.position = 'fixed';
+        ta.style.top = '-1000px';
+        ta.style.opacity = '0';
+        document.body.appendChild(ta);
 
-- **Ignoran líneas con “:”** o con caracteres acentuados en la **clave**.
-- Prefieren **separadores de tabulación** (`\t`) o claves **ASCII/UPPERCASE** sin acentos.
-- Tienen diferencias iOS/Android respecto a saltos de línea.
+        ta.focus();
+        ta.select();
+        ta.setSelectionRange(0, ta.value.length);
 
-Para maximizar compatibilidad sin cambiar tu UI, hice estos cambios clave:
+        const ok = document.execCommand('copy');
+        document.body.removeChild(ta);
+        if (ok) return true;
+      } catch (e) {}
+      // 4) contentEditable + execCommand con HTML
+      try {
+        const el = document.createElement('div');
+        el.contentEditable = 'true';
+        el.style.position = 'fixed';
+        el.style.top = '-1000px';
+        el.style.opacity = '0';
+        el.innerHTML = htmlText;
+        document.body.appendChild(el);
 
-1. **Copiado multiformato** (igual que antes): `text/plain` + `text/html` con `ClipboardItem`; fallbacks robustos.
-2. **Texto plano = TSV** (tab-separated values):  
-   - Claves **ASCII/UPPERCASE sin acentos** y con **tabulación**:  
-     `NOMBRE\tJuan Lopez`  
-     `BANCO\tBanco de Chile`  
-   - Saltos **CRLF** en iOS y `\n` en Android.
-3. **Visible en pantalla**: sigue siendo el bloque legible con **etiquetas normalizadas en español** (con acentos y mayúsculas/minúsculas correctas):  
+        const range = document.createRange();
+        range.selectNodeContents(el);
+        const sel = window.getSelection();
+        sel.removeAllRanges();
+        sel.addRange(range);
+
+        const ok2 = document.execCommand('copy');
+        document.body.removeChild(el);
+        if (ok2) return true;
+      } catch (e) {}
+      return false;
+    }
+
+    function showCopied() {
+      okEl.style.display = 'block';
+      setTimeout(() => okEl.style.display = 'none', 1500);
+    }
+
+    // Botones de "copiar por campo"
+    function renderByFieldButtons(d) {
+      const fields = [
+        { key:'nombre', label: LABELS_DISPLAY.nombre, value: toAsciiPreferred(d.nombre) },
+        { key:'rut',    label: LABELS_DISPLAY.rut,    value: toAsciiPreferred(d.rut) },
+        { key:'banco',  label: LABELS_DISPLAY.banco,  value: toAsciiPreferred(d.banco) },
+        { key:'tipo',   label: LABELS_DISPLAY.tipoCuenta, value: toAsciiPreferred(d.tipoCuenta) },
+        { key:'numero', label: LABELS_DISPLAY.numeroCuenta, value: toAsciiPreferred(d.numeroCuenta) },
+      ];
+      if (d.correo) fields.push({ key:'correo', label: LABELS_DISPLAY.correo, value: toAsciiPreferred(d.correo) });
+
+      byFieldGrid.innerHTML = '';
+      fields.forEach(f => {
+        if (!f.value) return;
+        const b = document.createElement('button');
+        b.className = 'btn-small';
+        b.type = 'button';
+        b.textContent = `Copiar ${f.label}`;
+        b.addEventListener('click', async () => {
+          const textPlain = f.value; // solo el valor ya saneado ASCII
+          const htmlText  = `<div>${String(f.value)
+                                .replace(/&/g,'&amp;')
+                                .replace(/</g,'&lt;')
+                                .replace(/>/g,'&gt;')}</div>`;
+          try {
+            const ok = await copyMultiFormat({ textPlain, htmlText });
+            if (!ok) throw new Error('copy_failed');
+            showCopied();
+            gtag('event', 'copy_field', { merchant_id: id, field: f.key });
+          } catch (e) {
+            alert('No pudimos copiar automaticamente. Manten presionado el texto y selecciona "Copiar".');
+          }
+        });
+        byFieldGrid.appendChild(b);
+      });
+
+      byFieldWrap.style.display = 'block';
+    }
+
+    let cachedD = null;
+
+    async function init() {
+      try {
+        const res = await fetch('./data.json', { cache: 'no-store' });
+        const all = await res.json();
+        const d = all[id];
+        cachedD = d;
+
+        if (!id || !d) {
+          datosEl.textContent = 'Codigo invalido';
+          errEl.style.display = 'block';
+          btn.disabled = true;
+          return;
+        }
+
+        // Titulo sin diacriticos/ñ
+        title.textContent = `Paga a ${toAsciiPreferred(d.nombre)}`;
+
+        // Construir bloque visible y payload de copiado
+        const displayLines = buildDisplayLines(d);      // para mostrar
+        const tsvLines     = buildTSVLines(d);          // para text/plain
+        const textPlain    = joinPlain(tsvLines);
+        const htmlText     = buildHTMLTableFromTSV(tsvLines);
+
+        // Mostrar bloque legible (sin caracteres extraños)
+        datosEl.textContent = joinPlain(displayLines);
+
+        // Habilitar boton principal
+        btn.disabled = false;
+
+        // GA4
+        gtag('event', 'payer_page_view', { merchant_id: id });
+
+        // Tip en entornos problematicos
+        if (isIOS || isSamsung || isInAppWebView) tip.style.display = 'block';
+
+        // Boton principal
+        btn.addEventListener('click', async () => {
+          try {
+            // Recalcular por si data.json cambio
+            const d0 = cachedD || d;
+            const tsv = buildTSVLines(d0);
+            const ok = await copyMultiFormat({
+              textPlain: joinPlain(tsv),
+              htmlText : buildHTMLTableFromTSV(tsv)
+            });
+            if (!ok) throw new Error('copy_failed');
+
+            showCopied();
+            gtag('event', 'copy_click', { merchant_id: id });
+          } catch (e) {
+            alert('No pudimos copiar automaticamente. Manten presionado el texto y selecciona "Copiar".');
+          }
+        });
+
+        // Renderizar plan B: copiar por campo
+        renderByFieldButtons(d);
+
+      } catch(e) {
+        datosEl.textContent = 'Error cargando datos';
+        errEl.style.display = 'block';
+        btn.disabled = true;
+      }
+    }
+
+    init();
+  </script>
+</body>
+</html>
