@@ -247,6 +247,7 @@ async function init() {
 
     // Titulo con nombre sanitizado
     title.textContent = `Paga a ${sanitizeValue(d.nombre)}`;
+    document.title = `TuQR - ${sanitizeValue(d.nombre)}`; // <<< ÚNICO cambio pedido
 
     // Texto visible y para copiar con descriptores
     const { text, fields } = buildText(d);
@@ -297,7 +298,7 @@ async function init() {
     errEl.style.display = 'block';
   }
 }
-gtag('config', 'G-CTV8Y0DJTR', { debug_mode: true });
+
 init();
 </script>
 
