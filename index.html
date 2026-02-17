@@ -6,7 +6,7 @@
   <title>TuQR — Datos para transferir</title>
 
   <!-- GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -300,6 +300,25 @@ async function init() {
 
 init();
 </script>
+
+  <!-- GA4 – Eventos por pagador -->
+<script>
+  // Evento al ver la página del pagador
+  gtag('event', 'payer_page_view', {
+    merchant_id: id,
+    page_path: location.pathname + location.search,
+    page_title: document.title
+  });
+
+  // Evento al hacer clic en "Copiar"
+  btn.addEventListener('click', () => {
+    gtag('event', 'copy_click', {
+      merchant_id: id,
+      page_path: location.pathname + location.search
+    });
+  });
+</script>
+``
 
 </body>
 </html>
