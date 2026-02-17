@@ -2,14 +2,11 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1"
-  />
-  <title>TuQR — Datos para transferir</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TuQR — Datos para transferir 22:29</title>
 
   <!-- GA4 -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0"></script>
+  https://www.googletagmanager.com/gtag/js?id=G-D9TN01T1R0</script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -18,91 +15,77 @@
   </script>
 
   <style>
-    body{
-      font-family: system-ui, -apple-system, Arial;
-      margin:0; padding:24px; background:#fff;
-      -webkit-text-size-adjust: 100%;
+    :root { color-scheme: light dark; }
+    html, body {
+      margin:0; padding:0; height:100%;
+      background:#fff; color:#111;
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
     .card{
-      max-width:520px; margin:0 auto;
-      border:1px solid #eee; border-radius:16px; padding:18px;
+      max-width:640px; margin:8px auto; padding:20px 16px 28px;
+      border:1px solid #eee; border-radius:16px; background:#fff;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
     }
-    h1{ font-size:22px; margin:0 0 8px; }
+    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
     p{ margin:0 0 14px; color:#444; }
-    pre{
+    pre#datos{
       background:#f6f6f6; padding:14px; border-radius:12px;
       white-space:pre-wrap; word-break:break-word;
-      font-size:15px;
-      user-select:text; -webkit-user-select:text;
+      font-size:16px; line-height:1.28; min-height:120px;
+      user-select:text; -webkit-user-select:text; -ms-user-select:text;
     }
     button{
-      width:100%; padding:16px; font-size:18px;
+      width:100%; padding:16px; font-size:17px; font-weight:700;
       border:0; border-radius:12px; cursor:pointer;
-      background:#0078ff; color:#fff; font-weight:600;
+      background:#0078ff; color:#fff; -webkit-tap-highlight-color: transparent;
     }
+    button:active{ filter: brightness(0.95); }
     button:disabled{ background:#999; cursor:not-allowed; }
     .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
     .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
+    .tip{ margin-top:10px; font-size:12px; color:#666; display:none; }
+    .tip b{ color:#333; }
     .small{ margin-top:12px; font-size:12px; color:#777; }
 
-    /* ✅ Botones por campo (grilla 2 columnas) */
-    .fields{
-      margin-top:18px;
-      border-top:1px solid #eee;
-      padding-top:14px;
-      display:none;
+    /* Copiar por campo (plan B) */
+    .byfield-wrap{
+      margin-top:16px; border-top:1px dashed #e5e5e5; padding-top:12px;
     }
-    .fields h2{
-      font-size:14px;
-      margin:0 0 10px;
-      color:#333;
+    .byfield-title{ font-size:13px; color:#555; font-weight:700; margin:0 0 8px; }
+    .grid{ display:grid; gap:10px; grid-template-columns:1fr 1fr; }
+    @media (min-width:560px){ .grid{ grid-template-columns: 1fr 1fr 1fr; } }
+    .btn-small{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:12px; font-size:14px; font-weight:700; line-height:1.1;
+      border-radius:10px; border:1px solid #e5e5e5; background:#fafafa; color:#222;
     }
-    .grid{
-      display:grid;
-      grid-template-columns: 1fr 1fr;
-      gap:10px;
-    }
-    .btnField{
-      width:100%;
-      padding:12px 10px;
-      font-size:14px;
-      border-radius:12px;
-      background:#111;
-      color:#fff;
-      font-weight:700;
-    }
-    .hint{
-      margin:10px 0 0;
-      font-size:12px;
-      color:#666;
-    }
+    .btn-small:active{ filter: brightness(0.97); }
   </style>
 </head>
 
 <body>
   <div class="card">
     <h1 id="title">Paga con transferencia</h1>
-    <p>Copia y pega estos datos en tu aplicación bancaria 22:15.</p>
+    <p>Copia y pega estos datos en tu aplicación bancaria.</p>
 
-    <pre id="visual">Cargando…</pre>
+    <!-- Bloque visible, en formato etiqueta en una línea + valor en la siguiente -->
+    <pre id="datos">Cargando…</pre>
 
-    <button id="copyAll" disabled>📋 Copiar datos para transferir</button>
+    <!-- Botón principal -->
+    <button id="copiar" disabled>Copiar datos para transferir</button>
 
     <div id="ok" class="ok">Copiado ✅</div>
     <div id="err" class="err">No encontramos este cobrador</div>
 
-    <!-- ✅ Botones por campo (sin mostrar valores) -->
-    <div id="fields" class="fields">
-      <h2>¿Tu banco pegó incompleto? Copia campo por campo:</h2>
-      <div class="grid">
-        <button class="btnField" id="b_nombre" type="button">Copiar Nombre</button>
-        <button class="btnField" id="b_rut" type="button">Copiar Rut</button>
-        <button class="btnField" id="b_banco" type="button">Copiar Banco</button>
-        <button class="btnField" id="b_tipo" type="button">Copiar Tipo</button>
-        <button class="btnField" id="b_numero" type="button">Copiar Número</button>
-        <button class="btnField" id="b_correo" type="button">Copiar Correo</button>
-      </div>
-      <p class="hint">Tip: si aún falla, pega primero en <b>Notas</b> y luego desde ahí a tu banco.</p>
+    <div id="tip" class="tip">
+      Si tu app no pega todo, intenta pegar primero en <b>Notas</b> y volver a copiar. También puedes usar <b>copiar por campo</b>.
+    </div>
+
+    <!-- Plan B: copiar por campo -->
+    <div id="byfield" class="byfield-wrap" style="display:none;">
+      <div class="byfield-title">¿Faltó algo? Copia por campo:</div>
+      <div class="grid" id="byfield-grid"><!-- Botones por campo --></div>
     </div>
 
     <div class="small">
@@ -110,167 +93,105 @@
     </div>
   </div>
 
-<script>
-  const params = new URLSearchParams(location.search);
-  const id = (params.get('id') || '').trim();
+  <script>
+    // --- Utilidades/Detección ---
+    const params = new URLSearchParams(location.search);
+    const id = (params.get('id') || '').trim();
 
-  const titleEl = document.getElementById('title');
-  const visualEl = document.getElementById('visual');
-  const copyAllBtn = document.getElementById('copyAll');
-  const okEl = document.getElementById('ok');
-  const errEl = document.getElementById('err');
-  const fieldsWrap = document.getElementById('fields');
+    const datosEl = document.getElementById('datos');
+    const btn = document.getElementById('copiar');
+    const okEl = document.getElementById('ok');
+    const errEl = document.getElementById('err');
+    const title = document.getElementById('title');
+    const tip = document.getElementById('tip');
+    const byFieldWrap = document.getElementById('byfield');
+    const byFieldGrid = document.getElementById('byfield-grid');
 
-  const b_nombre = document.getElementById('b_nombre');
-  const b_rut = document.getElementById('b_rut');
-  const b_banco = document.getElementById('b_banco');
-  const b_tipo = document.getElementById('b_tipo');
-  const b_numero = document.getElementById('b_numero');
-  const b_correo = document.getElementById('b_correo');
+    const ua = navigator.userAgent || '';
+    const isIOS =
+      /iPad|iPhone|iPod/.test(ua) ||
+      (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    const isSamsung = /SamsungBrowser/i.test(ua);
+    const isInAppWebView = /(FBAN|FBAV|Instagram|Line|Twitter|WhatsApp|wv|MACH)/i.test(ua);
 
-  function clean(s) {
-    return String(s ?? '')
-      .normalize('NFC')
-      .replace(/\u00A0/g, ' ')
-      .replace(/[\u200B-\u200D\uFEFF]/g, '')
-      .replace(/\r\n/g, '\n')
-      .replace(/\r/g, '\n')
-      .replace(/[ \t]+$/gm, '')
-      .trim();
-  }
-
-  function showCopied() {
-    okEl.style.display = 'block';
-    setTimeout(() => okEl.style.display = 'none', 1200);
-  }
-
-  // ✅ Copiado robusto + evita zoom: no dejamos foco en textarea
-  async function copyTextUniversal(text) {
-    const t = String(text || '');
-
-    // 1) Clipboard API
-    if (navigator.clipboard && window.isSecureContext) {
-      await navigator.clipboard.writeText(t);
-      return;
+    // Limpieza ultra estricta
+    function clean(s) {
+      return String(s ?? '')
+        .normalize('NFC')
+        .replace(/\u00A0/g, ' ')                 // NBSP -> espacio
+        .replace(/[\u200B-\u200D\uFEFF]/g, '')   // zero-width + BOM
+        .replace(/\r\n/g, '\n')                  // normaliza internamente a \n
+        .replace(/\r/g, '\n')
+        .replace(/[ \t]+$/gm, '')                // trim fin de línea
+        .trim();
     }
 
-    // 2) Fallback con textarea temporal (se crea, copia, se elimina y blur)
-    const prevScrollY = window.scrollY;
-    const ta = document.createElement('textarea');
-    ta.value = t;
-    ta.setAttribute('readonly', '');
-    ta.style.position = 'fixed';
-    ta.style.left = '-9999px';
-    ta.style.top = '0';
-    ta.style.opacity = '0';
-    ta.style.fontSize = '16px'; // clave para evitar zoom iOS
-    document.body.appendChild(ta);
-
-    ta.focus();
-    ta.select();
-    ta.setSelectionRange(0, ta.value.length);
-
-    const ok = document.execCommand('copy');
-    document.body.removeChild(ta);
-
-    // quitar foco para evitar zoom persistente
-    if (document.activeElement && typeof document.activeElement.blur === 'function') {
-      document.activeElement.blur();
-    }
-    window.scrollTo(0, prevScrollY);
-
-    if (!ok) throw new Error('copy_failed');
-  }
-
-  function buildBlock(d) {
-    let text =
-`Nombre: ${d.nombre}
-Rut: ${d.rut}
-Banco: ${d.banco}
-Tipo: ${d.tipoCuenta}
-Número Cuenta: ${d.numeroCuenta}`;
-    if (d.correo) text += `\nCorreo: ${d.correo}`;
-    return text;
-  }
-
-  function wireFieldButton(btn, value, fieldName) {
-    btn.addEventListener('click', async () => {
-      try {
-        await copyTextUniversal(value || '');
-        showCopied();
-        gtag('event', 'copy_field_click', { merchant_id: id, field: fieldName });
-      } catch(e) {
-        alert('No pudimos copiar automáticamente. Mantén presionado y selecciona “Copiar”.');
-      }
-    });
-  }
-
-  async function init() {
-    try {
-      const res = await fetch('./data.json', { cache: 'no-store' });
-      const all = await res.json();
-      const raw = all[id];
-
-      if (!id || !raw) {
-        visualEl.textContent = 'Código inválido';
-        errEl.style.display = 'block';
-        copyAllBtn.disabled = true;
-        return;
-      }
-
-      const d = {
-        nombre: clean(raw.nombre),
-        rut: clean(raw.rut),
-        banco: clean(raw.banco),
-        tipoCuenta: clean(raw.tipoCuenta),
-        numeroCuenta: clean(raw.numeroCuenta),
-        correo: raw.correo ? clean(raw.correo) : ''
+    // Etiquetas al estilo “copiar datos” de banca (sin ":")
+    function labelMap() {
+      return {
+        nombre: 'Nombre destinatario',
+        rut: 'RUT',
+        banco: 'Banco',
+        tipoCuenta: 'Tipo de cuenta',
+        numeroCuenta: 'Número de cuenta',
+        correo: 'Correo electrónico'
       };
-
-      titleEl.textContent = `Paga a ${d.nombre}`;
-
-      const block = buildBlock(d);
-      visualEl.textContent = block;
-
-      copyAllBtn.disabled = false;
-      copyAllBtn.addEventListener('click', async () => {
-        try {
-          await copyTextUniversal(block);
-          showCopied();
-          gtag('event', 'copy_click', { merchant_id: id });
-        } catch(e) {
-          alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona “Copiar”.');
-        }
-      });
-
-      // Mostrar grilla de botones
-      fieldsWrap.style.display = 'block';
-
-      // Botones por campo (sin mostrar valores)
-      wireFieldButton(b_nombre, d.nombre, 'nombre');
-      wireFieldButton(b_rut, d.rut, 'rut');
-      wireFieldButton(b_banco, d.banco, 'banco');
-      wireFieldButton(b_tipo, d.tipoCuenta, 'tipo');
-      wireFieldButton(b_numero, d.numeroCuenta, 'numero_cuenta');
-
-      if (d.correo) {
-        b_correo.style.display = 'block';
-        wireFieldButton(b_correo, d.correo, 'correo');
-      } else {
-        b_correo.style.display = 'none';
-      }
-
-      gtag('event', 'payer_page_view', { merchant_id: id });
-
-    } catch(e) {
-      visualEl.textContent = 'Error cargando datos';
-      errEl.style.display = 'block';
-      copyAllBtn.disabled = true;
     }
-  }
 
-  init();
-</script>
+    // Líneas “pares” (Etiqueta en una línea, Valor en la siguiente)
+    function buildPairedLines(d) {
+      const L = labelMap();
+      const nombre = clean(d.nombre);
+      const rut    = clean(d.rut);
+      const banco  = clean(d.banco);
+      const tipo   = clean(d.tipoCuenta);
+      const numero = clean(d.numeroCuenta);
+      const correo = d.correo ? clean(d.correo) : '';
 
-</body>
-</html>
+      const lines = [
+        L.nombre, nombre,
+        L.rut, rut,
+        L.banco, banco,
+        L.tipoCuenta, tipo,
+        L.numeroCuenta, numero
+      ];
+      if (correo) { lines.push(L.correo, correo); }
+      return lines;
+    }
+
+    // Texto plano: CRLF en iOS
+    function buildPlainText(lines) {
+      const sep = isIOS ? '\r\n' : '\n';
+      return lines.join(sep);
+    }
+
+    // HTML “bank friendly”: <p><b>Etiqueta</b><br>Valor</p>
+    function buildHTMLFromPairs(lines) {
+      const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+      let html = '';
+      for (let i = 0; i < lines.length; i += 2) {
+        const label = esc(lines[i] ?? '');
+        const val   = esc(lines[i+1] ?? '');
+        if (!label && !val) continue;
+        html += `<p><b>${label}</b><br>${val}</p>`;
+      }
+      return `<div>${html}</div>`;
+    }
+
+    // También generamos un “texto visible” amigable para el <pre>
+    function buildVisibleBlock(lines) {
+      // Unimos como “Etiqueta: Valor” (solo para visualización¡Gracias por el update, Nicolás! Con lo que viste en **Banco de Chile** (no pega *Nombre*) y **MACH** (no pega *Nombre* ni *Banco*), el síntoma calza con parsers que:
+
+- **Ignoran líneas con “:”** o con caracteres acentuados en la **clave**.
+- Prefieren **separadores de tabulación** (`\t`) o claves **ASCII/UPPERCASE** sin acentos.
+- Tienen diferencias iOS/Android respecto a saltos de línea.
+
+Para maximizar compatibilidad sin cambiar tu UI, hice estos cambios clave:
+
+1. **Copiado multiformato** (igual que antes): `text/plain` + `text/html` con `ClipboardItem`; fallbacks robustos.
+2. **Texto plano = TSV** (tab-separated values):  
+   - Claves **ASCII/UPPERCASE sin acentos** y con **tabulación**:  
+     `NOMBRE\tJuan Lopez`  
+     `BANCO\tBanco de Chile`  
+   - Saltos **CRLF** en iOS y `\n` en Android.
+3. **Visible en pantalla**: sigue siendo el bloque legible con **etiquetas normalizadas en español** (con acentos y mayúsculas/minúsculas correctas):  
