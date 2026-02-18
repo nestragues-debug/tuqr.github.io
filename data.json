@@ -26,7 +26,7 @@
   "TenpoVista": {
     "banco": "Banco Tenpo",
     "rut": "23182071-k",
-    "nombre": "John Rambo",
+    "nombre": "John Rambo Tenpo Vista",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -34,7 +34,7 @@
   "BCICorriente": {
     "banco": "Banco BCI",
     "rut": "23182071-k",
-    "nombre": "John Rambo",
+    "nombre": "John Rambo BCI CC",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -42,7 +42,7 @@
   "ItauCC": {
     "banco": "Banco Itaú",
     "rut": "23182071-k",
-    "nombre": "John Rambo",
+    "nombre": "John Rambo Itaú CC",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
