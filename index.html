@@ -148,16 +148,9 @@ function clean(s) {
     .trim();
 }
 
-// Sanitizacion solicitada:
-// - reemplazar ñ/Ñ por n
-// - quitar tildes y dieresis (diacriticos) de vocales (y en general)
+// Sanitizacion solicitada, sin reemplazar
 function sanitizeValue(s) {
-  let t = clean(s);
-  // ñ/Ñ -> n
-  t = t.replace(/ñ/g, 'n').replace(/Ñ/g, 'n');
-  // remover diacriticos
-  t = t.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-  return t;
+  return clean(s);
 }
 
 // 🔹 BLOQUE COPIADO con DESCRIPTORES (Correo opcional)
@@ -174,7 +167,7 @@ function buildText(d) {
     `Rut: ${rut}`,
     `Banco: ${banco}`,
     `Tipo de cuenta: ${tipo}`,
-    `Numero de cuenta: ${numero}`
+    `Número de cuenta: ${numero}`
   ];
 
   if (correoRaw) {
