@@ -26,26 +26,26 @@
   "TenpoVista": {
     "banco": "Banco Tenpo",
     "rut": "23182071-k",
-    "nombre": "Juan Lopez",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Vista",
-    "numeroCuenta": "12345678",
-    "correo": "juan.lopez.tenpo@email.com"
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   },
   "BCICorriente": {
     "banco": "Banco BCI",
     "rut": "23182071-k",
-    "nombre": "Juan Lopez",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "99887766",
-    "correo": "juan.lopez.bci@email.com"
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco Itau",
+    "banco": "Banco Itaú",
     "rut": "23182071-k",
-    "nombre": "Juan Lopez",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "12345678",
-    "correo": "juan.lopez.itau@email.com"
+    "nombre": "John Rambo",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   }
 }
 
