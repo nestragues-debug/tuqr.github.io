@@ -6,7 +6,7 @@
   <title>TuQR — Ir a WhatsApp</title>
 
   <!-- GA4 -->
-  https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -25,7 +25,15 @@
       max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:16px;
       background:#fff; padding:20px 18px 24px; box-shadow:0 1px 2px rgba(0,0,0,.03);
     }
-    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
+    .brand{
+      display:flex; align-items:center; gap:10px; margin-bottom:8px;
+    }
+    .brand svg{ width:28px; height:28px; display:block; }
+    .brand .name{
+      font-weight:900; letter-spacing:.2px; color:#0F172A; font-size:18px; line-height:1;
+    }
+    .brand .tag{ color:#475569; font-size:12px; line-height:1; margin-top:2px; }
+    h1{ font-size:22px; margin:8px 0 8px; font-weight:800; color:#222; }
     p{ margin:0 0 14px; color:#444; }
     .info{
       background:#f6f6f6; border-radius:12px; padding:12px; font-size:14px; color:#333;
@@ -49,6 +57,29 @@
 </head>
 <body>
   <div class="card">
+    <!-- Logo TuQR (inline SVG, sin dependencias) -->
+    <div class="brand" aria-label="TuQR">
+      <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
+        <defs>
+          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
+            <stop offset="0" stop-color="#0ea5e9"/>
+            <stop offset="1" stop-color="#6366f1"/>
+          </linearGradient>
+        </defs>
+        <!-- Marco QR estilizado -->
+        <rect x="6" y="6" width="20" height="20" rx="3" fill="url(#g)"/>
+        <rect x="38" y="6" width="20" height="20" rx="3" fill="url(#g)"/>
+        <rect x="6" y="38" width="20" height="20" rx="3" fill="url(#g)"/>
+        <rect x="26" y="26" width="12" height="12" rx="2" fill="#0F172A" opacity=".12"/>
+        <!-- Punto central -->
+        <circle cx="32" cy="32" r="4" fill="#0F172A" opacity=".35"/>
+      </svg>
+      <div>
+        <div class="name">TuQR</div>
+        <div class="tag">Transferencias simples y rápidas</div>
+      </div>
+    </div>
+
     <h1 id="title">Paga con transferencia</h1>
     <p>Abre WhatsApp para continuar.</p>
 
@@ -76,7 +107,7 @@
 
   <script>
     // ---------------------------
-    // Configuración: tu número fijo de WhatsApp (formato internacional, sin + ni símbolos)
+    // Config: tu número fijo (solo dígitos, formato internacional sin +)
     // ---------------------------
     const DEFAULT_PHONE = '56982897919';
 
@@ -109,7 +140,6 @@
         .trim();
     }
     function isValidIntlNumber(n){ return /^[0-9]{8,15}$/.test(n); }
-
     function buildWaLink(phone, merchantId){
       const msg = 'OK ' + merchantId;
       const enc = encodeURIComponent(msg);
