@@ -2,193 +2,134 @@
 <html lang="es">
 <head>
 <meta charset="utf-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Admin TuQR – Crear cobrador</title>
-
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Admin TuQR – Crear cobrador (seguro)</title>
 <style>
-body{
-  background:#f7f7f7;
-  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,sans-serif;
-  padding:20px;
-  color:#222;
-}
-.card{
-  max-width:520px;
-  margin:0 auto;
-  background:#fff;
-  border-radius:14px;
-  padding:24px;
-  box-shadow:0 2px 5px rgba(0,0,0,.07);
-}
-h1{
-  font-size:22px;
-  margin:0 0 16px;
-  font-weight:800;
-}
-label{
-  font-weight:600;
-  font-size:14px;
-  margin-top:14px;
-  display:block;
-}
-input, textarea{
-  width:100%;
-  padding:10px;
-  font-size:15px;
-  border:1px solid #ccc;
-  border-radius:10px;
-  margin-top:6px;
-}
-button{
-  margin-top:20px;
-  padding:14px;
-  width:100%;
-  font-size:16px;
-  font-weight:700;
-  border:0;
-  background:#0ea5e9;
-  color:#fff;
-  border-radius:12px;
-  cursor:pointer;
-}
-pre{
-  white-space:pre-wrap;
-  background:#f3f3f3;
-  padding:14px;
-  border-radius:10px;
-  margin-top:20px;
-  font-size:14px;
-}
-.success{
-  margin-top:12px;
-  color:#0a7;
-  font-weight:700;
-}
-.error{
-  margin-top:12px;
-  color:#b00;
-  font-weight:700;
-}
+  body{background:#f7f7f7;font-family:system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;padding:20px;color:#222}
+  .card{max-width:560px;margin:0 auto;background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 5px rgba(0,0,0,.07)}
+  h1{font-size:22px;margin:0 0 16px;font-weight:800}
+  label{font-weight:600;font-size:14px;margin-top:14px;display:block}
+  input, select{width:100%;padding:10px;font-size:15px;border:1px solid #ccc;border-radius:10px;margin-top:6px;background:#fff}
+  .row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+  button{margin-top:20px;padding:14px;width:100%;font-size:16px;font-weight:700;border:0;background:#0ea5e9;color:#fff;border-radius:12px;cursor:pointer}
+  button:active{filter:brightness(.97)}
+  .ok{margin-top:12px;color:#0a7;font-weight:700}
+  .err{margin-top:12px;color:#b00;font-weight:700;white-space:pre-wrap}
+  .help{margin-top:8px;color:#666;font-size:12px}
 </style>
 </head>
 <body>
-
 <div class="card">
-<h1>Crear nuevo cobrador</h1>
+  <h1>Crear nuevo cobrador</h1>
 
-<label>ID único (ej: ItauCC2)</label>
-<input id="id" />
+  <label for="id">ID único (ej: ItauCC2)</label>
+  <input id="id" placeholder="ItauCC2" />
 
-<label>Nombre</label>
-<input id="nombre" />
+  <div class="row">
+    <div>
+      <label for="nombre">Nombre</label>
+      <input id="nombre" />
+    </div>
+    <div>
+      <label for="rut">RUT</label>
+      <input id="rut" />
+    </div>
+  </div>
 
-<label>RUT</label>
-<input id="rut" />
+  <div class="row">
+    <div>
+      <label for="tipoCuenta">Tipo de cuenta</label>
+      <select id="tipoCuenta">
+        <option value="">— Selecciona —</option>
+        <option value="Cuenta Corriente">Corriente</option>
+        <option value="Cuenta Vista">Vista</option>
+      </select>
+    </div>
+    <div>
+      <label for="numeroCuenta">Número de cuenta</label>
+      <input id="numeroCuenta" />
+    </div>
+  </div>
 
-<label>Banco</label>
-<input id="banco" />
+  <label for="banco">Banco</label>
+  <select id="banco">
+    <option value="">— Selecciona —</option>
+    <option>Banco de Chile</option>
+    <option>Banco BICE</option>
+    <option>Banco Consorcio</option>
+    <option>Banco BCI</option>
+    <option>Banco Falabella</option>
+    <option>Banco Internacional</option>
+    <option>Banco Itaú</option>
+    <option>Banco Ripley</option>
+    <option>Banco Santander</option>
+    <option>Banco Security</option>
+    <option>Scotiabank</option>
+    <option>Tenpo</option>
+    <option>Tapp</option>
+    <option>Mercado Pago</option>
+  </select>
 
-<label>Tipo de cuenta</label>
-<input id="tipoCuenta" />
+  <label for="correo">Correo (opcional)</label>
+  <input id="correo" placeholder="correo@dominio.cl" />
 
-<label>Número de cuenta</label>
-<input id="numeroCuenta" />
-
-<label>Correo (opcional)</label>
-<input id="correo" />
-
-<label>Tu GitHub Personal Access Token (PAT)</label>
-<input id="token" type="password" />
-
-<button onclick="guardar()">Guardar en data.json</button>
-
-<div id="msg"></div>
-
+  <button id="save">Guardar en data.json</button>
+  <div id="msg"></div>
+  <div class="help">Nota: este formulario envía los datos al Worker de Cloudflare, que actualiza <b>data.json</b> en tu repositorio con un commit. No se usa ningún token en el navegador.</div>
 </div>
 
 <script>
-async function guardar(){
-  const msg = document.getElementById("msg");
-  msg.innerHTML = "";
+  // Reemplaza por tu URL real del Worker, ej.: 'https://tuqr-admin-writer.tusubdominio.workers.dev'
+  const WORKER_URL = 'https://<TU_SUBDOMINIO>.workers.dev';
 
-  const id  = document.getElementById("id").value.trim();
-  const nombre = document.getElementById("nombre").value.trim();
-  const rut = document.getElementById("rut").value.trim();
-  const banco = document.getElementById("banco").value.trim();
-  const tipoCuenta = document.getElementById("tipoCuenta").value.trim();
-  const numeroCuenta = document.getElementById("numeroCuenta").value.trim();
-  const correo = document.getElementById("correo").value.trim();
-  const token = document.getElementById("token").value.trim();
+  function val(id){ return (document.getElementById(id).value || '').trim(); }
+  function clean(s){ return String(s ?? '').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F]/g,'').trim(); }
 
-  if(!id || !nombre || !rut || !banco || !tipoCuenta || !numeroCuenta){
-    msg.innerHTML = "<div class='error'>Faltan campos obligatorios.</div>";
-    return;
-  }
-  if(!token){
-    msg.innerHTML = "<div class='error'>Debes ingresar tu token PAT.</div>";
-    return;
-  }
+  document.getElementById('save').addEventListener('click', async ()=>{
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
 
-  // 1. Descargar data.json desde GitHub API
-  const url = "https://api.github.com/repos/TuQRApp/tuqr.github.io/contents/data.json";
+    const payload = {
+      id: clean(val('id')),
+      nombre: clean(val('nombre')),
+      rut: clean(val('rut')),
+      banco: clean(val('banco')),
+      tipoCuenta: clean(val('tipoCuenta')),
+      numeroCuenta: clean(val('numeroCuenta')),
+      correo: clean(val('correo'))
+    };
 
-  let res = await fetch(url, {
-    headers:{ "Authorization": "token " + token }
+    // Validaciones mínimas
+    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta){
+      msg.innerHTML = '<div class="err">Faltan campos obligatorios.</div>';
+      return;
+    }
+
+    try{
+      const res = await fetch(WORKER_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const data = await res.json().catch(()=>({}));
+      if(!res.ok || !data || !data.ok){
+        const detail = (data && (data.error || data.detail)) ? ('\nDetalle: ' + (data.error || data.detail)) : '';
+        msg.innerHTML = '<div class="err">Error guardando.' + detail + '</div>';
+        return;
+      }
+      msg.innerHTML = '<div class="ok">¡Cobrador guardado correctamente en data.json!</div>';
+      // Limpieza suave del formulario
+      // document.getElementById('id').value = ''; // si quieres seguir agregando, comenta o descomenta estas líneas
+      // document.getElementById('nombre').value = '';
+      // document.getElementById('rut').value = '';
+      // document.getElementById('banco').value = '';
+      // document.getElementById('tipoCuenta').value = '';
+      // document.getElementById('numeroCuenta').value = '';
+      // document.getElementById('correo').value = '';
+    }catch(e){
+      msg.innerHTML = '<div class="err">Fallo de red: ' + e + '</div>';
+    }
   });
-
-  if(!res.ok){
-    msg.innerHTML = "<div class='error'>Error obteniendo data.json (¿token incorrecto?).</div>";
-    return;
-  }
-
-  const fileData = await res.json();
-  const sha = fileData.sha;   // necesario para commit
-  const content = atob(fileData.content.replace(/\n/g,""));
-
-  // 2. Parsear el JSON
-  let json;
-  try{
-    json = JSON.parse(content);
-  }catch(e){
-    msg.innerHTML = "<div class='error'>Error parseando data.json.</div>";
-    return;
-  }
-
-  // 3. Agregar o reemplazar cobrador
-  json[id] = {
-    banco,
-    rut,
-    nombre,
-    tipoCuenta,
-    numeroCuenta
-  };
-  if(correo) json[id].correo = correo;
-
-  // 4. Preparar nuevo contenido
-  const newContent = JSON.stringify(json, null, 2);
-  const newB64 = btoa(newContent);
-
-  // 5. Subir a GitHub con commit
-  const update = await fetch(url, {
-    method:"PUT",
-    headers:{
-      "Authorization":"token " + token,
-      "Content-Type":"application/json"
-    },
-    body: JSON.stringify({
-      message: "Add/update cobrador " + id,
-      content: newB64,
-      sha: sha
-    })
-  });
-
-  if(update.ok){
-    msg.innerHTML = "<div class='success'>¡Cobrador guardado correctamente en data.json!</div>";
-  } else {
-    msg.innerHTML = "<div class='error'>Error subiendo cambios a GitHub.</div>";
-  }
-}
 </script>
-
 </body>
 </html>
