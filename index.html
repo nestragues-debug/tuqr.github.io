@@ -2,8 +2,8 @@
 <html lang="es">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>TuQR — Ir a WhatsApp</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TuQR — Datos para transferir</title>
 
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
@@ -11,216 +11,302 @@
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
     gtag('js', new Date());
-    gtag('config','G-CTV8Y0DJTR');
+    gtag('config', 'G-CTV8Y0DJTR');
   </script>
 
   <style>
-    :root { color-scheme: light dark; }
     body{
+      font-family: system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
       margin:0; padding:24px; background:#fff; color:#111;
-      font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,Arial,sans-serif;
       -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
     .card{
-      max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:16px;
-      background:#fff; padding:20px 18px 24px; box-shadow:0 1px 2px rgba(0,0,0,.03);
+      max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:16px; padding:18px;
+      box-shadow: 0 1px 2px rgba(0,0,0,.03);
     }
-    .brand{
-      display:flex; align-items:center; gap:10px; margin-bottom:8px;
-    }
-    .brand svg{ width:28px; height:28px; display:block; }
-    .brand .name{
-      font-weight:900; letter-spacing:.2px; color:#0F172A; font-size:18px; line-height:1;
-    }
-    .brand .tag{ color:#475569; font-size:12px; line-height:1; margin-top:2px; }
-    h1{ font-size:22px; margin:8px 0 8px; font-weight:800; color:#222; }
+    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
     p{ margin:0 0 14px; color:#444; }
-    .info{
-      background:#f6f6f6; border-radius:12px; padding:12px; font-size:14px; color:#333;
-      word-break:break-word;
+    pre#datos{
+      background:#f6f6f6; padding:14px; border-radius:12px; min-height:112px;
+      white-space:pre-wrap; word-break:break-word; font-size:15px; line-height:1.28;
+      -webkit-text-size-adjust:100%;
     }
-    .kvs{ margin:10px 0 0; font-size:13px; color:#555; }
-    .kvs b{ color:#222; }
-    .cta{
-      margin-top:16px;
-      width:100%; padding:16px; font-size:17px; font-weight:700; line-height:1.1;
-      border:0; border-radius:12px; cursor:pointer; background:#25D366; color:#fff;
+    button{
+      width:100%; padding:16px; font-size:17px; font-weight:700;
+      border:0; border-radius:12px; cursor:pointer; background:#0078ff; color:#fff;
+      -webkit-tap-highlight-color: transparent;
     }
-    .cta:disabled{ background:#9adab8; cursor:not-allowed; }
-    .cta:active{ filter:brightness(0.97); }
-    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
+    button:disabled{ background:#999; cursor:not-allowed; }
+    button:active{ filter:brightness(0.96); }
     .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
+    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
     .small{ margin-top:12px; font-size:12px; color:#777; }
-    .hint{ font-size:12px; color:#666; margin-top:8px; }
-    .sep{ height:1px; background:#eee; margin:16px 0; }
+
+    /* Plan B: botones por campo */
+    .fields{
+      margin-top:16px; border-top:1px dashed #e5e5e5; padding-top:12px;
+      display:grid; gap:10px; grid-template-columns:1fr;
+    }
+    @media (min-width:520px){ .fields{ grid-template-columns:1fr 1fr; } }
+    .field-btn{
+      padding:12px; font-size:14px; font-weight:700; line-height:1.1;
+      border-radius:10px; border:1px solid #e5e5e5; background:#fafafa; color:#222;
+    }
+    .field-btn:disabled{ color:#aaa; background:#f1f1f1; border-color:#eee; }
   </style>
 </head>
+
 <body>
   <div class="card">
-    <!-- Logo TuQR (inline SVG, sin dependencias) -->
-    <div class="brand" aria-label="TuQR">
-      <svg viewBox="0 0 64 64" role="img" aria-hidden="true">
-        <defs>
-          <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-            <stop offset="0" stop-color="#0ea5e9"/>
-            <stop offset="1" stop-color="#6366f1"/>
-          </linearGradient>
-        </defs>
-        <!-- Marco QR estilizado -->
-        <rect x="6" y="6" width="20" height="20" rx="3" fill="url(#g)"/>
-        <rect x="38" y="6" width="20" height="20" rx="3" fill="url(#g)"/>
-        <rect x="6" y="38" width="20" height="20" rx="3" fill="url(#g)"/>
-        <rect x="26" y="26" width="12" height="12" rx="2" fill="#0F172A" opacity=".12"/>
-        <!-- Punto central -->
-        <circle cx="32" cy="32" r="4" fill="#0F172A" opacity=".35"/>
-      </svg>
-      <div>
-        <div class="name">TuQR</div>
-        <div class="tag">Transferencias simples y rápidas</div>
-      </div>
-    </div>
-
     <h1 id="title">Paga con transferencia</h1>
-    <p>Abre WhatsApp para continuar.</p>
+    <p>Copia y pega en tu aplicación bancaria.</p>
 
-    <div id="info" class="info">
-      <div>Comercio: <b id="merchantLabel">—</b></div>
-      <div class="kvs">
-        <div>Destino: <b id="waTarget">—</b></div>
-        <div id="builtLine" style="display:none;">Mensaje: <b id="waText">—</b></div>
-      </div>
+    <pre id="datos">Cargando…</pre>
+
+    <button id="copiar" disabled>Copiar datos para transferir</button>
+
+    <div id="ok" class="ok">Copiado</div>
+    <div id="err" class="err">No encontramos este comercio</div>
+
+    <!-- Plan B: copiar por campo -->
+    <div id="fields" class="fields" style="display:none;">
+      <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
+      <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
+      <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
+      <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
+      <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
+      <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
     </div>
 
-    <button id="toWhatsApp" class="cta" disabled>Abrir WhatsApp</button>
-
-    <div id="ok" class="ok">Listo. Abriendo WhatsApp…</div>
-    <div id="err" class="err">No pudimos preparar el enlace a WhatsApp.</div>
-
-    <div class="sep"></div>
     <div class="small">
-      En TuQR solo se inicia la conversación. El pagador debe enviar el primer mensaje en WhatsApp. Luego tú respondes manualmente con los datos del comercio.
-    </div>
-    <div class="hint" id="hint" style="display:none;">
-      Sugerencia: puedes pasar <code>&wa=</code> con tu link completo <code>wa.me</code> (opcional). Por defecto, esta landing construye el mensaje con tu número fijo.
+      En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
     </div>
   </div>
 
-  <script>
-    // ---------------------------
-    // Config: tu número fijo (solo dígitos, formato internacional sin +)
-    // ---------------------------
-    const DEFAULT_PHONE = '56982897919';
+<script>
+/* =========================
+   Utilidades y selección DOM
+   ========================= */
+const params = new URLSearchParams(location.search);
+const id = (params.get('id') || '').trim();
 
-    // ---------------------------
-    // Utilidades y DOM
-    // ---------------------------
-    const qs = new URLSearchParams(location.search);
-    const id = (qs.get('id') || '').trim();             // merchant_id (ej.: BCICorriente)
-    const waParam = (qs.get('wa') || '').trim();        // link wa.me completo (opcional)
+const datosEl   = document.getElementById('datos');
+const btn       = document.getElementById('copiar');
+const okEl      = document.getElementById('ok');
+const errEl     = document.getElementById('err');
+const titleEl   = document.getElementById('title');
 
-    const titleEl   = document.getElementById('title');
-    const infoEl    = document.getElementById('info');
-    const okEl      = document.getElementById('ok');
-    const errEl     = document.getElementById('err');
-    const btn       = document.getElementById('toWhatsApp');
+const fieldsWrap= document.getElementById('fields');
+const btnNombre = document.getElementById('copyNombre');
+const btnRut    = document.getElementById('copyRut');
+const btnBanco  = document.getElementById('copyBanco');
+const btnTipo   = document.getElementById('copyTipo');
+const btnNumero = document.getElementById('copyNumero');
+const btnCorreo = document.getElementById('copyCorreo');
 
-    const merchantLabelEl = document.getElementById('merchantLabel');
-    const waTargetEl      = document.getElementById('waTarget');
-    const builtLine       = document.getElementById('builtLine');
-    const waTextEl        = document.getElementById('waText');
-    const hintEl          = document.getElementById('hint');
+/* =========================
+   Detección básica de iOS
+   ========================= */
+const ua = navigator.userAgent || '';
+const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
 
-    function clean(s){
-      return String(s ?? '')
-        .normalize('NFC')
-        .replace(/\u00A0/g, ' ')
-        .replace(/[\u200B-\u200F]/g, '')
-        .replace(/\r\n/g, '\n').replace(/\r/g, '\n')
-        .replace(/[ \t]+$/gm, '')
-        .trim();
+/* =========================
+   Limpieza ligera (mantiene tildes y ñ)
+   ========================= */
+function clean(s){
+  return String(s ?? '')
+    .normalize('NFC')
+    .replace(/\u00A0/g, ' ')              // NBSP -> espacio normal
+    .replace(/[\u200B-\u200F]/g, '')      // zero-width
+    .replace(/\r\n/g, '\n')               // normaliza internamente a \n
+    .replace(/\r/g, '\n')
+    .replace(/[ \t]+$/gm, '')             // trim fin de línea
+    .trim();
+}
+function sanitizeValue(s){ return clean(s); }
+
+/* =========================
+   Construcción de bloque (formato "Notas")
+   ========================= */
+function buildText(d){
+  const nombre = sanitizeValue(d.nombre);
+  const rut    = sanitizeValue(d.rut);
+  const banco  = sanitizeValue(d.banco);
+  const tipo   = sanitizeValue(d.tipoCuenta);
+  const numero = sanitizeValue(d.numeroCuenta);
+  const correo = d.correo ? sanitizeValue(d.correo) : '';
+
+  const lines = [
+    `Nombre: ${nombre}`,
+    `Rut: ${rut}`,
+    `Banco: ${banco}`,
+    `Tipo de cuenta: ${tipo}`,
+    `Número de cuenta: ${numero}`
+  ];
+  if (correo) lines.push(`Correo: ${correo}`);
+
+  // Para copiar en "formato Notas": solo texto plano, con CRLF en iOS
+  const sep = isIOS ? '\r\n' : '\n';
+  const textPlain = lines.join(sep);
+
+  // Valores individuales para plan B
+  const fields = {
+    nombre, rut, banco,
+    tipo,   // alias interno para tipoCuenta
+    numero, // alias interno para numeroCuenta
+    correo
+  };
+
+  return { textPlain, fields, lines };
+}
+
+/* =========================
+   Copiado (solo texto plano "Notas") + fallbacks
+   ========================= */
+async function copyTextUniversal(text){
+  // 1) Clipboard API (texto plano)
+  if (navigator.clipboard && window.isSecureContext) {
+    await navigator.clipboard.writeText(text);
+    return true;
+  }
+
+  // 2) textarea + execCommand
+  try {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.setAttribute('readonly','');
+    ta.style.position = 'fixed';
+    ta.style.top = '-9999px';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.focus();
+    ta.select();
+    ta.setSelectionRange(0, ta.value.length);
+    const ok = document.execCommand('copy');
+    document.body.removeChild(ta);
+    if (ok) return true;
+  } catch(e){}
+
+  // 3) contentEditable (texto plano)
+  try {
+    const el = document.createElement('div');
+    el.textContent = text;        // texto plano
+    el.contentEditable = 'true';
+    el.style.position = 'fixed';
+    el.style.top = '-9999px';
+    el.style.opacity = '0';
+    document.body.appendChild(el);
+
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    const sel = window.getSelection();
+    sel.removeAllRanges();
+    sel.addRange(range);
+
+    const ok2 = document.execCommand('copy');
+    document.body.removeChild(el);
+    if (ok2) return true;
+  } catch(e){}
+
+  return false;
+}
+
+function showCopied(){
+  okEl.style.display = 'block';
+  setTimeout(()=> okEl.style.display = 'none', 1500);
+}
+
+/* =========================
+   Estado global
+   ========================= */
+let cachedText = '';
+let cachedFields = null;
+
+/* =========================
+   Init
+   ========================= */
+async function init(){
+  try{
+    const res = await fetch('./data.json?ts=' + Date.now(), { cache:'no-store' });
+    if(!res.ok){
+      datosEl.textContent = 'Error cargando datos';
+      errEl.style.display = 'block';
+      return;
     }
-    function isValidIntlNumber(n){ return /^[0-9]{8,15}$/.test(n); }
-    function buildWaLink(phone, merchantId){
-      const msg = 'OK ' + merchantId;
-      const enc = encodeURIComponent(msg);
-      return `https://wa.me/${phone}?text=${enc}`;
+    const all = await res.json();
+    const d = all[id];
+
+    if(!id || !d){
+      datosEl.textContent = 'Código inválido';
+      errEl.style.display = 'block';
+      return;
     }
 
-    // ---------------------------
-    // Init
-    // ---------------------------
-    (function init(){
+    // Títulos
+    titleEl.textContent  = `Paga a ${sanitizeValue(d.nombre)}`;
+    document.title       = `TuQR - ${sanitizeValue(d.nombre)}`;
+
+    // Construcción
+    const { textPlain, fields, lines } = buildText(d);
+    cachedText   = textPlain;
+    cachedFields = fields;
+
+    // Mostrar bloque visible (usamos \n; el visor <pre> renderiza bien en todos)
+    datosEl.textContent = lines.join('\n');
+    btn.disabled = false;
+
+    // GA4: vista por pagador
+    try{
+      gtag('event','payer_page_view', {
+        merchant_id: id,
+        page_path: location.pathname + location.search,
+        page_title: document.title
+      });
+    }catch(e){}
+
+    // Listener botón principal (UNICO)
+    btn.addEventListener('click', async ()=>{
       try{
-        const merchantId = clean(id);
-        if (!merchantId) {
-          infoEl.innerHTML = 'Falta el parámetro <b>id</b> en la URL.';
-          errEl.style.display = 'block';
-          btn.disabled = true;
-          hintEl.style.display = 'block';
-          return;
-        }
-
-        // Títulos
-        titleEl.textContent = `Paga a ${merchantId}`;
-        document.title      = `TuQR - ${merchantId}`;
-        merchantLabelEl.textContent = merchantId;
-
-        let waLinkFinal = '';
-        let built = false;
-
-        if (waParam) {
-          // Si nos pasas el wa.me directo en ?wa=, respetamos ese enlace
-          waLinkFinal = clean(waParam);
-        } else {
-          // Construimos con tu número fijo
-          const phone = DEFAULT_PHONE;
-          if (!isValidIntlNumber(phone)) {
-            infoEl.innerHTML = 'El número configurado no es válido (usa solo dígitos en formato internacional, sin +).';
-            errEl.style.display = 'block';
-            btn.disabled = true;
-            hintEl.style.display = 'block';
-            return;
-          }
-          waLinkFinal = buildWaLink(phone, merchantId);
-          built = true;
-        }
-
-        // Mostrar destino y mensaje (si lo construimos aquí)
-        waTargetEl.textContent = waLinkFinal;
-        if (built) {
-          builtLine.style.display = 'block';
-          waTextEl.textContent = 'OK ' + merchantId;
-        }
-
-        // Habilitar CTA
-        btn.disabled = false;
-
-        // GA4: vista por pagador
-        try {
-          gtag('event','payer_page_view', {
-            merchant_id: merchantId,
-            page_path: location.pathname + location.search,
-            page_title: document.title
+        const ok = await copyTextUniversal(cachedText);
+        if(!ok) throw new Error('copy_failed');
+        showCopied();
+        try{
+          gtag('event','copy_click', {
+            merchant_id: id,
+            page_path: location.pathname + location.search
           });
-        } catch(e){}
-
-        // Click a WhatsApp
-        btn.addEventListener('click', () => {
-          try {
-            const host = (()=>{ try{ return (new URL(waLinkFinal)).host || 'wa.me'; }catch(e){ return 'wa.me'; }})();
-            gtag('event','open_whatsapp', { merchant_id: merchantId, wa_mode: waParam ? 'direct' : 'built', wa_host: host });
-          } catch(e){}
-          okEl.style.display = 'block';
-          location.href = waLinkFinal;
-        });
-
-      } catch(e){
-        infoEl.innerHTML = 'Error preparando el enlace a WhatsApp.';
-        errEl.style.display = 'block';
-        btn.disabled = true;
-        hintEl.style.display = 'block';
+        }catch(e){}
+      }catch(e){
+        alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona "Copiar".');
       }
-    })();
-  </script>
+    }, { once:false });
+
+    // Plan B (por campo)
+    fieldsWrap.style.display = 'grid';
+
+    const enableBtn = (el, hasValue) => { el.disabled = !hasValue; };
+
+    enableBtn(btnNombre, !!fields.nombre);
+    enableBtn(btnRut,    !!fields.rut);
+    enableBtn(btnBanco,  !!fields.banco);
+    enableBtn(btnTipo,   !!fields.tipo);
+    enableBtn(btnNumero, !!fields.numero);
+    enableBtn(btnCorreo, !!fields.correo);
+
+    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(fields.nombre); showCopied(); } }catch(e){} });
+    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextUniversal(fields.rut);    showCopied(); } }catch(e){} });
+    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextUniversal(fields.banco);  showCopied(); } }catch(e){} });
+    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextUniversal(fields.tipo);   showCopied(); } }catch(e){} });
+    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(fields.numero); showCopied(); } }catch(e){} });
+    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(fields.correo); showCopied(); } }catch(e){} });
+
+  }catch(e){
+    datosEl.textContent = 'Error cargando datos';
+    errEl.style.display = 'block';
+  }
+}
+
+init();
+</script>
 </body>
 </html>
