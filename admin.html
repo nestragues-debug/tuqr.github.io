@@ -1,0 +1,194 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Admin TuQR – Crear cobrador</title>
+
+<style>
+body{
+  background:#f7f7f7;
+  font-family: system-ui,-apple-system,Segoe UI,Roboto,Helvetica,sans-serif;
+  padding:20px;
+  color:#222;
+}
+.card{
+  max-width:520px;
+  margin:0 auto;
+  background:#fff;
+  border-radius:14px;
+  padding:24px;
+  box-shadow:0 2px 5px rgba(0,0,0,.07);
+}
+h1{
+  font-size:22px;
+  margin:0 0 16px;
+  font-weight:800;
+}
+label{
+  font-weight:600;
+  font-size:14px;
+  margin-top:14px;
+  display:block;
+}
+input, textarea{
+  width:100%;
+  padding:10px;
+  font-size:15px;
+  border:1px solid #ccc;
+  border-radius:10px;
+  margin-top:6px;
+}
+button{
+  margin-top:20px;
+  padding:14px;
+  width:100%;
+  font-size:16px;
+  font-weight:700;
+  border:0;
+  background:#0ea5e9;
+  color:#fff;
+  border-radius:12px;
+  cursor:pointer;
+}
+pre{
+  white-space:pre-wrap;
+  background:#f3f3f3;
+  padding:14px;
+  border-radius:10px;
+  margin-top:20px;
+  font-size:14px;
+}
+.success{
+  margin-top:12px;
+  color:#0a7;
+  font-weight:700;
+}
+.error{
+  margin-top:12px;
+  color:#b00;
+  font-weight:700;
+}
+</style>
+</head>
+<body>
+
+<div class="card">
+<h1>Crear nuevo cobrador</h1>
+
+<label>ID único (ej: ItauCC2)</label>
+<input id="id" />
+
+<label>Nombre</label>
+<input id="nombre" />
+
+<label>RUT</label>
+<input id="rut" />
+
+<label>Banco</label>
+<input id="banco" />
+
+<label>Tipo de cuenta</label>
+<input id="tipoCuenta" />
+
+<label>Número de cuenta</label>
+<input id="numeroCuenta" />
+
+<label>Correo (opcional)</label>
+<input id="correo" />
+
+<label>Tu GitHub Personal Access Token (PAT)</label>
+<input id="token" type="password" />
+
+<button onclick="guardar()">Guardar en data.json</button>
+
+<div id="msg"></div>
+
+</div>
+
+<script>
+async function guardar(){
+  const msg = document.getElementById("msg");
+  msg.innerHTML = "";
+
+  const id  = document.getElementById("id").value.trim();
+  const nombre = document.getElementById("nombre").value.trim();
+  const rut = document.getElementById("rut").value.trim();
+  const banco = document.getElementById("banco").value.trim();
+  const tipoCuenta = document.getElementById("tipoCuenta").value.trim();
+  const numeroCuenta = document.getElementById("numeroCuenta").value.trim();
+  const correo = document.getElementById("correo").value.trim();
+  const token = document.getElementById("token").value.trim();
+
+  if(!id || !nombre || !rut || !banco || !tipoCuenta || !numeroCuenta){
+    msg.innerHTML = "<div class='error'>Faltan campos obligatorios.</div>";
+    return;
+  }
+  if(!token){
+    msg.innerHTML = "<div class='error'>Debes ingresar tu token PAT.</div>";
+    return;
+  }
+
+  // 1. Descargar data.json desde GitHub API
+  const url = "https://api.github.com/repos/TuQRApp/tuqr.github.io/contents/data.json";
+
+  let res = await fetch(url, {
+    headers:{ "Authorization": "token " + token }
+  });
+
+  if(!res.ok){
+    msg.innerHTML = "<div class='error'>Error obteniendo data.json (¿token incorrecto?).</div>";
+    return;
+  }
+
+  const fileData = await res.json();
+  const sha = fileData.sha;   // necesario para commit
+  const content = atob(fileData.content.replace(/\n/g,""));
+
+  // 2. Parsear el JSON
+  let json;
+  try{
+    json = JSON.parse(content);
+  }catch(e){
+    msg.innerHTML = "<div class='error'>Error parseando data.json.</div>";
+    return;
+  }
+
+  // 3. Agregar o reemplazar cobrador
+  json[id] = {
+    banco,
+    rut,
+    nombre,
+    tipoCuenta,
+    numeroCuenta
+  };
+  if(correo) json[id].correo = correo;
+
+  // 4. Preparar nuevo contenido
+  const newContent = JSON.stringify(json, null, 2);
+  const newB64 = btoa(newContent);
+
+  // 5. Subir a GitHub con commit
+  const update = await fetch(url, {
+    method:"PUT",
+    headers:{
+      "Authorization":"token " + token,
+      "Content-Type":"application/json"
+    },
+    body: JSON.stringify({
+      message: "Add/update cobrador " + id,
+      content: newB64,
+      sha: sha
+    })
+  });
+
+  if(update.ok){
+    msg.innerHTML = "<div class='success'>¡Cobrador guardado correctamente en data.json!</div>";
+  } else {
+    msg.innerHTML = "<div class='error'>Error subiendo cambios a GitHub.</div>";
+  }
+}
+</script>
+
+</body>
+</html>
