@@ -125,7 +125,6 @@
         <button id="copyNombre" class="field-btn" disabled>Nombre</button>
         <button id="copyRut"    class="field-btn" disabled>Rut</button>
         <button id="copyBanco"  class="field-btn" disabled>Banco</button>
-        <button id="copyTipo"   class="field-btn" disabled>Tipo de cuenta</button>
         <button id="copyNumero" class="field-btn" disabled>Nº de cuenta</button>
         <button id="copyCorreo" class="field-btn" disabled>Correo</button>
       </div>
@@ -142,9 +141,6 @@
   </div>
 
 <script>
-/* ─────────────────────────────────────────────
-   DOM refs
-   ───────────────────────────────────────────── */
 const params    = new URLSearchParams(location.search);
 const id        = (params.get('id') || '').trim();
 const datosEl   = document.getElementById('datos');
@@ -156,13 +152,9 @@ const fieldsWrap= document.getElementById('fields');
 const btnNombre = document.getElementById('copyNombre');
 const btnRut    = document.getElementById('copyRut');
 const btnBanco  = document.getElementById('copyBanco');
-const btnTipo   = document.getElementById('copyTipo');
 const btnNumero = document.getElementById('copyNumero');
 const btnCorreo = document.getElementById('copyCorreo');
 
-/* ─────────────────────────────────────────────
-   Limpieza de texto
-   ───────────────────────────────────────────── */
 function clean(s){
   return String(s ?? '')
     .normalize('NFC')
@@ -175,9 +167,6 @@ function clean(s){
 }
 const sv = s => clean(s);
 
-/* ─────────────────────────────────────────────
-   Construcción del texto (LF simple)
-   ───────────────────────────────────────────── */
 function buildText(d){
   const nombre = sv(d.nombre);
   const rut    = sv(d.rut);
@@ -202,82 +191,32 @@ function buildText(d){
   };
 }
 
-/* ─────────────────────────────────────────────────────────────────
-   copyText(text) — Cadena de fallbacks cross-platform
-
-   ┌─────────────────────────────────────────────────────────────┐
-   │  REGLA FUNDAMENTAL — no romper la cadena de user gesture    │
-   │                                                             │
-   │  Esta función DEBE llamarse directamente desde el handler   │
-   │  del evento click, SIN ningún await previo en ese handler.  │
-   │                                                             │
-   │  iOS Safari y algunos Android revocan el permiso de         │
-   │  clipboard si detectan que hubo una operación asíncrona     │
-   │  entre el tap y la llamada a la Clipboard API.              │
-   │                                                             │
-   │  Por eso el texto se pre-carga en cachedText/cachedFields   │
-   │  durante el fetch inicial (fuera del handler).              │
-   └─────────────────────────────────────────────────────────────┘
-
-   Intentos en orden:
-
-   1. navigator.clipboard.writeText()
-      ✓ Chrome Android 66+, Firefox Android 63+
-      ✓ iOS Safari 13.4+ (requiere HTTPS + user gesture síncrono)
-      ✓ Samsung Internet 9+, Edge, Opera Mobile
-
-   2. document.execCommand('copy') sobre un <textarea> oculto
-      ✓ Android WebViews, browsers viejos, UC Browser
-      ✓ El textarea se posiciona fixed fuera de pantalla para
-        evitar scroll y teclado virtual en móvil.
-      ✓ setSelectionRange(0, length) es necesario en iOS 12 y anteriores.
-
-   3. Selección manual del <pre>
-      ✓ Último recurso: selecciona el texto visible para que
-        el usuario solo tenga que tocar "Copiar" en el menú nativo.
-      ✓ Cubre browsers muy antiguos o configuraciones restrictivas.
-   ───────────────────────────────────────────────────────────────── */
 function copyText(text){
   const payload = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
 
-  /* 1. Clipboard API moderna */
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function'){
     return navigator.clipboard.writeText(payload)
       .then(() => true)
       .catch(() => legacyCopy(payload));
   }
-
-  /* 2 + 3. Fallbacks síncronos */
   return Promise.resolve(legacyCopy(payload));
 }
 
 function legacyCopy(text){
-  /* 2. textarea + execCommand */
   try{
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly', '');
-    ta.style.cssText = [
-      'position:fixed',
-      'top:0','left:0',
-      'width:2em','height:2em',
-      'padding:0','border:none',
-      'outline:none','box-shadow:none',
-      'background:transparent',
-      'opacity:0',
-      'pointer-events:none',
-      'z-index:-1'
-    ].join(';');
+    ta.style.cssText = 'position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;box-shadow:none;background:transparent;opacity:0;pointer-events:none;z-index:-1';
     document.body.appendChild(ta);
     ta.focus({ preventScroll: true });
     ta.select();
-    ta.setSelectionRange(0, ta.value.length); // requerido en iOS ≤ 12
+    ta.setSelectionRange(0, ta.value.length);
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
     if (ok) return true;
   }catch(_){}
 
-  /* 3. Selección manual del <pre> como último recurso */
   try{
     const range = document.createRange();
     range.selectNodeContents(datosEl);
@@ -288,9 +227,6 @@ function legacyCopy(text){
   return false;
 }
 
-/* ─────────────────────────────────────────────
-   UI helpers
-   ───────────────────────────────────────────── */
 function showCopied(){
   okEl.style.display = 'block';
   setTimeout(() => { okEl.style.display = 'none'; }, 1600);
@@ -302,27 +238,19 @@ function showError(msg){
 }
 
 function makeFieldHandler(getVal){
-  /* SIN async — llamada directa al tap para respetar user gesture */
   return function(){
     const val = getVal();
     if (!val) return;
     copyText(val).then(ok => {
       if (ok) showCopied();
-      else    alert('Mantén presionado el texto y elige "Copiar".');
+      else alert('Mantén presionado el texto y elige "Copiar".');
     });
   };
 }
 
-/* ─────────────────────────────────────────────
-   Estado global (pre-cargado antes del tap)
-   ───────────────────────────────────────────── */
 let cachedText   = '';
 let cachedFields = null;
 
-/* ─────────────────────────────────────────────
-   Init — fetch ocurre al cargar la página,
-   mucho antes de cualquier tap del usuario.
-   ───────────────────────────────────────────── */
 async function init(){
   try{
     const res = await fetch('./data.json?ts=' + Date.now(), { cache: 'no-store' });
@@ -342,9 +270,6 @@ async function init(){
 
     datosEl.textContent = lines.join('\n');
 
-    /* ── Botón "Copia todos" ──────────────────────────────────────
-       Handler NO async. copyText() se llama en el mismo tick del tap.
-       ─────────────────────────────────────────────────────────── */
     btn.disabled = false;
     btn.addEventListener('click', function(){
       copyText(cachedText).then(ok => {
@@ -357,13 +282,11 @@ async function init(){
       });
     });
 
-    /* ── Botones por campo ───────────────────────────────────────── */
     fieldsWrap.style.display = 'grid';
     [
       [btnNombre, () => cachedFields.nombre],
       [btnRut,    () => cachedFields.rut],
       [btnBanco,  () => cachedFields.banco],
-      [btnTipo,   () => cachedFields.tipo],
       [btnNumero, () => cachedFields.numero],
       [btnCorreo, () => cachedFields.correo],
     ].forEach(([el, getVal]) => {
@@ -373,7 +296,6 @@ async function init(){
       }
     });
 
-    /* ── GA4 ─────────────────────────────────────────────────────── */
     try{
       gtag('event','payer_page_view',{
         merchant_id: id,
