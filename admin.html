@@ -46,8 +46,7 @@
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
 
-  h1{ font-size:20px; font-weight:800; margin:10px 0 6px; letter-spacing:-0.2px; }
-  .subtitle{ font-size:12px; color:var(--muted); margin:0 0 4px; line-height:1.4; }
+  h1{ font-size:20px; font-weight:800; margin:10px 0 18px; letter-spacing:-0.2px; }
 
   label{
     font-weight:700; font-size:13px; color:var(--muted);
@@ -76,6 +75,15 @@
   .field-err.show{ display:block; }
 
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .id-row{
+    display:flex; align-items:center; gap:10px; margin-top:14px;
+  }
+  .id-row label{
+    margin:0; white-space:nowrap; flex-shrink:0;
+    font-weight:700; font-size:13px; color:var(--muted);
+  }
+  .id-row input{ margin:0; }
 
   .cta{
     margin-top:22px; padding:13px; width:100%;
@@ -130,8 +138,7 @@
   .btn-copy-link{
     flex-shrink:0; padding:6px 10px; font-size:12px; font-weight:800;
     font-family:inherit; border:0; border-radius:8px; cursor:pointer;
-    background:var(--primary); color:#fff;
-    transition:filter .1s;
+    background:var(--primary); color:#fff; transition:filter .1s;
   }
   .btn-copy-link:active{ filter:brightness(.95); }
 
@@ -150,6 +157,19 @@
     margin-top:6px; opacity:0; transition:opacity .2s;
   }
   .copied-flash.show{ opacity:1; }
+
+  .wsp-prefix{
+    display:flex; align-items:center; gap:0;
+  }
+  .wsp-prefix span{
+    padding:11px 10px 11px 12px; font-size:14px; font-weight:700;
+    background:#f2f3f5; border:1.5px solid rgba(0,0,0,.12);
+    border-right:0; border-radius:12px 0 0 12px; color:var(--muted);
+    white-space:nowrap; line-height:1;
+  }
+  .wsp-prefix input{
+    border-radius:0 12px 12px 0; flex:1;
+  }
 </style>
 </head>
 <body>
@@ -161,11 +181,11 @@
 
   <div class="card">
     <h1>Crear comercio</h1>
-    <p class="subtitle">Crea tu usuario (sin espacios). Ej: <b>ItauCC2</b>, <b>EstadoRut</b></p>
 
-    <div style="display:flex; align-items:center; gap:8px; margin-top:14px;">
-      <label for="id" style="margin:0; white-space:nowrap;">ID único</label>
-      <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="margin:0;"/>
+    <!-- ID en una sola línea -->
+    <div class="id-row">
+      <label for="id">Crea tu usuario (sin espacios)</label>
+      <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     </div>
     <div class="field-err" id="err-id">Sin espacios, solo letras y números</div>
     <div class="field-err" id="err-id-existe">Usuario ya existe</div>
@@ -223,9 +243,12 @@
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email" />
     <div class="field-err" id="err-correo">Formato de correo inválido</div>
 
-    <label for="wsp">WhatsApp destinatario <span style="font-weight:400;color:#aaa">(con código país)</span></label>
-    <input id="wsp" placeholder="56912345678" inputmode="numeric" />
-    <div class="field-err" id="err-wsp">Solo números, incluye código de país</div>
+    <label for="wsp">WhatsApp destinatario</label>
+    <div class="wsp-prefix">
+      <span>+56</span>
+      <input id="wsp" placeholder="9XXXXXXXXX" inputmode="numeric" maxlength="9" />
+    </div>
+    <div class="field-err" id="err-wsp">Debe ser 9XXXXXXXXX (9 dígitos, comenzando con 9)</div>
 
     <button class="cta" id="save">Guardar</button>
     <div id="msg"></div>
@@ -246,7 +269,7 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
-  const BASE_URL   = 'https://tuqrapp.github.io/';
+  const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
 
   let dataJson = null;
 
@@ -267,8 +290,12 @@
       .trim();
   }
 
-  function validarId(id){ return /^[^\s]+$/.test(id); }
-  function idExiste(id){ return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id); }
+  function validarId(id)   { return /^[^\s]+$/.test(id); }
+  function idExiste(id)    { return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id); }
+  function validarEmail(e) { if(!e) return true; return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+
+  // 9 dígitos exactos, comenzando con 9
+  function validarWsp(w)   { return /^9\d{8}$/.test(w); }
 
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
@@ -292,13 +319,6 @@
     const dv     = r.slice(-1);
     return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g,'.') + '-' + dv;
   }
-
-  function validarEmail(email){
-    if(!email) return true;
-    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-  }
-
-  function validarWsp(wsp){ return /^\d{8,15}$/.test(wsp); }
 
   /* ── Eventos en tiempo real ── */
   const idInput     = document.getElementById('id');
@@ -363,7 +383,7 @@
   });
 
   wspInput.addEventListener('input', function(){
-    this.value = this.value.replace(/\D/g,'');
+    this.value = this.value.replace(/\D/g,'').slice(0,9);
     const errEl = document.getElementById('err-wsp');
     if(this.value.length > 0){
       const ok = validarWsp(this.value);
@@ -461,7 +481,7 @@
       correoInput.focus(); return;
     }
     if(!validarWsp(wspVal)){
-      msg.innerHTML = '<div class="err">El WhatsApp debe tener entre 8 y 15 dígitos e incluir código de país.</div>';
+      msg.innerHTML = '<div class="err">El WhatsApp debe ser 9XXXXXXXXX (9 dígitos, comenzando con 9).</div>';
       wspInput.focus(); return;
     }
 
@@ -488,7 +508,8 @@
       document.getElementById('linkText').textContent = link;
       document.getElementById('qrCard').classList.add('show');
 
-      const wspUrl = `https://wa.me/${wspVal}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
+      // Agrega 56 al enviar por WhatsApp
+      const wspUrl = `https://wa.me/56${wspVal}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
       document.getElementById('btnWsp').onclick = () => window.open(wspUrl, '_blank');
 
       msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
