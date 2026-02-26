@@ -40,9 +40,9 @@
     "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco ItaÃÂº",
+    "banco": "Banco ItaÃÂÃÂº",
     "rut": "23182071-k",
-    "nombre": "John Rambo ItaÃÂº CC",
+    "nombre": "John Rambo ItaÃÂÃÂº CC",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -54,5 +54,12 @@
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "123456",
     "correo": "prueba@dominio.cl"
+  },
+  "TestFinal": {
+    "banco": "Banco BCI",
+    "rut": "11.111.111-1",
+    "nombre": "Final",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "123456"
   }
 }
