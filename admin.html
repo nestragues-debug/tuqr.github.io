@@ -1,50 +1,355 @@
-h1{ font-size:20px; font-weight:800; margin:6px 0 10px; letter-spacing:-0.2px; }
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Admin TuQR – Crear comercio</title>
 
-label{
-  font-weight:700; font-size:13px; color:var(--muted);
-  margin-top:8px; display:block; margin-bottom:3px;
-}
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
 
-.id-row{ display:flex; align-items:center; gap:10px; margin-top:8px; }
+<style>
+  :root{
+    --primary: #ff7a18;
+    --accent:  #ffd400;
+    --bg:      #f2f3f5;
+    --card:    #ffffff;
+    --text:    #1a1a1a;
+    --muted:   #5a5a5a;
+    --border:  rgba(0,0,0,.08);
+    --shadow:  0 10px 24px rgba(0,0,0,.08);
+    --radius:  18px;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    font-family:"Poppins",system-ui,-apple-system,Helvetica,Arial,sans-serif;
+    margin:0; padding:16px 12px;
+    background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  .wrap{ max-width:480px; margin:0 auto; }
 
-.cta{ margin-top:14px; padding:13px; width:100%;
-  font-size:15px; font-weight:800; font-family:inherit;
-  border:0; border-radius:12px; cursor:pointer;
-  color:#fff; background:var(--primary);
-  box-shadow:0 6px 12px rgba(255,122,24,.22);
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .06s ease, filter .06s ease;
-}
+  .brand{ display:flex; justify-content:center; margin:6px 0 6px; }
+  .brand img{
+    width:100%; max-width:440px; height:auto; display:block;
+    filter:drop-shadow(0 6px 10px rgba(0,0,0,.10));
+  }
 
-.cta-nuevo{ margin-top:12px; padding:13px; width:100%;
-  font-size:15px; font-weight:800; font-family:inherit;
-  border:2px solid var(--primary); border-radius:12px; cursor:pointer;
-  color:var(--primary); background:transparent;
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .06s ease, background .12s ease, color .12s ease;
-}
+  .card{
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:22px 20px 24px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+  }
+  .card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:8px;
+    background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
+  }
 
-.qr-card{ margin-top:12px; padding:14px 16px; border-radius:var(--radius);
-  border:1px solid var(--border); background:#fafafa;
-  display:none; text-align:center;
-}
+  h1{ font-size:20px; font-weight:800; margin:10px 0 18px; letter-spacing:-0.2px; }
 
-.qr-hint{ font-size:13px; font-weight:700; color:var(--muted);
-  margin:0 0 10px; line-height:1.4; text-align:center;
-}
+  label{
+    font-weight:700; font-size:13px; color:var(--muted);
+    margin-top:14px; display:block; margin-bottom:5px;
+  }
+  input, select{
+    width:100%; padding:11px 12px; font-size:14px; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
+    background:#fff; color:var(--text);
+    outline:none; transition:border-color .15s, box-shadow .15s;
+    -webkit-appearance:none; appearance:none;
+  }
+  input:focus, select:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(255,122,24,.12);
+  }
+  input.invalid{ border-color:#e00; background:#fff8f8; }
+  input.invalid:focus{ box-shadow:0 0 0 3px rgba(220,0,0,.10); }
+  input.valid{ border-color:#0a7; background:#f5fbf8; }
+  input.valid:focus{ box-shadow:0 0 0 3px rgba(0,170,120,.10); }
 
-.ok{ margin-top:10px; font-weight:800; padding:10px 12px;
-  border-radius:12px; font-size:14px;
-  color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
-}
+  .field-err{
+    color:#c00; font-size:12px; font-weight:600;
+    margin-top:4px; display:none;
+  }
+  .field-err.show{ display:block; }
 
-.btn-download-qr{
-  width:100%; padding:12px; font-size:14px; font-weight:800;
-  font-family:inherit; border:0; border-radius:12px; cursor:pointer;
-  background:#1a1a1a; color:#fff;
-  box-shadow:0 4px 10px rgba(0,0,0,.12);
-  -webkit-tap-highlight-color:transparent;
-  transition:transform .06s ease, filter .06s ease;
-  margin-bottom:10px;
-}
-.btn-download-qr:active{ transform:translateY(1px); filter:brightness(.9); }
+  .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+
+  .cta{
+    margin-top:22px; padding:13px; width:100%;
+    font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer;
+    color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+  }
+  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
+
+  .cta-nuevo{
+    margin-top:12px; padding:13px; width:100%;
+    font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
+    color:var(--primary); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .12s ease, color .12s ease;
+  }
+  .cta-nuevo:active{ transform:translateY(1px); }
+  .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
+
+  .ok{
+    margin-top:12px; font-weight:800; padding:10px 12px;
+    border-radius:12px; font-size:14px;
+    color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
+  }
+  .err{
+    margin-top:12px; font-weight:800; padding:10px 12px;
+    border-radius:12px; font-size:14px; white-space:pre-wrap;
+    color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
+  }
+
+  .help{
+    margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="brand">
+    <img src="./TuQRLogo.png" alt="TuQR" />
+  </div>
+
+  <div class="card">
+    <h1>Crear comercio</h1>
+
+    <label for="id">ID único</label>
+    <input id="id" placeholder="ej: ItauCC2" />
+
+    <div class="row">
+      <div>
+        <label for="nombre">Nombre</label>
+        <input id="nombre" placeholder="Juan López" />
+      </div>
+      <div>
+        <label for="rut">RUT</label>
+        <input id="rut" placeholder="12.345.678-9" maxlength="12" />
+        <div class="field-err" id="err-rut">RUT inválido</div>
+      </div>
+    </div>
+
+    <div class="row">
+      <div>
+        <label for="tipoCuenta">Tipo de cuenta</label>
+        <select id="tipoCuenta">
+          <option value="">— Selecciona —</option>
+          <option value="Cuenta Corriente">Corriente</option>
+          <option value="Cuenta Vista">Vista</option>
+          <option value="Cuenta RUT">Cuenta RUT</option>
+        </select>
+      </div>
+      <div>
+        <label for="numeroCuenta">Número de cuenta</label>
+        <input id="numeroCuenta" placeholder="Solo números" inputmode="numeric" />
+        <div class="field-err" id="err-cuenta">Solo se permiten números</div>
+      </div>
+    </div>
+
+    <label for="banco">Banco</label>
+    <select id="banco">
+      <option value="">— Selecciona —</option>
+      <option>Banco de Chile</option>
+      <option>Banco BICE</option>
+      <option>Banco Consorcio</option>
+      <option>Banco BCI</option>
+      <option>Banco Estado</option>
+      <option>Banco Falabella</option>
+      <option>Banco Internacional</option>
+      <option>Banco Itaú</option>
+      <option>Banco Ripley</option>
+      <option>Banco Santander</option>
+      <option>Banco Security</option>
+      <option>Scotiabank</option>
+      <option>Tapp Caja Los Andes</option>
+      <option>Banco Tenpo</option>
+      <option>Mercado Pago</option>
+    </select>
+
+    <label for="correo">Correo <span style="font-weight:400;color:#aaa">(opcional)</span></label>
+    <input id="correo" placeholder="correo@dominio.cl" inputmode="email" />
+    <div class="field-err" id="err-correo">Formato de correo inválido</div>
+
+    <button class="cta" id="save">Guardar</button>
+    <div id="msg"></div>
+
+    <div class="help">Los datos se guardan en <b>data.json</b> vía Cloudflare Worker.</div>
+  </div>
+</div>
+
+<script>
+  const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
+
+  function val(id){ return (document.getElementById(id).value || '').trim(); }
+  function clean(s){
+    return String(s ?? '')
+      .normalize('NFC')
+      .replace(/\u00A0/g,' ')
+      .replace(/[\u200B-\u200F]/g,'')
+      .trim();
+  }
+
+  function validarRut(rut){
+    const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
+    if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
+    const cuerpo = r.slice(0,-1);
+    const dv     = r.slice(-1);
+    let suma = 0, mul = 2;
+    for(let i = cuerpo.length - 1; i >= 0; i--){
+      suma += parseInt(cuerpo[i]) * mul;
+      mul = mul === 7 ? 2 : mul + 1;
+    }
+    const dvEsperado = 11 - (suma % 11);
+    const dvStr = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : String(dvEsperado);
+    return dv === dvStr;
+  }
+
+  function formatearRut(rut){
+    const r = rut.replace(/[\.\-\s]/g,'');
+    if(r.length < 2) return r;
+    const cuerpo = r.slice(0,-1);
+    const dv     = r.slice(-1);
+    return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g,'.') + '-' + dv;
+  }
+
+  function validarEmail(email){
+    if(!email) return true;
+    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
+  }
+
+  const rutInput    = document.getElementById('rut');
+  const cuentaInput = document.getElementById('numeroCuenta');
+  const correoInput = document.getElementById('correo');
+
+  rutInput.addEventListener('input', function(){
+    const raw = this.value.replace(/[\.\-\s]/g,'');
+    if(raw.length >= 2) this.value = formatearRut(raw);
+    const errEl = document.getElementById('err-rut');
+    if(this.value.length > 0){
+      const ok = validarRut(this.value);
+      this.classList.toggle('valid', ok);
+      this.classList.toggle('invalid', !ok);
+      errEl.classList.toggle('show', !ok);
+    } else {
+      this.classList.remove('valid','invalid');
+      errEl.classList.remove('show');
+    }
+  });
+
+  cuentaInput.addEventListener('input', function(){
+    this.value = this.value.replace(/\D/g,'');
+    const errEl = document.getElementById('err-cuenta');
+    const ok = this.value.length === 0 || /^\d+$/.test(this.value);
+    this.classList.toggle('valid', this.value.length > 0 && ok);
+    this.classList.toggle('invalid', this.value.length > 0 && !ok);
+    errEl.classList.toggle('show', !ok);
+  });
+
+  correoInput.addEventListener('blur', function(){
+    const errEl = document.getElementById('err-correo');
+    if(this.value.length > 0){
+      const ok = validarEmail(this.value);
+      this.classList.toggle('valid', ok);
+      this.classList.toggle('invalid', !ok);
+      errEl.classList.toggle('show', !ok);
+    } else {
+      this.classList.remove('valid','invalid');
+      errEl.classList.remove('show');
+    }
+  });
+
+  function resetForm(){
+    ['id','nombre','rut','numeroCuenta','correo'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+      el.classList.remove('valid','invalid');
+    });
+    ['tipoCuenta','banco'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    ['err-rut','err-cuenta','err-correo'].forEach(id => {
+      document.getElementById(id).classList.remove('show');
+    });
+    document.getElementById('msg').innerHTML = '';
+    document.getElementById('save').style.display = '';
+    document.getElementById('id').focus();
+  }
+
+  (function guard(){
+    const msg = document.getElementById('msg');
+    if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
+      msg.innerHTML = '<div class="err">WORKER_URL no está configurado correctamente.</div>';
+      throw new Error('WORKER_URL inválido');
+    }
+  })();
+
+  document.getElementById('save').addEventListener('click', async ()=>{
+    const msg = document.getElementById('msg');
+    msg.innerHTML = '';
+
+    const payload = {
+      id:           clean(val('id')),
+      nombre:       clean(val('nombre')),
+      rut:          clean(val('rut')),
+      banco:        clean(val('banco')),
+      tipoCuenta:   clean(val('tipoCuenta')),
+      numeroCuenta: clean(val('numeroCuenta')),
+      correo:       clean(val('correo'))
+    };
+
+    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta){
+      msg.innerHTML = '<div class="err">Faltan campos obligatorios.</div>';
+      return;
+    }
+    if(!validarRut(payload.rut)){
+      msg.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
+      rutInput.focus(); return;
+    }
+    if(!/^\d+$/.test(payload.numeroCuenta)){
+      msg.innerHTML = '<div class="err">El número de cuenta debe contener solo dígitos.</div>';
+      cuentaInput.focus(); return;
+    }
+    if(payload.correo && !validarEmail(payload.correo)){
+      msg.innerHTML = '<div class="err">El formato del correo no es válido.</div>';
+      correoInput.focus(); return;
+    }
+
+    try{
+      const res  = await fetch(WORKER_URL, {
+        method:'POST',
+        headers:{ 'Content-Type':'application/json' },
+        body: JSON.stringify(payload)
+      });
+      const txt  = await res.text();
+      let data   = {};
+      try { data = JSON.parse(txt); } catch {}
+
+      if(!res.ok || !data.ok){
+        const detail = data.error
+          ? ('\nDetalle: ' + data.error + (data.probable_cause ? ' — ' + data.probable_cause : '') + (data.detail ? '\n' + data.detail : ''))
+          : ('\nHTTP ' + res.status + '\n' + txt);
+        msg.innerHTML = '<div class="err">Error guardando.' + detail + '</div>';
+        return;
+      }
+
+      msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
+      document.getElementById('save').style.display = 'none';
+      document.getElementById('nuevo').addEventListener('click', resetForm);
+
+    }catch(e){
+      msg.innerHTML = '<div class="err">Fallo de red: ' + e + '</div>';
+    }
+  });
+</script>
+</body>
+</html>
