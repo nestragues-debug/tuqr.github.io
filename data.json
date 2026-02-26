@@ -40,9 +40,9 @@
     "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco ItaÃÂº",
+    "banco": "Banco ItaÃÂÃÂº",
     "rut": "23182071-k",
-    "nombre": "John Rambo ItaÃÂº CC",
+    "nombre": "John Rambo ItaÃÂÃÂº CC",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -90,5 +90,12 @@
     "nombre": "Nico",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "11"
+  },
+  "dhdhhd": {
+    "banco": "Tapp Caja Los Andes",
+    "rut": "13.268.177-5",
+    "nombre": "Nicolas",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "2"
   }
 }
