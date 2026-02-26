@@ -40,7 +40,7 @@
     "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco ItaÃÂº",
+    "banco": "Banco ItaÃÂÃÂº",
     "rut": "23182071-k",
     "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Corriente",
@@ -68,5 +68,13 @@
     "nombre": "Nicolas Estragues",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "13143"
+  },
+  "Bowie": {
+    "banco": "Mercado Pago",
+    "rut": "13.268.177-5",
+    "nombre": "Nicolas Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "98712",
+    "correo": "nestragues@gmail.com"
   }
 }
