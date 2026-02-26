@@ -2,39 +2,39 @@
   "EstadoRut": {
     "banco": "Banco Estado",
     "rut": "23182071-k",
-    "nombre": "Juan Lopez",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta RUT",
-    "numeroCuenta": "12345678",
-    "correo": "juan.lopez.estado@email.com"
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   },
   "SantanderCC": {
     "banco": "Banco Santander",
     "rut": "23182071-k",
-    "nombre": "Juan Lopez",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "99887766",
-    "correo": "juan.lopez.santander@email.com"
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   },
   "TappVista": {
     "banco": "Tapp Caja Los Andes",
     "rut": "23182071-k",
-    "nombre": "Juan Lopez",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Vista",
-    "numeroCuenta": "12345678",
-    "correo": "juan.lopez.tapp@email.com"
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   },
   "TenpoVista": {
     "banco": "Banco Tenpo",
     "rut": "23182071-k",
-    "nombre": "John Rambo Tenpo Vista",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
   },
   "BCICorriente": {
-    "banco": "Banco BCI",
+    "banco": "BCI",
     "rut": "23182071-k",
-    "nombre": "John Rambo BCI CC",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -42,67 +42,17 @@
   "ItauCC": {
     "banco": "Banco Itaú",
     "rut": "23182071-k",
-    "nombre": "John Rambo-Itaú",
-    "tipoCuenta": "Cuenta Vista",
+    "nombre": "John Rambo",
+    "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
   },
-  "TestOK": {
-    "banco": "Banco BCI",
-    "rut": "11.111.111-1",
-    "nombre": "Prueba",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "123456",
-    "correo": "prueba@dominio.cl"
-  },
-  "TestFinal": {
-    "banco": "Banco BCI",
-    "rut": "11.111.111-1",
-    "nombre": "Final",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "123456"
-  },
-  "Test": {
-    "banco": "Banco de Chile",
-    "rut": "1",
-    "nombre": "A",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "1"
-  },
-  "a": {
-    "banco": "Banco de Chile",
-    "rut": "1",
-    "nombre": "a",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "s1",
-    "correo": "g"
-  },
-  "Hola": {
-    "banco": "Banco Tenpo",
-    "rut": "13.268.177-5",
-    "nombre": "Nico",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "11"
-  },
-  "Hola2": {
-    "banco": "Banco Tenpo",
-    "rut": "13.268.177-5",
-    "nombre": "Nico",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "11"
-  },
-  "dhdhhd": {
-    "banco": "Tapp Caja Los Andes",
-    "rut": "13.268.177-5",
-    "nombre": "Nicolas",
-    "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "2"
-  },
-  "Nuevoprueba": {
+  "RipleyCC": {
     "banco": "Banco Ripley",
-    "rut": "24.001.985-K",
-    "nombre": "Lourdes Estragues",
+    "rut": "23182071-k",
+    "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Corriente",
-    "numeroCuenta": "1298712312"
+    "numeroCuenta": "11111111",
+    "correo": "john.rambo@email.com"
   }
 }
