@@ -5,11 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TuQR — Datos para transferir</title>
 
-  <!-- Fuente Poppins -->
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
-
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
   <script>
@@ -19,155 +14,180 @@
     gtag('config', 'G-CTV8Y0DJTR');
   </script>
 
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
-    /* Paleta */
     :root{
-      --pri: #ff6a00;       /* Naranja/rojo (energía, rapidez) */
-      --pri-700:#e65f00;
-      --sec: #ffc107;       /* Amarillo (alegría, emprendimiento) */
-      --trust:#10b981;      /* Verde (confianza/frescura). Alternativa azul: #1e88e5 */
-      --bg:  #f7f9fb;       /* Fondo claro */
-      --ink:#0f172a;        /* Texto principal */
-      --muted:#64748b;      /* Texto secundario */
-      --ok:#109868;         /* Mensaje OK */
-      --err:#c62828;        /* Mensaje Error */
-      --card:#ffffff;       /* Tarjeta */
-      --line:#e6ebf2;       /* Líneas sutiles */
+      /* Paleta (feria / mini-comercio) */
+      --primary: #ff4d2d;   /* rojo-naranja acción */
+      --primary2:#ff7a18;   /* naranja cercanía */
+      --accent:  #ffd400;   /* amarillo vibrante */
+      --bg:      #f7f7f8;   /* gris muy claro */
+      --card:    #ffffff;   /* blanco */
+      --text:    #1a1a1a;   /* negro/gris oscuro */
+      --muted:   #5a5a5a;   /* texto secundario */
+      --border:  rgba(0,0,0,.08);
+      --shadow:  0 10px 24px rgba(0,0,0,.08);
+      --radius:  18px;
     }
 
-    html,body{
+    *{ box-sizing:border-box; }
+
+    body{
+      font-family: "Poppins", system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
       margin:0;
-      background: var(--bg);
-      color: var(--ink);
-      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
-      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      padding:22px 14px;
+      background:
+        radial-gradient(900px 380px at 50% -40px, rgba(255, 212, 0, .18), transparent 55%),
+        radial-gradient(900px 380px at 50% 0px, rgba(255, 77, 45, .12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
 
-    /* Hero estilo “portada” con logo grande */
-    .hero{
-      background:
-        radial-gradient(1200px 300px at 50% -50%, rgba(255,106,0,.18), rgba(255,106,0,0)),
-        linear-gradient(0deg, #fff0, #fff0);
-      padding: 28px 18px 10px;
-      text-align:center;
+    .wrap{
+      max-width:560px;
+      margin:0 auto;
     }
-    .hero .logo-wrap{
-      max-width: 760px;
-      margin: 0 auto;
-    }
-    .hero img.logo{
-      width: min(88%, 520px);
-      height: auto;
-      display:block;
-      margin: 0 auto 6px;
-      filter: drop-shadow(0 10px 18px rgba(255,106,0,.15));
-    }
-    .hero .strap{
-      color: var(--muted);
-      font-size: 14px;
+
+    /* Header con logo */
+    .brand{
+      display:flex;
+      justify-content:center;
+      align-items:center;
       margin: 6px 0 14px;
     }
-
-    /* Cinta superior con colores feria */
-    .ribbon{
-      height: 6px;
-      background:
-        linear-gradient(90deg, var(--pri) 0%, #ff8a1d 22%, var(--sec) 45%, #5bd18a 72%, var(--trust) 100%);
-      border-bottom: 1px solid rgba(0,0,0,.04);
+    .brand img{
+      width:min(180px, 58vw);
+      height:auto;
+      display:block;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
     }
 
-    /* Contenedor de la tarjeta */
-    .wrap{
-      padding: 0 18px 28px;
-    }
     .card{
-      max-width: 560px;
-      margin: 0 auto;
-      background: var(--card);
-      border: 1px solid var(--line);
-      border-radius: 18px;
-      padding: 18px 18px 22px;
-      box-shadow:
-        0 8px 24px rgba(255,106,0,.06),
-        0 2px 6px rgba(16,185,129,.05);
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
+    }
+
+    /* Franja superior tipo “feria” */
+    .card::before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0;
+      height:10px;
+      background: linear-gradient(90deg, var(--accent), var(--primary), var(--primary2));
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:700;
+      font-size:12px;
+      color:rgba(26,26,26,.9);
+      background: rgba(255,212,0,.22);
+      border:1px solid rgba(255,212,0,.35);
+      padding:8px 10px;
+      border-radius:999px;
+      margin-top:10px;
+    }
+    .badge .dot{
+      width:10px; height:10px;
+      border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(255,212,0,.18);
     }
 
     h1{
-      font-size: 24px;
-      margin: 2px 0 6px;
-      font-weight: 800;
-      color: var(--ink);
+      font-size:22px;
+      line-height:1.15;
+      margin:10px 0 8px;
+      font-weight:800;
+      color:var(--text);
+      letter-spacing:-0.2px;
     }
+
     p{
-      margin: 0 0 14px;
-      color: var(--muted);
-      font-size: 14px;
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
     }
 
     pre#datos{
-      background: #fff8f2;
-      padding: 14px;
-      border-radius: 12px;
-      min-height: 112px;
-      white-space: pre-wrap;
-      word-break: break-word;
-      font-size: 15px;
-      line-height: 1.28;
-      border: 1px solid #ffe3cf;
+      background: #fff6e5; /* cálido, tipo “papel/nota” */
+      border:1px dashed rgba(255, 122, 24, .45);
+      padding:14px;
+      border-radius:14px;
+      min-height:118px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-size:15px;
+      line-height:1.32;
+      -webkit-text-size-adjust:100%;
+      margin: 0 0 14px;
     }
 
-    /* Botón principal estilo feria */
-    button{
+    .cta{
       width:100%;
       padding:16px;
-      font-size:17px;
+      font-size:16px;
       font-weight:800;
       border:0;
       border-radius:14px;
       cursor:pointer;
-      background: var(--pri);
       color:#fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      box-shadow: 0 10px 18px rgba(255, 77, 45, .22);
       -webkit-tap-highlight-color: transparent;
-      box-shadow:
-        0 10px 18px rgba(255,106,0,.22),
-        0 2px 6px rgba(16,185,129,.12);
-      transition: transform .04s ease, filter .12s ease, box-shadow .12s ease;
+      transition: transform .06s ease, filter .06s ease;
     }
-    button:hover{ filter: brightness(.98); }
-    button:active{ transform: translateY(1px); filter:brightness(.96); }
-    button:disabled{
-      background: #ffb98e;
-      cursor:not-allowed;
+    .cta:disabled{
+      background:#bdbdbd;
       box-shadow:none;
+      cursor:not-allowed;
     }
+    .cta:active{ transform: translateY(1px); filter:brightness(0.97); }
 
-    .ok{
+    .ok, .err{
       margin-top:10px;
-      color: var(--ok);
-      font-weight:700;
+      font-weight:800;
       display:none;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+    }
+    .ok{
+      color:#0a7;
+      background: rgba(0,170,120,.10);
+      border:1px solid rgba(0,170,120,.18);
     }
     .err{
-      margin-top:10px;
-      color: var(--err);
-      font-weight:700;
-      display:none;
+      color:#b00;
+      background: rgba(190,0,0,.08);
+      border:1px solid rgba(190,0,0,.14);
     }
 
     .small{
-      margin-top:12px;
+      margin-top:14px;
       font-size:12px;
-      color:#6b7280;
-      background: #f8fafc;
-      border: 1px dashed var(--line);
-      border-radius: 10px;
-      padding:10px;
+      color:#6a6a6a;
+      line-height:1.4;
     }
 
     /* Plan B: botones por campo */
     .fields{
       margin-top:16px;
-      border-top:1px dashed var(--line);
+      border-top:1px dashed rgba(0,0,0,.12);
       padding-top:12px;
       display:grid;
       gap:10px;
@@ -178,58 +198,61 @@
     .field-btn{
       padding:12px;
       font-size:14px;
-      font-weight:700;
+      font-weight:800;
       line-height:1.1;
       border-radius:12px;
-      border:2px solid #ffd9b8;   /* borde naranjo suave */
-      background:#fffefb;
-      color:#1f2937;
-      transition: background .12s ease, border-color .12s ease, transform .04s ease;
-      box-shadow: 0 2px 6px rgba(255,193,7,.10);
+      border:1px solid rgba(0,0,0,.10);
+      background: #fff;
+      color:var(--text);
+      cursor:pointer;
+      box-shadow: 0 6px 12px rgba(0,0,0,.05);
+      transition: transform .06s ease, filter .06s ease;
     }
-    .field-btn:hover{ background:#fff6e6; border-color:#ffc88d; }
-    .field-btn:active{ transform: translateY(1px); }
+    .field-btn:active{ transform: translateY(1px); filter:brightness(0.98); }
     .field-btn:disabled{
-      color:#a3a3a3; background:#fafafa; border-color:#eee; box-shadow:none;
+      color:#9a9a9a;
+      background:#f2f2f2;
+      border-color:#e9e9e9;
+      box-shadow:none;
+      cursor:not-allowed;
     }
 
-    /* Footer mini confianza */
-    .foot{
-      text-align:center;
-      font-size:12px;
-      color:#8a9aab;
-      margin: 18px auto 6px;
+    /* Micro-ayudas visuales */
+    .hint{
+      margin-top:12px;
+      background: rgba(255,212,0,.14);
+      border: 1px solid rgba(255,212,0,.28);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 13px;
+      color: rgba(26,26,26,.9);
+      line-height: 1.35;
     }
-    .foot b{ color: var(--trust); }
-
+    .hint b{ font-weight:800; }
   </style>
 </head>
 
 <body>
-  <!-- Hero con logo grande (Opción C) -->
-  <header class="hero" aria-label="TuQR portada">
-    <div class="logo-wrap">
-      <!-- Coloca tu archivo en ./assets/tuqr-logo.png -->
-      <img class="logo" src="./TuQRLogo.png" alt="TuQR — Transferencias simples">
-      <div class="strap">Rápido para cobrar, fácil para pagar.</div>
+  <div class="wrap">
+
+    <!-- Logo centrado arriba -->
+    <div class="brand">
+      <!-- Si no aparece, cambia src a "./main/TuQRLogo.png" -->
+      <img src="./TuQRLogo.png" alt="TuQR" />
     </div>
-  </header>
 
-  <!-- Cinta multicolor tipo feria -->
-  <div class="ribbon" aria-hidden="true"></div>
-
-  <!-- Contenido -->
-  <main class="wrap">
     <div class="card">
+      <div class="badge"><span class="dot"></span> Transferencia rápida y sin errores</div>
+
       <h1 id="title">Paga con transferencia</h1>
-      <p>Copia y pega en tu aplicación bancaria.</p>
+      <p>Copia y pega estos datos en tu app bancaria (sin escribir a mano).</p>
 
       <pre id="datos">Cargando…</pre>
 
-      <button id="copiar" disabled>Copiar datos para transferir</button>
+      <button id="copiar" class="cta" disabled>Copiar datos para transferir</button>
 
-      <div id="ok" class="ok">¡Copiado! Ahora pégalo en tu banco.</div>
-      <div id="err" class="err">No encontramos este comercio</div>
+      <div id="ok" class="ok">✅ Copiado</div>
+      <div id="err" class="err">❌ No encontramos este comercio</div>
 
       <!-- Plan B: copiar por campo -->
       <div id="fields" class="fields" style="display:none;">
@@ -241,13 +264,16 @@
         <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
       </div>
 
+      <div class="hint">
+        En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b><br>
+        Si tu banco no pega bien, usa los botones por campo.
+      </div>
+
       <div class="small">
-        En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
+        Consejo: revisa que el nombre y el número de cuenta coincidan antes de enviar.
       </div>
     </div>
-
-    <div class="foot">Hecho con <b>TuQR</b> — simple y confiable.</div>
-  </main>
+  </div>
 
 <script>
 /* =========================
@@ -282,11 +308,11 @@ const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' 
 function clean(s){
   return String(s ?? '')
     .normalize('NFC')
-    .replace(/\u00A0/g, ' ')              // NBSP -> espacio normal
-    .replace(/[\u200B-\u200F]/g, '')      // zero-width
-    .replace(/\r\n/g, '\n')               // normaliza internamente a \n
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u200B-\u200F]/g, '')
+    .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
-    .replace(/[ \t]+$/gm, '')             // trim fin de línea
+    .replace(/[ \t]+$/gm, '')
     .trim();
 }
 function sanitizeValue(s){ return clean(s); }
@@ -299,22 +325,22 @@ function buildText(d){
   const rut    = sanitizeValue(d.rut);
   const banco  = sanitizeValue(d.banco);
   const tipo   = sanitizeValue(d.tipoCuenta);
-  constmero de cuenta: ${numero}`
+  const numero = sanitizeValue(d.numeroCuenta);
+  const correo = d.correo ? sanitizeValue(d.correo) : '';
+
+  const lines = [
+    `Nombre: ${nombre}`,
+    `Rut: ${rut}`,
+    `Banco: ${banco}`,
+    `Tipo de cuenta: ${tipo}`,
+    `Número de cuenta: ${numero}`
   ];
   if (correo) lines.push(`Correo: ${correo}`);
 
-  // Para copiar en "formato Notas": solo texto plano, con CRLF en iOS
   const sep = isIOS ? '\r\n' : '\n';
   const textPlain = lines.join(sep);
 
-  // Valores individuales para plan B
-  const fields = {
-    nombre, rut, banco,
-    tipo,   // alias interno para tipoCuenta
-    numero, // alias interno para numeroCuenta
-    correo
-  };
-
+  const fields = { nombre, rut, banco, tipo, numero, correo };
   return { textPlain, fields, lines };
 }
 
@@ -322,13 +348,10 @@ function buildText(d){
    Copiado (solo texto plano "Notas") + fallbacks
    ========================= */
 async function copyTextUniversal(text){
-  // 1) Clipboard API (texto plano)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
     return true;
   }
-
-  // 2) textarea + execCommand
   try {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -344,11 +367,9 @@ async function copyTextUniversal(text){
     document.body.removeChild(ta);
     if (ok) return true;
   } catch(e){}
-
-  // 3) contentEditable (texto plano)
   try {
     const el = document.createElement('div');
-    el.textContent = text;        // texto plano
+    el.textContent = text;
     el.contentEditable = 'true';
     el.style.position = 'fixed';
     el.style.top = '-9999px';
@@ -365,7 +386,6 @@ async function copyTextUniversal(text){
     document.body.removeChild(el);
     if (ok2) return true;
   } catch(e){}
-
   return false;
 }
 
@@ -400,20 +420,16 @@ async function init(){
       return;
     }
 
-    // Títulos
     titleEl.textContent  = `Paga a ${sanitizeValue(d.nombre)}`;
     document.title       = `TuQR - ${sanitizeValue(d.nombre)}`;
 
-    // Construcción
     const { textPlain, fields, lines } = buildText(d);
     cachedText   = textPlain;
     cachedFields = fields;
 
-    // Mostrar bloque visible (usamos \n; el visor <pre> renderiza bien en todos)
     datosEl.textContent = lines.join('\n');
     btn.disabled = false;
 
-    // GA4: vista por pagador
     try{
       gtag('event','payer_page_view', {
         merchant_id: id,
@@ -422,7 +438,6 @@ async function init(){
       });
     }catch(e){}
 
-    // Listener botón principal (UNICO)
     btn.addEventListener('click', async ()=>{
       try{
         const ok = await copyTextUniversal(cachedText);
@@ -439,11 +454,9 @@ async function init(){
       }
     }, { once:false });
 
-    // Plan B (por campo)
     fieldsWrap.style.display = 'grid';
 
     const enableBtn = (el, hasValue) => { el.disabled = !hasValue; };
-
     enableBtn(btnNombre, !!fields.nombre);
     enableBtn(btnRut,    !!fields.rut);
     enableBtn(btnBanco,  !!fields.banco);
@@ -451,12 +464,12 @@ async function init(){
     enableBtn(btnNumero, !!fields.numero);
     enableBtn(btnCorreo, !!fields.correo);
 
-    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(cachedFields.nombre); showCopied(); } }catch(e){} });
-    btnRut   .addEventListener('click', async ()=>{ try{ if(!btnRut   .disabled){ await copyTextUniversal(cachedFields.rut);    showCopied(); } }catch(e){} });
-    btnBanco .addEventListener('click', async ()=>{ try{ if(!btnBanco .disabled){ await copyTextUniversal(cachedFields.banco);  showCopied(); } }catch(e){} });
-    btnTipo  .addEventListener('click', async ()=>{ try{ if(!btnTipo  .disabled){ await copyTextUniversal(cachedFields.tipo);   showCopied(); } }catch(e){} });
-    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(cachedFields.numero); showCopied(); } }catch(e){} });
-    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(cachedFields.correo); showCopied(); } }catch(e){} });
+    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(fields.nombre); showCopied(); } }catch(e){} });
+    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextUniversal(fields.rut);    showCopied(); } }catch(e){} });
+    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextUniversal(fields.banco);  showCopied(); } }catch(e){} });
+    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextUniversal(fields.tipo);   showCopied(); } }catch(e){} });
+    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(fields.numero); showCopied(); } }catch(e){} });
+    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(fields.correo); showCopied(); } }catch(e){} });
 
   }catch(e){
     datosEl.textContent = 'Error cargando datos';
