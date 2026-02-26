@@ -76,6 +76,15 @@
 
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
+  .id-row{
+    display:flex; align-items:center; gap:10px; margin-top:14px;
+  }
+  .id-row label{
+    margin:0; white-space:nowrap; flex-shrink:0;
+    font-weight:700; font-size:13px; color:var(--muted);
+  }
+  .id-row input{ margin:0; }
+
   .cta{
     margin-top:22px; padding:13px; width:100%;
     font-size:15px; font-weight:800; font-family:inherit;
@@ -86,17 +95,6 @@
     transition:transform .06s ease, filter .06s ease;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-
-  .cta-nuevo{
-    margin-top:12px; padding:13px; width:100%;
-    font-size:15px; font-weight:800; font-family:inherit;
-    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
-    color:var(--primary); background:transparent;
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, background .12s ease, color .12s ease;
-  }
-  .cta-nuevo:active{ transform:translateY(1px); }
-  .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
 
   .ok{
     margin-top:12px; font-weight:800; padding:10px 12px;
@@ -109,8 +107,68 @@
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
 
-  .help{
-    margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
+  .cta-nuevo{
+    margin-top:12px; padding:13px; width:100%;
+    font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
+    color:var(--primary); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .12s ease, color .12s ease;
+  }
+  .cta-nuevo:active{ transform:translateY(1px); }
+  .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
+
+  .qr-card{
+    margin-top:16px; padding:18px 16px; border-radius:var(--radius);
+    border:1px solid var(--border); background:#fafafa;
+    display:none; text-align:center;
+  }
+  .qr-card.show{ display:block; }
+  .qr-card canvas, .qr-card img{ margin:0 auto 12px; display:block; border-radius:10px; }
+
+  .link-box{
+    display:flex; align-items:center; gap:8px;
+    background:#fff; border:1.5px solid rgba(0,0,0,.10);
+    border-radius:10px; padding:8px 10px; margin-bottom:12px;
+  }
+  .link-box span{
+    flex:1; font-size:12px; color:var(--muted);
+    word-break:break-all; text-align:left;
+  }
+  .btn-copy-link{
+    flex-shrink:0; padding:6px 10px; font-size:12px; font-weight:800;
+    font-family:inherit; border:0; border-radius:8px; cursor:pointer;
+    background:var(--primary); color:#fff; transition:filter .1s;
+  }
+  .btn-copy-link:active{ filter:brightness(.95); }
+
+  .btn-wsp{
+    width:100%; padding:12px; font-size:14px; font-weight:800;
+    font-family:inherit; border:0; border-radius:12px; cursor:pointer;
+    background:#25D366; color:#fff;
+    box-shadow:0 4px 10px rgba(37,211,102,.25);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+  }
+  .btn-wsp:active{ transform:translateY(1px); filter:brightness(.97); }
+
+  .copied-flash{
+    font-size:12px; font-weight:700; color:#0a7;
+    margin-top:6px; opacity:0; transition:opacity .2s;
+  }
+  .copied-flash.show{ opacity:1; }
+
+  .wsp-prefix{
+    display:flex; align-items:center; gap:0;
+  }
+  .wsp-prefix span{
+    padding:11px 10px 11px 12px; font-size:14px; font-weight:700;
+    background:#f2f3f5; border:1.5px solid rgba(0,0,0,.12);
+    border-right:0; border-radius:12px 0 0 12px; color:var(--muted);
+    white-space:nowrap; line-height:1;
+  }
+  .wsp-prefix input{
+    border-radius:0 12px 12px 0; flex:1;
   }
 </style>
 </head>
@@ -124,8 +182,13 @@
   <div class="card">
     <h1>Crear comercio</h1>
 
-    <label for="id">ID único</label>
-    <input id="id" placeholder="ej: ItauCC2" />
+    <!-- ID en una sola línea -->
+    <div class="id-row">
+      <label for="id">Crea tu usuario (sin espacios)</label>
+      <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    </div>
+    <div class="field-err" id="err-id">Sin espacios, solo letras y números</div>
+    <div class="field-err" id="err-id-existe">Usuario ya existe</div>
 
     <div class="row">
       <div>
@@ -180,15 +243,43 @@
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email" />
     <div class="field-err" id="err-correo">Formato de correo inválido</div>
 
+    <label for="wsp">WhatsApp destinatario</label>
+    <div class="wsp-prefix">
+      <span>+56</span>
+      <input id="wsp" placeholder="9XXXXXXXXX" inputmode="numeric" maxlength="9" />
+    </div>
+    <div class="field-err" id="err-wsp">Debe ser 9XXXXXXXXX (9 dígitos, comenzando con 9)</div>
+
     <button class="cta" id="save">Guardar</button>
     <div id="msg"></div>
 
-    <div class="help">Los datos se guardan en <b>data.json</b> vía Cloudflare Worker.</div>
+    <div class="qr-card" id="qrCard">
+      <div id="qrContainer"></div>
+      <div class="link-box">
+        <span id="linkText"></span>
+        <button class="btn-copy-link" id="btnCopyLink">Copiar</button>
+      </div>
+      <div class="copied-flash" id="copiedFlash">¡Link copiado!</div>
+      <button class="btn-wsp" id="btnWsp">Enviar por WhatsApp</button>
+    </div>
+
   </div>
 </div>
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
+
+  let dataJson = null;
+
+  async function cargarData(){
+    try{
+      const res = await fetch('./data.json?ts=' + Date.now(), { cache:'no-store' });
+      if(res.ok) dataJson = await res.json();
+    }catch(_){}
+  }
+  cargarData();
 
   function val(id){ return (document.getElementById(id).value || '').trim(); }
   function clean(s){
@@ -198,6 +289,13 @@
       .replace(/[\u200B-\u200F]/g,'')
       .trim();
   }
+
+  function validarId(id)   { return /^[^\s]+$/.test(id); }
+  function idExiste(id)    { return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id); }
+  function validarEmail(e) { if(!e) return true; return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+
+  // 9 dígitos exactos, comenzando con 9
+  function validarWsp(w)   { return /^9\d{8}$/.test(w); }
 
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
@@ -222,14 +320,30 @@
     return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g,'.') + '-' + dv;
   }
 
-  function validarEmail(email){
-    if(!email) return true;
-    return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
-  }
-
+  /* ── Eventos en tiempo real ── */
+  const idInput     = document.getElementById('id');
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
   const correoInput = document.getElementById('correo');
+  const wspInput    = document.getElementById('wsp');
+
+  idInput.addEventListener('input', function(){
+    this.value = this.value.replace(/\s/g,'');
+    const errFmt    = document.getElementById('err-id');
+    const errExiste = document.getElementById('err-id-existe');
+    if(this.value.length > 0){
+      const fmtOk  = validarId(this.value);
+      const existe = idExiste(this.value);
+      this.classList.toggle('invalid', !fmtOk || existe);
+      this.classList.toggle('valid',    fmtOk && !existe);
+      errFmt.classList.toggle('show',   !fmtOk);
+      errExiste.classList.toggle('show', fmtOk && existe);
+    } else {
+      this.classList.remove('valid','invalid');
+      errFmt.classList.remove('show');
+      errExiste.classList.remove('show');
+    }
+  });
 
   rutInput.addEventListener('input', function(){
     const raw = this.value.replace(/[\.\-\s]/g,'');
@@ -268,23 +382,56 @@
     }
   });
 
+  wspInput.addEventListener('input', function(){
+    this.value = this.value.replace(/\D/g,'').slice(0,9);
+    const errEl = document.getElementById('err-wsp');
+    if(this.value.length > 0){
+      const ok = validarWsp(this.value);
+      this.classList.toggle('valid', ok);
+      this.classList.toggle('invalid', !ok);
+      errEl.classList.toggle('show', !ok);
+    } else {
+      this.classList.remove('valid','invalid');
+      errEl.classList.remove('show');
+    }
+  });
+
+  /* ── QR ── */
+  function generarQR(url){
+    const container = document.getElementById('qrContainer');
+    container.innerHTML = '';
+    new QRCode(container, {
+      text: url,
+      width: 180,
+      height: 180,
+      colorDark: '#1a1a1a',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
+  /* ── Reset ── */
   function resetForm(){
-    ['id','nombre','rut','numeroCuenta','correo'].forEach(id => {
-      const el = document.getElementById(id);
+    ['id','nombre','rut','numeroCuenta','correo','wsp'].forEach(fid => {
+      const el = document.getElementById(fid);
       el.value = '';
       el.classList.remove('valid','invalid');
     });
-    ['tipoCuenta','banco'].forEach(id => {
-      document.getElementById(id).value = '';
+    ['tipoCuenta','banco'].forEach(fid => {
+      document.getElementById(fid).value = '';
     });
-    ['err-rut','err-cuenta','err-correo'].forEach(id => {
-      document.getElementById(id).classList.remove('show');
+    ['err-id','err-id-existe','err-rut','err-cuenta','err-correo','err-wsp'].forEach(fid => {
+      document.getElementById(fid).classList.remove('show');
     });
     document.getElementById('msg').innerHTML = '';
     document.getElementById('save').style.display = '';
+    document.getElementById('qrCard').classList.remove('show');
+    document.getElementById('qrContainer').innerHTML = '';
+    cargarData();
     document.getElementById('id').focus();
   }
 
+  /* ── Guard Worker URL ── */
   (function guard(){
     const msg = document.getElementById('msg');
     if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
@@ -293,6 +440,7 @@
     }
   })();
 
+  /* ── Guardar ── */
   document.getElementById('save').addEventListener('click', async ()=>{
     const msg = document.getElementById('msg');
     msg.innerHTML = '';
@@ -306,10 +454,19 @@
       numeroCuenta: clean(val('numeroCuenta')),
       correo:       clean(val('correo'))
     };
+    const wspVal = val('wsp').replace(/\D/g,'');
 
-    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta){
+    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta || !wspVal){
       msg.innerHTML = '<div class="err">Faltan campos obligatorios.</div>';
       return;
+    }
+    if(!validarId(payload.id)){
+      msg.innerHTML = '<div class="err">El ID no puede contener espacios.</div>';
+      idInput.focus(); return;
+    }
+    if(idExiste(payload.id)){
+      msg.innerHTML = '<div class="err">Usuario ya existe. Elige otro ID.</div>';
+      idInput.focus(); return;
     }
     if(!validarRut(payload.rut)){
       msg.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
@@ -322,6 +479,10 @@
     if(payload.correo && !validarEmail(payload.correo)){
       msg.innerHTML = '<div class="err">El formato del correo no es válido.</div>';
       correoInput.focus(); return;
+    }
+    if(!validarWsp(wspVal)){
+      msg.innerHTML = '<div class="err">El WhatsApp debe ser 9XXXXXXXXX (9 dígitos, comenzando con 9).</div>';
+      wspInput.focus(); return;
     }
 
     try{
@@ -342,12 +503,43 @@
         return;
       }
 
+      const link = BASE_URL + '?id=' + encodeURIComponent(payload.id);
+      generarQR(link);
+      document.getElementById('linkText').textContent = link;
+      document.getElementById('qrCard').classList.add('show');
+
+      // Agrega 56 al enviar por WhatsApp
+      const wspUrl = `https://wa.me/56${wspVal}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
+      document.getElementById('btnWsp').onclick = () => window.open(wspUrl, '_blank');
+
       msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
       document.getElementById('save').style.display = 'none';
       document.getElementById('nuevo').addEventListener('click', resetForm);
 
     }catch(e){
       msg.innerHTML = '<div class="err">Fallo de red: ' + e + '</div>';
+    }
+  });
+
+  /* ── Copiar link ── */
+  document.getElementById('btnCopyLink').addEventListener('click', function(){
+    const link  = document.getElementById('linkText').textContent;
+    const flash = document.getElementById('copiedFlash');
+    function flashCopied(){
+      flash.classList.add('show');
+      setTimeout(() => flash.classList.remove('show'), 1800);
+    }
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(link).then(flashCopied);
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = link;
+      ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flashCopied();
     }
   });
 </script>
