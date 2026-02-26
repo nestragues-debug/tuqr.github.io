@@ -40,7 +40,7 @@
     "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco Itaú",
+    "banco": "Banco ItaÃº",
     "rut": "23182071-k",
     "nombre": "John Rambo",
     "tipoCuenta": "Cuenta Corriente",
@@ -54,5 +54,12 @@
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
+  },
+  "NicoE": {
+    "banco": "Banco BICE",
+    "rut": "13.268.177-5",
+    "nombre": "Nicolas Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "1234523"
   }
 }
