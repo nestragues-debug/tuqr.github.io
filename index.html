@@ -21,11 +21,10 @@
 
   <style>
     :root{
-      /* Paleta (feria / mini-comercio) */
-      --primary: #ff4d2d;   /* rojo-naranja acción */
-      --primary2:#ff7a18;   /* naranja cercanía */
+      /* Paleta “confianza” (cálida pero sobria) */
+      --primary: #ff7a18;   /* naranja menos intenso */
       --accent:  #ffd400;   /* amarillo vibrante */
-      --bg:      #f7f7f8;   /* gris muy claro */
+      --bg:      #f2f3f5;   /* gris claro limpio */
       --card:    #ffffff;   /* blanco */
       --text:    #1a1a1a;   /* negro/gris oscuro */
       --muted:   #5a5a5a;   /* texto secundario */
@@ -39,18 +38,15 @@
     body{
       font-family: "Poppins", system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
       margin:0;
-      padding:22px 14px;
-      background:
-        radial-gradient(900px 380px at 50% -40px, rgba(255, 212, 0, .18), transparent 55%),
-        radial-gradient(900px 380px at 50% 0px, rgba(255, 77, 45, .12), transparent 60%),
-        var(--bg);
+      padding:18px 12px;
+      background: var(--bg);
       color:var(--text);
       -webkit-font-smoothing: antialiased;
       -moz-osx-font-smoothing: grayscale;
     }
 
     .wrap{
-      max-width:560px;
+      max-width:440px; /* más angosto para ver “botones por campo” en celular */
       margin:0 auto;
     }
 
@@ -59,10 +55,10 @@
       display:flex;
       justify-content:center;
       align-items:center;
-      margin: 6px 0 14px;
+      margin: 6px 0 12px;
     }
     .brand img{
-      width:min(180px, 58vw);
+      width:min(240px, 72vw); /* logo más ancho */
       height:auto;
       display:block;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
@@ -78,13 +74,13 @@
       overflow:hidden;
     }
 
-    /* Franja superior tipo “feria” */
+    /* Franja superior sobria */
     .card::before{
       content:"";
       position:absolute;
       top:0; left:0; right:0;
-      height:10px;
-      background: linear-gradient(90deg, var(--accent), var(--primary), var(--primary2));
+      height:8px;
+      background: linear-gradient(90deg, rgba(255,212,0,.95), rgba(255,122,24,.95));
     }
 
     .badge{
@@ -92,11 +88,11 @@
       align-items:center;
       gap:8px;
       font-weight:700;
-      font-size:12px;
+      font-size:11px;          /* mejora opcional */
       color:rgba(26,26,26,.9);
-      background: rgba(255,212,0,.22);
-      border:1px solid rgba(255,212,0,.35);
-      padding:8px 10px;
+      background: rgba(255,212,0,.18);
+      border:1px solid rgba(255,212,0,.32);
+      padding:6px 9px;         /* mejora opcional */
       border-radius:999px;
       margin-top:10px;
     }
@@ -104,7 +100,7 @@
       width:10px; height:10px;
       border-radius:999px;
       background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(255,212,0,.18);
+      box-shadow: 0 0 0 4px rgba(255,212,0,.16);
     }
 
     h1{
@@ -117,37 +113,39 @@
     }
 
     p{
-      margin:0 0 14px;
+      margin:0 0 12px;
       color:var(--muted);
       font-size:14px;
       line-height:1.45;
     }
 
     pre#datos{
-      background: #fff6e5; /* cálido, tipo “papel/nota” */
-      border:1px dashed rgba(255, 122, 24, .45);
+      background: #ffffff;
+      border:1px solid rgba(0,0,0,.10);
       padding:14px;
       border-radius:14px;
-      min-height:118px;
+      min-height:96px; /* más compacto */
       white-space:pre-wrap;
       word-break:break-word;
       font-size:15px;
       line-height:1.32;
       -webkit-text-size-adjust:100%;
-      margin: 0 0 14px;
+      margin: 0 0 12px;
     }
 
     .cta{
-      width:100%;
-      padding:16px;
-      font-size:16px;
+      width:92%;               /* más angosto */
+      margin:0 auto;
+      display:block;
+      padding:13px;            /* menos alto */
+      font-size:15px;
       font-weight:800;
       border:0;
-      border-radius:14px;
+      border-radius:12px;
       cursor:pointer;
       color:#fff;
-      background: linear-gradient(135deg, var(--primary), var(--primary2));
-      box-shadow: 0 10px 18px rgba(255, 77, 45, .22);
+      background:#ff7a18;      /* naranja menos intenso */
+      box-shadow: 0 6px 12px rgba(255,122,24,.22);
       -webkit-tap-highlight-color: transparent;
       transition: transform .06s ease, filter .06s ease;
     }
@@ -156,7 +154,7 @@
       box-shadow:none;
       cursor:not-allowed;
     }
-    .cta:active{ transform: translateY(1px); filter:brightness(0.97); }
+    .cta:active{ transform: translateY(1px); filter:brightness(0.98); }
 
     .ok, .err{
       margin-top:10px;
@@ -177,16 +175,9 @@
       border:1px solid rgba(190,0,0,.14);
     }
 
-    .small{
-      margin-top:14px;
-      font-size:12px;
-      color:#6a6a6a;
-      line-height:1.4;
-    }
-
     /* Plan B: botones por campo */
     .fields{
-      margin-top:16px;
+      margin-top:14px;
       border-top:1px dashed rgba(0,0,0,.12);
       padding-top:12px;
       display:grid;
@@ -208,7 +199,7 @@
       box-shadow: 0 6px 12px rgba(0,0,0,.05);
       transition: transform .06s ease, filter .06s ease;
     }
-    .field-btn:active{ transform: translateY(1px); filter:brightness(0.98); }
+    .field-btn:active{ transform: translateY(1px); filter:brightness(0.99); }
     .field-btn:disabled{
       color:#9a9a9a;
       background:#f2f2f2;
@@ -217,11 +208,10 @@
       cursor:not-allowed;
     }
 
-    /* Micro-ayudas visuales */
     .hint{
       margin-top:12px;
-      background: rgba(255,212,0,.14);
-      border: 1px solid rgba(255,212,0,.28);
+      background: rgba(0,0,0,.03);
+      border: 1px solid rgba(0,0,0,.08);
       border-radius: 14px;
       padding: 12px;
       font-size: 13px;
@@ -229,6 +219,13 @@
       line-height: 1.35;
     }
     .hint b{ font-weight:800; }
+
+    .small{
+      margin-top:12px;
+      font-size:12px;
+      color:#6a6a6a;
+      line-height:1.4;
+    }
   </style>
 </head>
 
@@ -245,7 +242,7 @@
       <div class="badge"><span class="dot"></span> Transferencia rápida y sin errores</div>
 
       <h1 id="title">Paga con transferencia</h1>
-      <p>Copia y pega estos datos en tu app bancaria (sin escribir a mano).</p>
+      <p>Copia y pega en tu app bancaria (sin escribir a mano)</p>
 
       <pre id="datos">Cargando…</pre>
 
