@@ -14,72 +14,264 @@
     gtag('config', 'G-CTV8Y0DJTR');
   </script>
 
+  <!-- Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <style>
+    :root{
+      /* Paleta (feria / mini-comercio) */
+      --primary: #ff4d2d;   /* rojo-naranja acción */
+      --primary2:#ff7a18;   /* naranja cercanía */
+      --accent:  #ffd400;   /* amarillo vibrante */
+      --bg:      #f7f7f8;   /* gris muy claro */
+      --card:    #ffffff;   /* blanco */
+      --text:    #1a1a1a;   /* negro/gris oscuro */
+      --muted:   #5a5a5a;   /* texto secundario */
+      --border:  rgba(0,0,0,.08);
+      --shadow:  0 10px 24px rgba(0,0,0,.08);
+      --radius:  18px;
+    }
+
+    *{ box-sizing:border-box; }
+
     body{
-      font-family: system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
-      margin:0; padding:24px; background:#fff; color:#111;
-      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      font-family: "Poppins", system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
+      margin:0;
+      padding:22px 14px;
+      background:
+        radial-gradient(900px 380px at 50% -40px, rgba(255, 212, 0, .18), transparent 55%),
+        radial-gradient(900px 380px at 50% 0px, rgba(255, 77, 45, .12), transparent 60%),
+        var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
     }
+
+    .wrap{
+      max-width:560px;
+      margin:0 auto;
+    }
+
+    /* Header con logo */
+    .brand{
+      display:flex;
+      justify-content:center;
+      align-items:center;
+      margin: 6px 0 14px;
+    }
+    .brand img{
+      width:min(180px, 58vw);
+      height:auto;
+      display:block;
+      filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
+    }
+
     .card{
-      max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:16px; padding:18px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+      background:var(--card);
+      border:1px solid var(--border);
+      border-radius:var(--radius);
+      padding:18px;
+      box-shadow: var(--shadow);
+      position:relative;
+      overflow:hidden;
     }
-    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
-    p{ margin:0 0 14px; color:#444; }
+
+    /* Franja superior tipo “feria” */
+    .card::before{
+      content:"";
+      position:absolute;
+      top:0; left:0; right:0;
+      height:10px;
+      background: linear-gradient(90deg, var(--accent), var(--primary), var(--primary2));
+    }
+
+    .badge{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      font-weight:700;
+      font-size:12px;
+      color:rgba(26,26,26,.9);
+      background: rgba(255,212,0,.22);
+      border:1px solid rgba(255,212,0,.35);
+      padding:8px 10px;
+      border-radius:999px;
+      margin-top:10px;
+    }
+    .badge .dot{
+      width:10px; height:10px;
+      border-radius:999px;
+      background: var(--accent);
+      box-shadow: 0 0 0 4px rgba(255,212,0,.18);
+    }
+
+    h1{
+      font-size:22px;
+      line-height:1.15;
+      margin:10px 0 8px;
+      font-weight:800;
+      color:var(--text);
+      letter-spacing:-0.2px;
+    }
+
+    p{
+      margin:0 0 14px;
+      color:var(--muted);
+      font-size:14px;
+      line-height:1.45;
+    }
+
     pre#datos{
-      background:#f6f6f6; padding:14px; border-radius:12px; min-height:112px;
-      white-space:pre-wrap; word-break:break-word; font-size:15px; line-height:1.28;
+      background: #fff6e5; /* cálido, tipo “papel/nota” */
+      border:1px dashed rgba(255, 122, 24, .45);
+      padding:14px;
+      border-radius:14px;
+      min-height:118px;
+      white-space:pre-wrap;
+      word-break:break-word;
+      font-size:15px;
+      line-height:1.32;
       -webkit-text-size-adjust:100%;
+      margin: 0 0 14px;
     }
-    button{
-      width:100%; padding:16px; font-size:17px; font-weight:700;
-      border:0; border-radius:12px; cursor:pointer; background:#0078ff; color:#fff;
+
+    .cta{
+      width:100%;
+      padding:16px;
+      font-size:16px;
+      font-weight:800;
+      border:0;
+      border-radius:14px;
+      cursor:pointer;
+      color:#fff;
+      background: linear-gradient(135deg, var(--primary), var(--primary2));
+      box-shadow: 0 10px 18px rgba(255, 77, 45, .22);
       -webkit-tap-highlight-color: transparent;
+      transition: transform .06s ease, filter .06s ease;
     }
-    button:disabled{ background:#999; cursor:not-allowed; }
-    button:active{ filter:brightness(0.96); }
-    .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
-    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
-    .small{ margin-top:12px; font-size:12px; color:#777; }
+    .cta:disabled{
+      background:#bdbdbd;
+      box-shadow:none;
+      cursor:not-allowed;
+    }
+    .cta:active{ transform: translateY(1px); filter:brightness(0.97); }
+
+    .ok, .err{
+      margin-top:10px;
+      font-weight:800;
+      display:none;
+      padding:10px 12px;
+      border-radius:12px;
+      font-size:14px;
+    }
+    .ok{
+      color:#0a7;
+      background: rgba(0,170,120,.10);
+      border:1px solid rgba(0,170,120,.18);
+    }
+    .err{
+      color:#b00;
+      background: rgba(190,0,0,.08);
+      border:1px solid rgba(190,0,0,.14);
+    }
+
+    .small{
+      margin-top:14px;
+      font-size:12px;
+      color:#6a6a6a;
+      line-height:1.4;
+    }
 
     /* Plan B: botones por campo */
     .fields{
-      margin-top:16px; border-top:1px dashed #e5e5e5; padding-top:12px;
-      display:grid; gap:10px; grid-template-columns:1fr;
+      margin-top:16px;
+      border-top:1px dashed rgba(0,0,0,.12);
+      padding-top:12px;
+      display:grid;
+      gap:10px;
+      grid-template-columns:1fr;
     }
     @media (min-width:520px){ .fields{ grid-template-columns:1fr 1fr; } }
+
     .field-btn{
-      padding:12px; font-size:14px; font-weight:700; line-height:1.1;
-      border-radius:10px; border:1px solid #e5e5e5; background:#fafafa; color:#222;
+      padding:12px;
+      font-size:14px;
+      font-weight:800;
+      line-height:1.1;
+      border-radius:12px;
+      border:1px solid rgba(0,0,0,.10);
+      background: #fff;
+      color:var(--text);
+      cursor:pointer;
+      box-shadow: 0 6px 12px rgba(0,0,0,.05);
+      transition: transform .06s ease, filter .06s ease;
     }
-    .field-btn:disabled{ color:#aaa; background:#f1f1f1; border-color:#eee; }
+    .field-btn:active{ transform: translateY(1px); filter:brightness(0.98); }
+    .field-btn:disabled{
+      color:#9a9a9a;
+      background:#f2f2f2;
+      border-color:#e9e9e9;
+      box-shadow:none;
+      cursor:not-allowed;
+    }
+
+    /* Micro-ayudas visuales */
+    .hint{
+      margin-top:12px;
+      background: rgba(255,212,0,.14);
+      border: 1px solid rgba(255,212,0,.28);
+      border-radius: 14px;
+      padding: 12px;
+      font-size: 13px;
+      color: rgba(26,26,26,.9);
+      line-height: 1.35;
+    }
+    .hint b{ font-weight:800; }
   </style>
 </head>
 
 <body>
-  <div class="card">
-    <h1 id="title">Paga con transferencia</h1>
-    <p>Copia y pega en tu aplicación bancaria.</p>
+  <div class="wrap">
 
-    <pre id="datos">Cargando…</pre>
-
-    <button id="copiar" disabled>Copiar datos para transferir</button>
-
-    <div id="ok" class="ok">Copiado</div>
-    <div id="err" class="err">No encontramos este comercio</div>
-
-    <!-- Plan B: copiar por campo -->
-    <div id="fields" class="fields" style="display:none;">
-      <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
-      <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
-      <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
-      <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
-      <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
-      <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
+    <!-- Logo centrado arriba -->
+    <div class="brand">
+      <!-- Si no aparece, cambia src a "./main/TuQRLogo.png" -->
+      <img src="./TuQRLogo.png" alt="TuQR" />
     </div>
 
-    <div class="small">
-      En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
+    <div class="card">
+      <div class="badge"><span class="dot"></span> Transferencia rápida y sin errores</div>
+
+      <h1 id="title">Paga con transferencia</h1>
+      <p>Copia y pega estos datos en tu app bancaria (sin escribir a mano).</p>
+
+      <pre id="datos">Cargando…</pre>
+
+      <button id="copiar" class="cta" disabled>Copiar datos para transferir</button>
+
+      <div id="ok" class="ok">✅ Copiado</div>
+      <div id="err" class="err">❌ No encontramos este comercio</div>
+
+      <!-- Plan B: copiar por campo -->
+      <div id="fields" class="fields" style="display:none;">
+        <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
+        <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
+        <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
+        <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
+        <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
+        <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
+      </div>
+
+      <div class="hint">
+        En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b><br>
+        Si tu banco no pega bien, usa los botones por campo.
+      </div>
+
+      <div class="small">
+        Consejo: revisa que el nombre y el número de cuenta coincidan antes de enviar.
+      </div>
     </div>
   </div>
 
@@ -116,11 +308,11 @@ const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' 
 function clean(s){
   return String(s ?? '')
     .normalize('NFC')
-    .replace(/\u00A0/g, ' ')              // NBSP -> espacio normal
-    .replace(/[\u200B-\u200F]/g, '')      // zero-width
-    .replace(/\r\n/g, '\n')               // normaliza internamente a \n
+    .replace(/\u00A0/g, ' ')
+    .replace(/[\u200B-\u200F]/g, '')
+    .replace(/\r\n/g, '\n')
     .replace(/\r/g, '\n')
-    .replace(/[ \t]+$/gm, '')             // trim fin de línea
+    .replace(/[ \t]+$/gm, '')
     .trim();
 }
 function sanitizeValue(s){ return clean(s); }
@@ -145,18 +337,10 @@ function buildText(d){
   ];
   if (correo) lines.push(`Correo: ${correo}`);
 
-  // Para copiar en "formato Notas": solo texto plano, con CRLF en iOS
   const sep = isIOS ? '\r\n' : '\n';
   const textPlain = lines.join(sep);
 
-  // Valores individuales para plan B
-  const fields = {
-    nombre, rut, banco,
-    tipo,   // alias interno para tipoCuenta
-    numero, // alias interno para numeroCuenta
-    correo
-  };
-
+  const fields = { nombre, rut, banco, tipo, numero, correo };
   return { textPlain, fields, lines };
 }
 
@@ -164,13 +348,10 @@ function buildText(d){
    Copiado (solo texto plano "Notas") + fallbacks
    ========================= */
 async function copyTextUniversal(text){
-  // 1) Clipboard API (texto plano)
   if (navigator.clipboard && window.isSecureContext) {
     await navigator.clipboard.writeText(text);
     return true;
   }
-
-  // 2) textarea + execCommand
   try {
     const ta = document.createElement('textarea');
     ta.value = text;
@@ -186,11 +367,9 @@ async function copyTextUniversal(text){
     document.body.removeChild(ta);
     if (ok) return true;
   } catch(e){}
-
-  // 3) contentEditable (texto plano)
   try {
     const el = document.createElement('div');
-    el.textContent = text;        // texto plano
+    el.textContent = text;
     el.contentEditable = 'true';
     el.style.position = 'fixed';
     el.style.top = '-9999px';
@@ -207,7 +386,6 @@ async function copyTextUniversal(text){
     document.body.removeChild(el);
     if (ok2) return true;
   } catch(e){}
-
   return false;
 }
 
@@ -242,20 +420,16 @@ async function init(){
       return;
     }
 
-    // Títulos
     titleEl.textContent  = `Paga a ${sanitizeValue(d.nombre)}`;
     document.title       = `TuQR - ${sanitizeValue(d.nombre)}`;
 
-    // Construcción
     const { textPlain, fields, lines } = buildText(d);
     cachedText   = textPlain;
     cachedFields = fields;
 
-    // Mostrar bloque visible (usamos \n; el visor <pre> renderiza bien en todos)
     datosEl.textContent = lines.join('\n');
     btn.disabled = false;
 
-    // GA4: vista por pagador
     try{
       gtag('event','payer_page_view', {
         merchant_id: id,
@@ -264,7 +438,6 @@ async function init(){
       });
     }catch(e){}
 
-    // Listener botón principal (UNICO)
     btn.addEventListener('click', async ()=>{
       try{
         const ok = await copyTextUniversal(cachedText);
@@ -281,11 +454,9 @@ async function init(){
       }
     }, { once:false });
 
-    // Plan B (por campo)
     fieldsWrap.style.display = 'grid';
 
     const enableBtn = (el, hasValue) => { el.disabled = !hasValue; };
-
     enableBtn(btnNombre, !!fields.nombre);
     enableBtn(btnRut,    !!fields.rut);
     enableBtn(btnBanco,  !!fields.banco);
