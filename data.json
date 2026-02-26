@@ -40,9 +40,9 @@
     "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco Itaú",
+    "banco": "Banco ItaÃº",
     "rut": "23182071-k",
-    "nombre": "John Rambo Itaú CC",
+    "nombre": "John Rambo ItaÃº CC",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -68,5 +68,13 @@
     "nombre": "A",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "1"
+  },
+  "a": {
+    "banco": "Banco de Chile",
+    "rut": "1",
+    "nombre": "a",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "s1",
+    "correo": "g"
   }
 }
