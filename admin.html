@@ -47,7 +47,7 @@
   }
 
   h1{ font-size:20px; font-weight:800; margin:10px 0 6px; letter-spacing:-0.2px; }
-  .subtitle{ font-size:12px; color:var(--muted); margin:0 0 18px; line-height:1.4; }
+  .subtitle{ font-size:12px; color:var(--muted); margin:0 0 4px; line-height:1.4; }
 
   label{
     font-weight:700; font-size:13px; color:var(--muted);
@@ -161,12 +161,14 @@
 
   <div class="card">
     <h1>Crear comercio</h1>
-    <p class="subtitle">El ID debe ser único y sin espacios. Ej: <b>ItauCC2</b>, <b>EstadoRut</b></p>
+    <p class="subtitle">Crea tu usuario (sin espacios). Ej: <b>ItauCC2</b>, <b>EstadoRut</b></p>
 
-    <label for="id">ID único</label>
-    <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    <div style="display:flex; align-items:center; gap:8px; margin-top:14px;">
+      <label for="id" style="margin:0; white-space:nowrap;">ID único</label>
+      <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" style="margin:0;"/>
+    </div>
     <div class="field-err" id="err-id">Sin espacios, solo letras y números</div>
-    <div class="field-err" id="err-id-existe">Este ID ya existe en data.json</div>
+    <div class="field-err" id="err-id-existe">Usuario ya existe</div>
 
     <div class="row">
       <div>
@@ -246,7 +248,6 @@
   const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
   const BASE_URL   = 'https://tuqrapp.github.io/';
 
-  // Cache del data.json para validar IDs existentes
   let dataJson = null;
 
   async function cargarData(){
@@ -266,13 +267,8 @@
       .trim();
   }
 
-  /* ── Validaciones ── */
-  function validarId(id){
-    return /^[^\s]+$/.test(id); // sin espacios
-  }
-  function idExiste(id){
-    return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id);
-  }
+  function validarId(id){ return /^[^\s]+$/.test(id); }
+  function idExiste(id){ return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id); }
 
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
@@ -302,9 +298,7 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
   }
 
-  function validarWsp(wsp){
-    return /^\d{8,15}$/.test(wsp);
-  }
+  function validarWsp(wsp){ return /^\d{8,15}$/.test(wsp); }
 
   /* ── Eventos en tiempo real ── */
   const idInput     = document.getElementById('id');
@@ -314,17 +308,16 @@
   const wspInput    = document.getElementById('wsp');
 
   idInput.addEventListener('input', function(){
-    // Elimina espacios al escribir
     this.value = this.value.replace(/\s/g,'');
     const errFmt    = document.getElementById('err-id');
     const errExiste = document.getElementById('err-id-existe');
     if(this.value.length > 0){
-      const fmtOk = validarId(this.value);
+      const fmtOk  = validarId(this.value);
       const existe = idExiste(this.value);
       this.classList.toggle('invalid', !fmtOk || existe);
       this.classList.toggle('valid',    fmtOk && !existe);
-      errFmt.classList.toggle('show',    !fmtOk);
-      errExiste.classList.toggle('show',  fmtOk && existe);
+      errFmt.classList.toggle('show',   !fmtOk);
+      errExiste.classList.toggle('show', fmtOk && existe);
     } else {
       this.classList.remove('valid','invalid');
       errFmt.classList.remove('show');
@@ -414,7 +407,7 @@
     document.getElementById('save').style.display = '';
     document.getElementById('qrCard').classList.remove('show');
     document.getElementById('qrContainer').innerHTML = '';
-    cargarData(); // recarga data.json para que el nuevo ID quede registrado
+    cargarData();
     document.getElementById('id').focus();
   }
 
@@ -443,7 +436,6 @@
     };
     const wspVal = val('wsp').replace(/\D/g,'');
 
-    // Campos obligatorios
     if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta || !wspVal){
       msg.innerHTML = '<div class="err">Faltan campos obligatorios.</div>';
       return;
@@ -453,7 +445,7 @@
       idInput.focus(); return;
     }
     if(idExiste(payload.id)){
-      msg.innerHTML = '<div class="err">El ID "' + payload.id + '" ya existe en data.json. Elige otro.</div>';
+      msg.innerHTML = '<div class="err">Usuario ya existe. Elige otro ID.</div>';
       idInput.focus(); return;
     }
     if(!validarRut(payload.rut)){
