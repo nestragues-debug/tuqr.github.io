@@ -74,23 +74,17 @@
   }
   .field-err.show{ display:block; }
 
-  /* Prefijo teléfono */
-  .phone-wrap{ display:flex; gap:8px; align-items:flex-start; }
+  .phone-wrap{ display:flex; gap:8px; }
   .phone-prefix{
     width:72px; flex-shrink:0; padding:11px 10px; font-size:14px; font-family:inherit;
     border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
-    background:#f7f7f7; color:var(--muted); text-align:center;
-    outline:none;
+    background:#f7f7f7; color:var(--muted); text-align:center; outline:none;
   }
   .phone-wrap input{ flex:1; }
 
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .divider{ margin:20px 0 4px; border:none; border-top:1px dashed rgba(0,0,0,.10); }
 
-  .divider{
-    margin:20px 0 4px; border:none; border-top:1px dashed rgba(0,0,0,.10);
-  }
-
-  /* Botón principal */
   .cta{
     margin-top:22px; padding:13px; width:100%;
     font-size:15px; font-weight:800; font-family:inherit;
@@ -102,7 +96,6 @@
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  /* Botón contorno */
   .cta-outline{
     margin-top:12px; padding:13px; width:100%;
     font-size:15px; font-weight:800; font-family:inherit;
@@ -114,7 +107,6 @@
   .cta-outline:active{ transform:translateY(1px); }
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
 
-  /* Resultado */
   #resultado{ display:none; margin-top:20px; }
 
   .ok-pill{
@@ -130,7 +122,6 @@
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
 
-  /* QR */
   .qr-wrap{
     display:flex; flex-direction:column; align-items:center; gap:14px;
     padding:18px; background:#fff; border:1px solid var(--border);
@@ -232,7 +223,7 @@
 
     <hr class="divider"/>
 
-    <label for="telefono">WhatsApp para recibir el link</label>
+    <label for="telefono">WhatsApp del comercio</label>
     <div class="phone-wrap">
       <input class="phone-prefix" value="+56" readonly />
       <input id="telefono" placeholder="912345678" inputmode="numeric" maxlength="12" />
@@ -242,7 +233,6 @@
     <button class="cta" id="save">Guardar</button>
     <div id="msg-err"></div>
 
-    <!-- Resultado: QR + acciones + crear nuevo -->
     <div id="resultado">
       <div style="text-align:center">
         <span class="ok-pill">✓ ¡Comercio creado!</span>
@@ -285,7 +275,6 @@
       .trim();
   }
 
-  /* ── Validaciones ── */
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
@@ -306,7 +295,6 @@
   function validarEmail(e){ return !e || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
   function validarTelefono(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
 
-  /* ── Inputs en tiempo real ── */
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
   const correoInput = document.getElementById('correo');
@@ -350,7 +338,6 @@
     } else { this.classList.remove('valid','invalid'); errEl.classList.remove('show'); }
   });
 
-  /* ── QR ── */
   let qrURL = '';
   let qrGenerated = false;
   let numeroWA = '';
@@ -373,7 +360,6 @@
     document.getElementById('qrLabel').textContent = url;
   }
 
-  /* ── Guardar imagen ── */
   document.getElementById('btnGuardarQR').addEventListener('click', ()=>{
     if(!qrGenerated) return;
     const canvas = document.getElementById('qrCanvas');
@@ -383,15 +369,15 @@
     link.click();
   });
 
-  /* ── WhatsApp ── */
   document.getElementById('btnWA').addEventListener('click', ()=>{
     if(!qrURL || !numeroWA) return;
-    // Formato: +56 + número sin el 0 inicial si lo tuviera
+    // Elimina el 0 inicial si existe (ej: 09... → 9...)
     const num = '56' + numeroWA.replace(/^0+/,'');
-    window.open('https://wa.me/' + num + '?text=' + encodeURIComponent(qrURL), '_blank');
+    // api.whatsapp.com funciona en desktop (WhatsApp Web) y móvil
+    const waURL = 'https://api.whatsapp.com/send?phone=' + num + '&text=' + encodeURIComponent(qrURL);
+    window.open(waURL, '_blank');
   });
 
-  /* ── Reset ── */
   function resetForm(){
     ['id','nombre','rut','numeroCuenta','correo','telefono'].forEach(id => {
       const el = document.getElementById(id);
@@ -410,7 +396,6 @@
 
   document.getElementById('nuevo').addEventListener('click', resetForm);
 
-  /* ── Guard ── */
   (function guard(){
     if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
       document.getElementById('msg-err').innerHTML = '<div class="err">WORKER_URL no está configurado.</div>';
@@ -418,7 +403,6 @@
     }
   })();
 
-  /* ── Guardar ── */
   document.getElementById('save').addEventListener('click', async ()=>{
     const msgErr = document.getElementById('msg-err');
     msgErr.innerHTML = '';
@@ -472,7 +456,6 @@
         return;
       }
 
-      // Éxito
       numeroWA = telefono;
       document.getElementById('save').style.display = 'none';
       const url = BASE_URL + '?id=' + encodeURIComponent(payload.id);
