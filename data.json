@@ -40,9 +40,9 @@
     "correo": "john.rambo@email.com"
   },
   "ItauCC": {
-    "banco": "Banco ItaÃÂÃÂº",
+    "banco": "Banco ItaÃÂÃÂÃÂÃÂº",
     "rut": "23182071-k",
-    "nombre": "John Rambo ItaÃÂÃÂº CC",
+    "nombre": "John Rambo ItaÃÂÃÂÃÂÃÂº CC",
     "tipoCuenta": "Cuenta Vista",
     "numeroCuenta": "11111111",
     "correo": "john.rambo@email.com"
@@ -97,5 +97,12 @@
     "nombre": "Nicolas",
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "2"
+  },
+  "Nuevoprueba": {
+    "banco": "Banco Ripley",
+    "rut": "24.001.985-K",
+    "nombre": "Lourdes Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "1298712312"
   }
 }
