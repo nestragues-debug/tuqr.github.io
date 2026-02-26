@@ -76,15 +76,7 @@
 
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
-  .id-row{
-    display:flex; align-items:center; gap:10px; margin-top:14px;
-  }
-  .id-row label{
-    margin:0; white-space:nowrap; flex-shrink:0;
-    font-weight:700; font-size:13px; color:var(--muted);
-  }
-  .id-row input{ margin:0; }
-
+  /* Botón principal */
   .cta{
     margin-top:22px; padding:13px; width:100%;
     font-size:15px; font-weight:800; font-family:inherit;
@@ -96,79 +88,68 @@
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  .ok{
-    margin-top:12px; font-weight:800; padding:10px 12px;
-    border-radius:12px; font-size:14px;
-    color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
+  /* Botón contorno */
+  .cta-outline{
+    margin-top:12px; padding:13px; width:100%;
+    font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
+    color:var(--primary); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .12s ease;
   }
+  .cta-outline:active{ transform:translateY(1px); }
+  .cta-outline:hover{ background:rgba(255,122,24,.07); }
+
+  /* Resultado tras guardar */
+  #resultado{ display:none; margin-top:20px; }
+
+  .ok-pill{
+    display:inline-block;
+    padding:6px 14px; border-radius:999px; font-size:13px; font-weight:700;
+    color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
+    margin-bottom:16px;
+  }
+
   .err{
     margin-top:12px; font-weight:800; padding:10px 12px;
     border-radius:12px; font-size:14px; white-space:pre-wrap;
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
 
-  .cta-nuevo{
-    margin-top:12px; padding:13px; width:100%;
-    font-size:15px; font-weight:800; font-family:inherit;
-    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
-    color:var(--primary); background:transparent;
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, background .12s ease, color .12s ease;
+  /* QR */
+  .qr-wrap{
+    display:flex; flex-direction:column; align-items:center; gap:14px;
+    padding:18px; background:#fff; border:1px solid var(--border);
+    border-radius:16px; box-shadow:0 4px 12px rgba(0,0,0,.06);
   }
-  .cta-nuevo:active{ transform:translateY(1px); }
-  .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
+  .qr-wrap canvas{ border-radius:8px; }
+  .qr-label{ font-size:12px; color:var(--muted); font-weight:600; text-align:center; word-break:break-all; }
 
-  .qr-card{
-    margin-top:16px; padding:18px 16px; border-radius:var(--radius);
-    border:1px solid var(--border); background:#fafafa;
-    display:none; text-align:center;
-  }
-  .qr-card.show{ display:block; }
-  .qr-card canvas, .qr-card img{ margin:0 auto 12px; display:block; border-radius:10px; }
-
-  .link-box{
-    display:flex; align-items:center; gap:8px;
-    background:#fff; border:1.5px solid rgba(0,0,0,.10);
-    border-radius:10px; padding:8px 10px; margin-bottom:12px;
-  }
-  .link-box span{
-    flex:1; font-size:12px; color:var(--muted);
-    word-break:break-all; text-align:left;
-  }
-  .btn-copy-link{
-    flex-shrink:0; padding:6px 10px; font-size:12px; font-weight:800;
-    font-family:inherit; border:0; border-radius:8px; cursor:pointer;
-    background:var(--primary); color:#fff; transition:filter .1s;
-  }
-  .btn-copy-link:active{ filter:brightness(.95); }
-
-  .btn-wsp{
-    width:100%; padding:12px; font-size:14px; font-weight:800;
-    font-family:inherit; border:0; border-radius:12px; cursor:pointer;
-    background:#25D366; color:#fff;
+  /* Botones de acción QR */
+  .qr-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
+  .btn-wa{
+    padding:11px 10px; font-size:13px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff;
+    background:#25d366;
     box-shadow:0 4px 10px rgba(37,211,102,.25);
     -webkit-tap-highlight-color:transparent;
     transition:transform .06s ease, filter .06s ease;
+    display:flex; align-items:center; justify-content:center; gap:6px;
   }
-  .btn-wsp:active{ transform:translateY(1px); filter:brightness(.97); }
+  .btn-wa:active{ transform:translateY(1px); filter:brightness(.97); }
+  .btn-save{
+    padding:11px 10px; font-size:13px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff;
+    background:#555;
+    box-shadow:0 4px 10px rgba(0,0,0,.12);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+    display:flex; align-items:center; justify-content:center; gap:6px;
+  }
+  .btn-save:active{ transform:translateY(1px); filter:brightness(.97); }
 
-  .copied-flash{
-    font-size:12px; font-weight:700; color:#0a7;
-    margin-top:6px; opacity:0; transition:opacity .2s;
-  }
-  .copied-flash.show{ opacity:1; }
-
-  .wsp-prefix{
-    display:flex; align-items:center; gap:0;
-  }
-  .wsp-prefix span{
-    padding:11px 10px 11px 12px; font-size:14px; font-weight:700;
-    background:#f2f3f5; border:1.5px solid rgba(0,0,0,.12);
-    border-right:0; border-radius:12px 0 0 12px; color:var(--muted);
-    white-space:nowrap; line-height:1;
-  }
-  .wsp-prefix input{
-    border-radius:0 12px 12px 0; flex:1;
+  .help{
+    margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
   }
 </style>
 </head>
@@ -182,13 +163,8 @@
   <div class="card">
     <h1>Crear comercio</h1>
 
-    <!-- ID en una sola línea -->
-    <div class="id-row">
-      <label for="id">Crea tu usuario (sin espacios)</label>
-      <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-    </div>
-    <div class="field-err" id="err-id">Sin espacios, solo letras y números</div>
-    <div class="field-err" id="err-id-existe">Usuario ya existe</div>
+    <label for="id">ID único</label>
+    <input id="id" placeholder="ej: ItauCC2" />
 
     <div class="row">
       <div>
@@ -243,43 +219,43 @@
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email" />
     <div class="field-err" id="err-correo">Formato de correo inválido</div>
 
-    <label for="wsp">WhatsApp destinatario</label>
-    <div class="wsp-prefix">
-      <span>+56</span>
-      <input id="wsp" placeholder="9XXXXXXXXX" inputmode="numeric" maxlength="9" />
-    </div>
-    <div class="field-err" id="err-wsp">Debe ser 9XXXXXXXXX (9 dígitos, comenzando con 9)</div>
-
     <button class="cta" id="save">Guardar</button>
-    <div id="msg"></div>
+    <div id="msg-err"></div>
 
-    <div class="qr-card" id="qrCard">
-      <div id="qrContainer"></div>
-      <div class="link-box">
-        <span id="linkText"></span>
-        <button class="btn-copy-link" id="btnCopyLink">Copiar</button>
+    <!-- Resultado: QR + acciones + crear nuevo -->
+    <div id="resultado">
+      <div style="text-align:center">
+        <span class="ok-pill">✓ ¡Comercio creado!</span>
       </div>
-      <div class="copied-flash" id="copiedFlash">¡Link copiado!</div>
-      <button class="btn-wsp" id="btnWsp">Enviar por WhatsApp</button>
+
+      <div class="qr-wrap">
+        <canvas id="qrCanvas"></canvas>
+        <div class="qr-label" id="qrLabel"></div>
+        <div class="qr-actions">
+          <button class="btn-wa" id="btnWA">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.112.549 4.1 1.508 5.83L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.732.973.998-3.632-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
+            WhatsApp
+          </button>
+          <button class="btn-save" id="btnGuardarQR">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Guardar QR
+          </button>
+        </div>
+      </div>
+
+      <button class="cta-outline" id="nuevo">+ Crear otro comercio</button>
     </div>
 
+    <div class="help">Los datos se guardan en <b>data.json</b> vía Cloudflare Worker.</div>
   </div>
 </div>
 
+<!-- QR library -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script>
-  const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
-  const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
-
-  let dataJson = null;
-
-  async function cargarData(){
-    try{
-      const res = await fetch('./data.json?ts=' + Date.now(), { cache:'no-store' });
-      if(res.ok) dataJson = await res.json();
-    }catch(_){}
-  }
-  cargarData();
+  const WORKER_URL   = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL     = 'https://tuqrapp.github.io/tuqr.github.io/';
 
   function val(id){ return (document.getElementById(id).value || '').trim(); }
   function clean(s){
@@ -290,60 +266,30 @@
       .trim();
   }
 
-  function validarId(id)   { return /^[^\s]+$/.test(id); }
-  function idExiste(id)    { return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id); }
-  function validarEmail(e) { if(!e) return true; return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
-
-  // 9 dígitos exactos, comenzando con 9
-  function validarWsp(w)   { return /^9\d{8}$/.test(w); }
-
+  /* ── Validación RUT ── */
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
-    const cuerpo = r.slice(0,-1);
-    const dv     = r.slice(-1);
+    const cuerpo = r.slice(0,-1), dv = r.slice(-1);
     let suma = 0, mul = 2;
-    for(let i = cuerpo.length - 1; i >= 0; i--){
+    for(let i = cuerpo.length-1; i >= 0; i--){
       suma += parseInt(cuerpo[i]) * mul;
-      mul = mul === 7 ? 2 : mul + 1;
+      mul = mul === 7 ? 2 : mul+1;
     }
-    const dvEsperado = 11 - (suma % 11);
-    const dvStr = dvEsperado === 11 ? '0' : dvEsperado === 10 ? 'K' : String(dvEsperado);
-    return dv === dvStr;
+    const dvE = 11-(suma%11);
+    return dv === (dvE===11?'0':dvE===10?'K':String(dvE));
   }
-
   function formatearRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'');
     if(r.length < 2) return r;
-    const cuerpo = r.slice(0,-1);
-    const dv     = r.slice(-1);
-    return cuerpo.replace(/\B(?=(\d{3})+(?!\d))/g,'.') + '-' + dv;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.') + '-' + r.slice(-1);
   }
+  function validarEmail(e){ return !e || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
 
-  /* ── Eventos en tiempo real ── */
-  const idInput     = document.getElementById('id');
+  /* ── Inputs en tiempo real ── */
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
   const correoInput = document.getElementById('correo');
-  const wspInput    = document.getElementById('wsp');
-
-  idInput.addEventListener('input', function(){
-    this.value = this.value.replace(/\s/g,'');
-    const errFmt    = document.getElementById('err-id');
-    const errExiste = document.getElementById('err-id-existe');
-    if(this.value.length > 0){
-      const fmtOk  = validarId(this.value);
-      const existe = idExiste(this.value);
-      this.classList.toggle('invalid', !fmtOk || existe);
-      this.classList.toggle('valid',    fmtOk && !existe);
-      errFmt.classList.toggle('show',   !fmtOk);
-      errExiste.classList.toggle('show', fmtOk && existe);
-    } else {
-      this.classList.remove('valid','invalid');
-      errFmt.classList.remove('show');
-      errExiste.classList.remove('show');
-    }
-  });
 
   rutInput.addEventListener('input', function(){
     const raw = this.value.replace(/[\.\-\s]/g,'');
@@ -351,99 +297,105 @@
     const errEl = document.getElementById('err-rut');
     if(this.value.length > 0){
       const ok = validarRut(this.value);
-      this.classList.toggle('valid', ok);
-      this.classList.toggle('invalid', !ok);
-      errEl.classList.toggle('show', !ok);
-    } else {
-      this.classList.remove('valid','invalid');
-      errEl.classList.remove('show');
-    }
+      this.classList.toggle('valid',ok); this.classList.toggle('invalid',!ok);
+      errEl.classList.toggle('show',!ok);
+    } else { this.classList.remove('valid','invalid'); errEl.classList.remove('show'); }
   });
 
   cuentaInput.addEventListener('input', function(){
     this.value = this.value.replace(/\D/g,'');
-    const errEl = document.getElementById('err-cuenta');
-    const ok = this.value.length === 0 || /^\d+$/.test(this.value);
+    const ok = !this.value || /^\d+$/.test(this.value);
     this.classList.toggle('valid', this.value.length > 0 && ok);
     this.classList.toggle('invalid', this.value.length > 0 && !ok);
-    errEl.classList.toggle('show', !ok);
+    document.getElementById('err-cuenta').classList.toggle('show',!ok);
   });
 
   correoInput.addEventListener('blur', function(){
     const errEl = document.getElementById('err-correo');
     if(this.value.length > 0){
       const ok = validarEmail(this.value);
-      this.classList.toggle('valid', ok);
-      this.classList.toggle('invalid', !ok);
-      errEl.classList.toggle('show', !ok);
-    } else {
-      this.classList.remove('valid','invalid');
-      errEl.classList.remove('show');
-    }
-  });
-
-  wspInput.addEventListener('input', function(){
-    this.value = this.value.replace(/\D/g,'').slice(0,9);
-    const errEl = document.getElementById('err-wsp');
-    if(this.value.length > 0){
-      const ok = validarWsp(this.value);
-      this.classList.toggle('valid', ok);
-      this.classList.toggle('invalid', !ok);
-      errEl.classList.toggle('show', !ok);
-    } else {
-      this.classList.remove('valid','invalid');
-      errEl.classList.remove('show');
-    }
+      this.classList.toggle('valid',ok); this.classList.toggle('invalid',!ok);
+      errEl.classList.toggle('show',!ok);
+    } else { this.classList.remove('valid','invalid'); errEl.classList.remove('show'); }
   });
 
   /* ── QR ── */
+  let qrURL = '';
+  let qrGenerated = false;
+
   function generarQR(url){
-    const container = document.getElementById('qrContainer');
-    container.innerHTML = '';
-    new QRCode(container, {
+    qrURL = url;
+    const canvas = document.getElementById('qrCanvas');
+    // Limpiar canvas anterior
+    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+    // qrcodejs trabaja con un div contenedor
+    const tmp = document.createElement('div');
+    new QRCode(tmp, {
       text: url,
-      width: 180,
-      height: 180,
-      colorDark: '#1a1a1a',
-      colorLight: '#ffffff',
+      width: 200,
+      height: 200,
       correctLevel: QRCode.CorrectLevel.M
     });
+    // qrcodejs genera un canvas interno; lo copiamos al nuestro
+    setTimeout(()=>{
+      const srcCanvas = tmp.querySelector('canvas');
+      if(srcCanvas){
+        canvas.width  = srcCanvas.width;
+        canvas.height = srcCanvas.height;
+        canvas.getContext('2d').drawImage(srcCanvas,0,0);
+      }
+      qrGenerated = true;
+    }, 100);
+    document.getElementById('qrLabel').textContent = url;
   }
+
+  /* ── Guardar imagen ── */
+  document.getElementById('btnGuardarQR').addEventListener('click', ()=>{
+    if(!qrGenerated) return;
+    const canvas = document.getElementById('qrCanvas');
+    const link   = document.createElement('a');
+    link.download = 'TuQR-' + clean(val('id') || 'comercio') + '.png';
+    link.href     = canvas.toDataURL('image/png');
+    link.click();
+  });
+
+  /* ── WhatsApp ── */
+  document.getElementById('btnWA').addEventListener('click', ()=>{
+    if(!qrURL) return;
+    window.open('https://wa.me/?text=' + encodeURIComponent(qrURL), '_blank');
+  });
 
   /* ── Reset ── */
   function resetForm(){
-    ['id','nombre','rut','numeroCuenta','correo','wsp'].forEach(fid => {
-      const el = document.getElementById(fid);
-      el.value = '';
-      el.classList.remove('valid','invalid');
+    ['id','nombre','rut','numeroCuenta','correo'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = ''; el.classList.remove('valid','invalid');
     });
-    ['tipoCuenta','banco'].forEach(fid => {
-      document.getElementById(fid).value = '';
+    ['tipoCuenta','banco'].forEach(id => { document.getElementById(id).value = ''; });
+    ['err-rut','err-cuenta','err-correo'].forEach(id => {
+      document.getElementById(id).classList.remove('show');
     });
-    ['err-id','err-id-existe','err-rut','err-cuenta','err-correo','err-wsp'].forEach(fid => {
-      document.getElementById(fid).classList.remove('show');
-    });
-    document.getElementById('msg').innerHTML = '';
+    document.getElementById('msg-err').innerHTML = '';
+    document.getElementById('resultado').style.display = 'none';
     document.getElementById('save').style.display = '';
-    document.getElementById('qrCard').classList.remove('show');
-    document.getElementById('qrContainer').innerHTML = '';
-    cargarData();
+    qrURL = ''; qrGenerated = false;
     document.getElementById('id').focus();
   }
 
-  /* ── Guard Worker URL ── */
+  document.getElementById('nuevo').addEventListener('click', resetForm);
+
+  /* ── Guard ── */
   (function guard(){
-    const msg = document.getElementById('msg');
     if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
-      msg.innerHTML = '<div class="err">WORKER_URL no está configurado correctamente.</div>';
+      document.getElementById('msg-err').innerHTML = '<div class="err">WORKER_URL no está configurado.</div>';
       throw new Error('WORKER_URL inválido');
     }
   })();
 
   /* ── Guardar ── */
   document.getElementById('save').addEventListener('click', async ()=>{
-    const msg = document.getElementById('msg');
-    msg.innerHTML = '';
+    const msgErr = document.getElementById('msg-err');
+    msgErr.innerHTML = '';
 
     const payload = {
       id:           clean(val('id')),
@@ -454,92 +406,49 @@
       numeroCuenta: clean(val('numeroCuenta')),
       correo:       clean(val('correo'))
     };
-    const wspVal = val('wsp').replace(/\D/g,'');
 
-    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta || !wspVal){
-      msg.innerHTML = '<div class="err">Faltan campos obligatorios.</div>';
-      return;
-    }
-    if(!validarId(payload.id)){
-      msg.innerHTML = '<div class="err">El ID no puede contener espacios.</div>';
-      idInput.focus(); return;
-    }
-    if(idExiste(payload.id)){
-      msg.innerHTML = '<div class="err">Usuario ya existe. Elige otro ID.</div>';
-      idInput.focus(); return;
+    if(!payload.id||!payload.nombre||!payload.rut||!payload.banco||!payload.tipoCuenta||!payload.numeroCuenta){
+      msgErr.innerHTML = '<div class="err">Faltan campos obligatorios.</div>'; return;
     }
     if(!validarRut(payload.rut)){
-      msg.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
+      msgErr.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
       rutInput.focus(); return;
     }
     if(!/^\d+$/.test(payload.numeroCuenta)){
-      msg.innerHTML = '<div class="err">El número de cuenta debe contener solo dígitos.</div>';
+      msgErr.innerHTML = '<div class="err">El número de cuenta debe contener solo dígitos.</div>';
       cuentaInput.focus(); return;
     }
     if(payload.correo && !validarEmail(payload.correo)){
-      msg.innerHTML = '<div class="err">El formato del correo no es válido.</div>';
+      msgErr.innerHTML = '<div class="err">El formato del correo no es válido.</div>';
       correoInput.focus(); return;
-    }
-    if(!validarWsp(wspVal)){
-      msg.innerHTML = '<div class="err">El WhatsApp debe ser 9XXXXXXXXX (9 dígitos, comenzando con 9).</div>';
-      wspInput.focus(); return;
     }
 
     try{
       const res  = await fetch(WORKER_URL, {
         method:'POST',
-        headers:{ 'Content-Type':'application/json' },
+        headers:{'Content-Type':'application/json'},
         body: JSON.stringify(payload)
       });
       const txt  = await res.text();
       let data   = {};
-      try { data = JSON.parse(txt); } catch {}
+      try{ data = JSON.parse(txt); }catch{}
 
       if(!res.ok || !data.ok){
         const detail = data.error
-          ? ('\nDetalle: ' + data.error + (data.probable_cause ? ' — ' + data.probable_cause : '') + (data.detail ? '\n' + data.detail : ''))
-          : ('\nHTTP ' + res.status + '\n' + txt);
-        msg.innerHTML = '<div class="err">Error guardando.' + detail + '</div>';
+          ? ('\nDetalle: '+data.error+(data.probable_cause?' — '+data.probable_cause:'')+(data.detail?'\n'+data.detail:''))
+          : ('\nHTTP '+res.status+'\n'+txt);
+        msgErr.innerHTML = '<div class="err">Error guardando.'+detail+'</div>';
         return;
       }
 
-      const link = BASE_URL + '?id=' + encodeURIComponent(payload.id);
-      generarQR(link);
-      document.getElementById('linkText').textContent = link;
-      document.getElementById('qrCard').classList.add('show');
-
-      // Agrega 56 al enviar por WhatsApp
-      const wspUrl = `https://wa.me/56${wspVal}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
-      document.getElementById('btnWsp').onclick = () => window.open(wspUrl, '_blank');
-
-      msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
+      // Éxito
       document.getElementById('save').style.display = 'none';
-      document.getElementById('nuevo').addEventListener('click', resetForm);
+      const url = BASE_URL + '?id=' + encodeURIComponent(payload.id);
+      generarQR(url);
+      document.getElementById('resultado').style.display = 'block';
 
     }catch(e){
-      msg.innerHTML = '<div class="err">Fallo de red: ' + e + '</div>';
-    }
-  });
-
-  /* ── Copiar link ── */
-  document.getElementById('btnCopyLink').addEventListener('click', function(){
-    const link  = document.getElementById('linkText').textContent;
-    const flash = document.getElementById('copiedFlash');
-    function flashCopied(){
-      flash.classList.add('show');
-      setTimeout(() => flash.classList.remove('show'), 1800);
-    }
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(link).then(flashCopied);
-    } else {
-      const ta = document.createElement('textarea');
-      ta.value = link;
-      ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
-      document.body.appendChild(ta);
-      ta.select();
-      document.execCommand('copy');
-      document.body.removeChild(ta);
-      flashCopied();
+      msgErr.innerHTML = '<div class="err">Fallo de red: '+e+'</div>';
     }
   });
 </script>
