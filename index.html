@@ -58,17 +58,15 @@
       padding:6px 10px; border-radius:999px; margin-top:10px; text-align:center;
     }
     .badge .dot{ width:10px; height:10px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(255,212,0,.16); }
-    h1{ font-size:22px; line-height:1.15; margin:10px 0 8px; font-weight:800; color:var(--text); letter-spacing:-0.2px; }
-    p{ margin:0 0 12px; color:var(--muted); font-size:14px; line-height:1.45; }
-
+    h1{ font-size:15px; line-height:1.15; margin:10px 0 8px; font-weight:800; color:var(--text); letter-spacing:-0.2px; }
+    p{ margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
     pre#datos{
-  background:#fff; border:1px solid rgba(0,0,0,.10); padding:14px; border-radius:14px; min-height:96px;
-  white-space:pre-wrap; word-break:break-word; font-size:15px; line-height:1.32; -webkit-text-size-adjust:100%;
-  margin:0 0 12px; font-family: inherit;
-
-    }    
+      background:#fff; border:1px solid rgba(0,0,0,.10); padding:14px; border-radius:14px; min-height:96px;
+      white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.32; -webkit-text-size-adjust:100%;
+      margin:0 0 12px; font-family: inherit;
+    }
     .cta{
-      width:88%; margin:0 auto; display:block; padding:13px; font-size:15px; font-weight:800;
+      width:88%; margin:0 auto; display:block; padding:13px; font-size:13px; font-weight:800;
       border:0; border-radius:12px; cursor:pointer; color:#fff; background:#ff7a18;
       box-shadow: 0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color: transparent;
       transition: transform .06s ease, filter .06s ease;
@@ -76,7 +74,7 @@
     .cta:disabled{ background:#bdbdbd; box-shadow:none; cursor:not-allowed; }
     .cta:active{ transform: translateY(1px); filter:brightness(0.98); }
     .ok, .err{
-      margin-top:10px; font-weight:800; display:none; padding:10px 12px; border-radius:12px; font-size:14px;
+      margin-top:10px; font-weight:800; display:none; padding:10px 12px; border-radius:12px; font-size:13px;
     }
     .ok{ color:#0a7; background: rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18); }
     .err{ color:#b00; background: rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); }
@@ -98,7 +96,6 @@
       border-radius: 14px; padding: 12px; font-size: 13px; color: rgba(26,26,26,.9); line-height: 1.35;
     }
     .hint b{ font-weight:800; }
-    .small{ margin-top:12px; font-size:12px; color:#6a6a6a; line-height:1.4; }
   </style>
 </head>
 
@@ -133,11 +130,7 @@
 
       <div class="hint">
         En TuQR copias los datos. <b>Transfieres desde tu banco.</b><br>
-        Si no pega bien, usa los botones por campo.
-      </div>
-
-      <div class="small">
-        Consejo: revisa que el nombre y el número de cuenta coincidan antes de enviar.
+        Si tu banco no pega bien, usa los botones por campo.
       </div>
     </div>
   </div>
@@ -195,7 +188,6 @@ function buildText(d){
 
 function copyText(text){
   const payload = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-
   if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function'){
     return navigator.clipboard.writeText(payload)
       .then(() => true)
