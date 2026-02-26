@@ -21,9 +21,9 @@
 
   <style>
     :root{
-      --primary: #ff7a18;   /* naranja sobrio */
-      --accent:  #ffd400;   /* amarillo */
-      --bg:      #f2f3f5;   /* gris claro */
+      --primary: #ff7a18;
+      --accent:  #ffd400;
+      --bg:      #f2f3f5;
       --card:    #ffffff;
       --text:    #1a1a1a;
       --muted:   #5a5a5a;
@@ -31,218 +31,77 @@
       --shadow:  0 10px 24px rgba(0,0,0,.08);
       --radius:  18px;
     }
-
     *{ box-sizing:border-box; }
-
     body{
       font-family: "Poppins", system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
-      margin:0;
-      padding:16px 12px;
-      background: var(--bg);
-      color:var(--text);
-      -webkit-font-smoothing: antialiased;
-      -moz-osx-font-smoothing: grayscale;
+      margin:0; padding:16px 12px; background: var(--bg); color:var(--text);
+      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
-
-    .wrap{
-      max-width:440px;
-      margin:0 auto;
-    }
-
-    /* Logo: mismo ancho visual que la tarjeta */
-    .brand{
-      display:flex;
-      justify-content:center;
-      align-items:center;
-      margin: 6px 0 6px; /* más cerca de la card */
-    }
+    .wrap{ max-width:440px; margin:0 auto; }
+    .brand{ display:flex; justify-content:center; align-items:center; margin:6px 0 6px; }
     .brand img{
-      width:100%;
-      max-width:440px;        /* mismo tope que .wrap */
-      height:auto;
-      display:block;
+      width:100%; max-width:440px; height:auto; display:block;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
     }
-
     .card{
-      background:var(--card);
-      border:1px solid var(--border);
-      border-radius:var(--radius);
-      padding:18px;
-      box-shadow: var(--shadow);
-      position:relative;
-      overflow:hidden;
+      background:var(--card); border:1px solid var(--border);
+      border-radius:var(--radius); padding:18px; box-shadow: var(--shadow);
+      position:relative; overflow:hidden;
     }
-
     .card::before{
-      content:"";
-      position:absolute;
-      top:0; left:0; right:0;
-      height:8px;
+      content:""; position:absolute; top:0; left:0; right:0; height:8px;
       background: linear-gradient(90deg, rgba(255,212,0,.95), rgba(255,122,24,.95));
     }
-
-    /* Badge centrado */
     .badge{
-      display:flex;
-      justify-content:center;  /* centrado */
-      align-items:center;
-      gap:8px;
-      font-weight:700;
-      font-size:11px;
-      color:rgba(26,26,26,.9);
-      background: rgba(255,212,0,.18);
-      border:1px solid rgba(255,212,0,.32);
-      padding:6px 10px;
-      border-radius:999px;
-      margin-top:10px;
-      text-align:center;
+      display:flex; justify-content:center; align-items:center; gap:8px;
+      font-weight:700; font-size:11px; color:rgba(26,26,26,.9);
+      background: rgba(255,212,0,.18); border:1px solid rgba(255,212,0,.32);
+      padding:6px 10px; border-radius:999px; margin-top:10px; text-align:center;
     }
-    .badge .dot{
-      width:10px; height:10px;
-      border-radius:999px;
-      background: var(--accent);
-      box-shadow: 0 0 0 4px rgba(255,212,0,.16);
-      flex: 0 0 auto;
-    }
-
-    h1{
-      font-size:22px;
-      line-height:1.15;
-      margin:10px 0 8px;
-      font-weight:800;
-      color:var(--text);
-      letter-spacing:-0.2px;
-    }
-
-    p{
-      margin:0 0 12px;
-      color:var(--muted);
-      font-size:14px;
-      line-height:1.45;
-    }
-
+    .badge .dot{ width:10px; height:10px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(255,212,0,.16); }
+    h1{ font-size:22px; line-height:1.15; margin:10px 0 8px; font-weight:800; color:var(--text); letter-spacing:-0.2px; }
+    p{ margin:0 0 12px; color:var(--muted); font-size:14px; line-height:1.45; }
     pre#datos{
-      background: #ffffff;
-      border:1px solid rgba(0,0,0,.10);
-      padding:14px;
-      border-radius:14px;
-      min-height:96px;
-      white-space:pre-wrap;
-      word-break:break-word;
-      font-size:15px;
-      line-height:1.32;
-      -webkit-text-size-adjust:100%;
-      margin: 0 0 12px;
+      background:#fff; border:1px solid rgba(0,0,0,.10); padding:14px; border-radius:14px; min-height:96px;
+      white-space:pre-wrap; word-break:break-word; font-size:15px; line-height:1.32; -webkit-text-size-adjust:100%;
+      margin:0 0 12px;
     }
-
     .cta{
-      width:88%;
-      margin:0 auto;
-      display:block;
-      padding:13px;
-      font-size:15px;
-      font-weight:800;
-      border:0;
-      border-radius:12px;
-      cursor:pointer;
-      color:#fff;
-      background:#ff7a18;
-      box-shadow: 0 6px 12px rgba(255,122,24,.22);
-      -webkit-tap-highlight-color: transparent;
+      width:88%; margin:0 auto; display:block; padding:13px; font-size:15px; font-weight:800;
+      border:0; border-radius:12px; cursor:pointer; color:#fff; background:#ff7a18;
+      box-shadow: 0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color: transparent;
       transition: transform .06s ease, filter .06s ease;
     }
-    .cta:disabled{
-      background:#bdbdbd;
-      box-shadow:none;
-      cursor:not-allowed;
-    }
+    .cta:disabled{ background:#bdbdbd; box-shadow:none; cursor:not-allowed; }
     .cta:active{ transform: translateY(1px); filter:brightness(0.98); }
-
     .ok, .err{
-      margin-top:10px;
-      font-weight:800;
-      display:none;
-      padding:10px 12px;
-      border-radius:12px;
-      font-size:14px;
+      margin-top:10px; font-weight:800; display:none; padding:10px 12px; border-radius:12px; font-size:14px;
     }
-    .ok{
-      color:#0a7;
-      background: rgba(0,170,120,.10);
-      border:1px solid rgba(0,170,120,.18);
-    }
-    .err{
-      color:#b00;
-      background: rgba(190,0,0,.08);
-      border:1px solid rgba(190,0,0,.14);
-    }
-
-    .or-copy{
-      margin:10px 0 6px;
-      text-align:center;
-      font-size:13px;
-      color: rgba(26,26,26,.75);
-      font-weight:700;
-    }
-
-    /* 2 x 3 siempre en móvil (2 columnas) */
+    .ok{ color:#0a7; background: rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18); }
+    .err{ color:#b00; background: rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); }
+    .or-copy{ margin:10px 0 6px; text-align:center; font-size:13px; color: rgba(26,26,26,.75); font-weight:700; }
     .fields{
-      margin-top:8px;
-      border-top:1px dashed rgba(0,0,0,.12);
-      padding-top:12px;
-      display:grid;
-      gap:10px;
-      grid-template-columns:1fr 1fr; /* 2 columnas */
+      margin-top:8px; border-top:1px dashed rgba(0,0,0,.12); padding-top:12px;
+      display:grid; gap:10px; grid-template-columns:1fr 1fr;
     }
-
     .field-btn{
-      padding:12px 10px;
-      font-size:13px;
-      font-weight:800;
-      line-height:1.15;
-      border-radius:12px;
-      border:1px solid rgba(0,0,0,.10);
-      background: #fff;
-      color:var(--text);
-      cursor:pointer;
-      box-shadow: 0 6px 12px rgba(0,0,0,.05);
-      transition: transform .06s ease, filter .06s ease;
-      text-align:center;
+      padding:12px 10px; font-size:13px; font-weight:800; line-height:1.15;
+      border-radius:12px; border:1px solid rgba(0,0,0,.10); background:#fff; color:var(--text);
+      cursor:pointer; box-shadow: 0 6px 12px rgba(0,0,0,.05); transition: transform .06s ease, filter .06s ease; text-align:center;
     }
     .field-btn:active{ transform: translateY(1px); filter:brightness(0.99); }
-    .field-btn:disabled{
-      color:#9a9a9a;
-      background:#f2f2f2;
-      border-color:#e9e9e9;
-      box-shadow:none;
-      cursor:not-allowed;
-    }
-
+    .field-btn:disabled{ color:#9a9aa; background:#f2f2f2; border-color:#e9e9e9; box-shadow:none; cursor:not-allowed; }
     .hint{
-      margin-top:12px;
-      background: rgba(0,0,0,.03);
-      border: 1px solid rgba(0,0,0,.08);
-      border-radius: 14px;
-      padding: 12px;
-      font-size: 13px;
-      color: rgba(26,26,26,.9);
-      line-height: 1.35;
+      margin-top:12px; background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.08);
+      border-radius: 14px; padding: 12px; font-size: 13px; color: rgba(26,26,26,.9); line-height: 1.35;
     }
     .hint b{ font-weight:800; }
-
-    .small{
-      margin-top:12px;
-      font-size:12px;
-      color:#6a6a6a;
-      line-height:1.4;
-    }
+    .small{ margin-top:12px; font-size:12px; color:#6a6a6a; line-height:1.4; }
   </style>
 </head>
 
 <body>
   <div class="wrap">
-
     <div class="brand">
       <!-- Si no aparece, cambia src a "./main/TuQRLogo.png" -->
       <img src="./TuQRLogo.png" alt="TuQR" />
@@ -258,8 +117,8 @@
 
       <button id="copiar" class="cta" disabled>Copia todos los datos</button>
 
-      <div id="ok" class="ok">✅ Copiado</div>
-      <div id="err" class="err">❌ No encontramos este comercio</div>
+      <div id="ok" class="ok">Copiado</div>
+      <div id="err" class="err">No encontramos este comercio</div>
 
       <div class="or-copy">... o cópialos de a uno</div>
 
@@ -317,26 +176,27 @@ const isIOS = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' 
 function clean(s){
   return String(s ?? '')
     .normalize('NFC')
-    .replace(/\u00A0/g, ' ')
-    .replace(/[\u200B-\u200F]/g, '')
-    .replace(/\r\n/g, '\n')
+    .replace(/\u00A0/g, ' ')          // NBSP -> espacio normal
+    .replace(/[\u200B-\u200F]/g, '')  // zero-width chars
+    .replace(/\r\n/g, '\n')           // normaliza interno a \n
     .replace(/\r/g, '\n')
-    .replace(/[ \t]+$/gm, '')
+    .replace(/[ \t]+$/gm, '')         // trim fin de línea
     .trim();
 }
-function sanitizeValue(s){ return clean(s); }
+const sv = (s) => clean(s);
 
 /* =========================
-   Construcción de bloque (formato "Notas")
+   Construcción de bloque (formato WhatsApp)
    ========================= */
-function buildText(d){
-  const nombre = sanitizeValue(d.nombre);
-  const rut    = sanitizeValue(d.rut);
-  const banco  = sanitizeValue(d.banco);
-  const tipo   = sanitizeValue(d.tipoCuenta);
-  const numero = sanitizeValue(d.numeroCuenta);
-  const correo = d.correo ? sanitizeValue(d.correo) : '';
+function buildWhatsAppText(d){
+  const nombre = sv(d.nombre);
+  const rut    = sv(d.rut);
+  const banco  = sv(d.banco);
+  const tipo   = sv(d.tipoCuenta);
+  const numero = sv(d.numeroCuenta);
+  const correo = d.correo ? sv(d.correo) : '';
 
+  // Etiquetas y formato tal como lo compartes por WhatsApp (texto plano)
   const lines = [
     `Nombre: ${nombre}`,
     `Rut: ${rut}`,
@@ -346,24 +206,45 @@ function buildText(d){
   ];
   if (correo) lines.push(`Correo: ${correo}`);
 
+  // WhatsApp entrega texto plano. iOS suele copiar con CRLF; Android con LF.
   const sep = isIOS ? '\r\n' : '\n';
+
+  // IMPORTANTE: sin salto de línea final (WhatsApp no agrega uno extra al final)
   const textPlain = lines.join(sep);
 
+  // Para plan B
   const fields = { nombre, rut, banco, tipo, numero, correo };
   return { textPlain, fields, lines };
 }
 
 /* =========================
-   Copiado (solo texto plano "Notas") + fallbacks
+   Copiado en texto plano (estricto) + fallbacks
    ========================= */
-async function copyTextUniversal(text){
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return true;
+async function copyPlain(text){
+  // Asegura CRLF en iOS para emular WhatsApp al pegar en apps bancarias de iPhone
+  const payload = isIOS ? text.replace(/\n/g, '\r\n') : text;
+
+  // 0) ClipboardItem con 'text/plain' (cuando existe)
+  if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+    try{
+      const item = new ClipboardItem({ 'text/plain': new Blob([payload], { type: 'text/plain' }) });
+      await navigator.clipboard.write([item]);
+      return true;
+    }catch(e){}
   }
-  try {
+
+  // 1) Clipboard API writeText
+  if (navigator.clipboard && window.isSecureContext) {
+    try{
+      await navigator.clipboard.writeText(payload);
+      return true;
+    }catch(e){}
+  }
+
+  // 2) textarea + execCommand
+  try{
     const ta = document.createElement('textarea');
-    ta.value = text;
+    ta.value = payload;
     ta.setAttribute('readonly','');
     ta.style.position = 'fixed';
     ta.style.top = '-9999px';
@@ -375,10 +256,12 @@ async function copyTextUniversal(text){
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
     if (ok) return true;
-  } catch(e){}
-  try {
+  }catch(e){}
+
+  // 3) contentEditable + execCommand
+  try{
     const el = document.createElement('div');
-    el.textContent = text;
+    el.textContent = payload;
     el.contentEditable = 'true';
     el.style.position = 'fixed';
     el.style.top = '-9999px';
@@ -394,7 +277,8 @@ async function copyTextUniversal(text){
     const ok2 = document.execCommand('copy');
     document.body.removeChild(el);
     if (ok2) return true;
-  } catch(e){}
+  }catch(e){}
+
   return false;
 }
 
@@ -429,16 +313,20 @@ async function init(){
       return;
     }
 
-    titleEl.textContent  = `Paga a ${sanitizeValue(d.nombre)}`;
-    document.title       = `TuQR - ${sanitizeValue(d.nombre)}`;
+    // Títulos
+    titleEl.textContent  = `Paga a ${sv(d.nombre)}`;
+    document.title       = `TuQR - ${sv(d.nombre)}`;
 
-    const { textPlain, fields, lines } = buildText(d);
+    // Construir texto en formato WhatsApp
+    const { textPlain, fields, lines } = buildWhatsAppText(d);
     cachedText   = textPlain;
     cachedFields = fields;
 
+    // Mostrar (el <pre> renderiza bien con \n; no añadimos salto extra al final)
     datosEl.textContent = lines.join('\n');
     btn.disabled = false;
 
+    // GA4
     try{
       gtag('event','payer_page_view', {
         merchant_id: id,
@@ -447,9 +335,10 @@ async function init(){
       });
     }catch(e){}
 
+    // Copiar todo
     btn.addEventListener('click', async ()=>{
       try{
-        const ok = await copyTextUniversal(cachedText);
+        const ok = await copyPlain(cachedText);
         if(!ok) throw new Error('copy_failed');
         showCopied();
         try{
@@ -461,10 +350,10 @@ async function init(){
       }catch(e){
         alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona "Copiar".');
       }
-    }, { once:false });
+    });
 
+    // Plan B (por campo)
     fieldsWrap.style.display = 'grid';
-
     const enableBtn = (el, hasValue) => { el.disabled = !hasValue; };
     enableBtn(btnNombre, !!fields.nombre);
     enableBtn(btnRut,    !!fields.rut);
@@ -473,19 +362,18 @@ async function init(){
     enableBtn(btnNumero, !!fields.numero);
     enableBtn(btnCorreo, !!fields.correo);
 
-    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(fields.nombre); showCopied(); } }catch(e){} });
-    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextUniversal(fields.rut);    showCopied(); } }catch(e){} });
-    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextUniversal(fields.banco);  showCopied(); } }catch(e){} });
-    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextUniversal(fields.tipo);   showCopied(); } }catch(e){} });
-    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(fields.numero); showCopied(); } }catch(e){} });
-    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(fields.correo); showCopied(); } }catch(e){} });
+    btnNombre.addEventListener('click', async ()=>{ if(!btnNombre.disabled){ await copyPlain(fields.nombre); showCopied(); }});
+    btnRut.addEventListener('click',    async ()=>{ if(!btnRut.disabled){    await copyPlain(fields.rut);    showCopied(); }});
+    btnBanco.addEventListener('click',  async ()=>{ if(!btnBanco.disabled){  await copyPlain(fields.banco);  showCopied(); }});
+    btnTipo.addEventListener('click',   async ()=>{ if(!btnTipo.disabled){   await copyPlain(fields.tipo);   showCopied(); }});
+    btnNumero.addEventListener('click', async ()=>{ if(!btnNumero.disabled){ await copyPlain(fields.numero); showCopied(); }});
+    btnCorreo.addEventListener('click', async ()=>{ if(!btnCorreo.disabled){ await copyPlain(fields.correo); showCopied(); }});
 
   }catch(e){
     datosEl.textContent = 'Error cargando datos';
     errEl.style.display = 'block';
   }
 }
-
 init();
 </script>
 </body>
