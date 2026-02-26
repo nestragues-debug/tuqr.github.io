@@ -3,6 +3,7 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <meta name="format-detection" content="telephone=no,email=no,address=no">
   <title>TuQR — Datos para transferir</title>
 
   <!-- GA4 -->
@@ -15,25 +16,30 @@
   </script>
 
   <style>
-    body{
+    /* Estilos mínimos, sin intentar parecer WhatsApp */
+    :root{ color-scheme: light; }
+    *{ box-sizing: border-box; }
+    html, body{
+      margin:0; padding:0; background:#fff; color:#111;
       font-family: system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
-      margin:0; padding:24px; background:#fff; color:#111;
       -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
+    body{ padding:24px; }
     .card{
-      max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:16px; padding:18px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+      max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:12px; padding:16px;
     }
-    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
-    p{ margin:0 0 14px; color:#444; }
+    h1{ font-size:20px; margin:0 0 8px; font-weight:800; color:#222; }
+    p{ margin:0 0 12px; color:#444; }
+    /* El bloque visible es solo para ver (textContent), no formatea al copiar */
     pre#datos{
-      background:#f6f6f6; padding:14px; border-radius:12px; min-height:112px;
+      background:#fafafa; padding:12px; border-radius:10px; min-height:96px;
       white-space:pre-wrap; word-break:break-word; font-size:15px; line-height:1.28;
       -webkit-text-size-adjust:100%;
+      user-select:text; -webkit-user-select:text; -ms-user-select:text;
     }
     button{
-      width:100%; padding:16px; font-size:17px; font-weight:700;
-      border:0; border-radius:12px; cursor:pointer; background:#0078ff; color:#fff;
+      width:100%; padding:14px; font-size:16px; font-weight:700;
+      border:0; border-radius:10px; cursor:pointer; background:#0078ff; color:#fff;
       -webkit-tap-highlight-color: transparent;
     }
     button:disabled{ background:#999; cursor:not-allowed; }
@@ -41,18 +47,6 @@
     .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
     .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
     .small{ margin-top:12px; font-size:12px; color:#777; }
-
-    /* Plan B: botones por campo */
-    .fields{
-      margin-top:16px; border-top:1px dashed #e5e5e5; padding-top:12px;
-      display:grid; gap:10px; grid-template-columns:1fr;
-    }
-    @media (min-width:520px){ .fields{ grid-template-columns:1fr 1fr; } }
-    .field-btn{
-      padding:12px; font-size:14px; font-weight:700; line-height:1.1;
-      border-radius:10px; border:1px solid #e5e5e5; background:#fafafa; color:#222;
-    }
-    .field-btn:disabled{ color:#aaa; background:#f1f1f1; border-color:#eee; }
   </style>
 </head>
 
@@ -68,16 +62,6 @@
     <div id="ok" class="ok">Copiado</div>
     <div id="err" class="err">No encontramos este comercio</div>
 
-    <!-- Plan B: copiar por campo -->
-    <div id="fields" class="fields" style="display:none;">
-      <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
-      <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
-      <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
-      <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
-      <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
-      <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
-    </div>
-
     <div class="small">
       En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
     </div>
@@ -90,19 +74,11 @@
 const params = new URLSearchParams(location.search);
 const id = (params.get('id') || '').trim();
 
-const datosEl   = document.getElementById('datos');
-const btn       = document.getElementById('copiar');
-const okEl      = document.getElementById('ok');
-const errEl     = document.getElementById('err');
-const titleEl   = document.getElementById('title');
-
-const fieldsWrap= document.getElementById('fields');
-const btnNombre = document.getElementById('copyNombre');
-const btnRut    = document.getElementById('copyRut');
-const btnBanco  = document.getElementById('copyBanco');
-const btnTipo   = document.getElementById('copyTipo');
-const btnNumero = document.getElementById('copyNumero');
-const btnCorreo = document.getElementById('copyCorreo');
+const datosEl = document.getElementById('datos');
+const btn     = document.getElementById('copiar');
+const okEl    = document.getElementById('ok');
+const errEl   = document.getElementById('err');
+const titleEl = document.getElementById('title');
 
 /* =========================
    Detección básica de iOS
@@ -126,7 +102,7 @@ function clean(s){
 function sanitizeValue(s){ return clean(s); }
 
 /* =========================
-   Construcción de bloque (formato "Notas")
+   Construcción de texto 100% plano
    ========================= */
 function buildText(d){
   const nombre = sanitizeValue(d.nombre);
@@ -136,6 +112,7 @@ function buildText(d){
   const numero = sanitizeValue(d.numeroCuenta);
   const correo = d.correo ? sanitizeValue(d.correo) : '';
 
+  // Sin emojis, sin viñetas, sin estilos; solo etiquetas y valores
   const lines = [
     `Nombre: ${nombre}`,
     `Rut: ${rut}`,
@@ -145,36 +122,32 @@ function buildText(d){
   ];
   if (correo) lines.push(`Correo: ${correo}`);
 
-  // Para copiar en "formato Notas": solo texto plano, con CRLF en iOS
+  // Para copiar: CRLF en iOS, LF en otros (max compatibilidad al pegar)
   const sep = isIOS ? '\r\n' : '\n';
   const textPlain = lines.join(sep);
 
-  // Valores individuales para plan B
-  const fields = {
-    nombre, rut, banco,
-    tipo,   // alias interno para tipoCuenta
-    numero, // alias interno para numeroCuenta
-    correo
-  };
-
-  return { textPlain, fields, lines };
+  return { textPlain, lines };
 }
 
 /* =========================
-   Copiado (solo texto plano "Notas") + fallbacks
+   Copiado (solo texto plano) + fallbacks
    ========================= */
 async function copyTextUniversal(text){
   // 1) Clipboard API (texto plano)
   if (navigator.clipboard && window.isSecureContext) {
+    // writeText garantiza text/plain
     await navigator.clipboard.writeText(text);
     return true;
   }
 
-  // 2) textarea + execCommand
+  // 2) textarea + execCommand (texto plano)
   try {
     const ta = document.createElement('textarea');
     ta.value = text;
     ta.setAttribute('readonly','');
+    ta.setAttribute('autocorrect','off');
+    ta.setAttribute('autocapitalize','off');
+    ta.setAttribute('spellcheck','false');
     ta.style.position = 'fixed';
     ta.style.top = '-9999px';
     ta.style.opacity = '0';
@@ -187,10 +160,10 @@ async function copyTextUniversal(text){
     if (ok) return true;
   } catch(e){}
 
-  // 3) contentEditable (texto plano)
+  // 3) contentEditable como último recurso (textContent fuerza texto plano)
   try {
     const el = document.createElement('div');
-    el.textContent = text;        // texto plano
+    el.textContent = text;
     el.contentEditable = 'true';
     el.style.position = 'fixed';
     el.style.top = '-9999px';
@@ -220,7 +193,6 @@ function showCopied(){
    Estado global
    ========================= */
 let cachedText = '';
-let cachedFields = null;
 
 /* =========================
    Init
@@ -243,16 +215,18 @@ async function init(){
     }
 
     // Títulos
-    titleEl.textContent  = `Paga a ${sanitizeValue(d.nombre)}`;
-    document.title       = `TuQR - ${sanitizeValue(d.nombre)}`;
+    const safeName = sanitizeValue(d.nombre);
+    titleEl.textContent  = `Paga a ${safeName}`;
+    document.title       = `TuQR - ${safeName}`;
 
-    // Construcción
-    const { textPlain, fields, lines } = buildText(d);
-    cachedText   = textPlain;
-    cachedFields = fields;
+    // Construcción de texto plano
+    const { textPlain, lines } = buildText(d);
+    cachedText = textPlain;
 
-    // Mostrar bloque visible (usamos \n; el visor <pre> renderiza bien en todos)
+    // Mostrar sólo como vista previa (no afecta el copiado)
     datosEl.textContent = lines.join('\n');
+
+    // Habilitar botón
     btn.disabled = false;
 
     // GA4: vista por pagador
@@ -264,7 +238,7 @@ async function init(){
       });
     }catch(e){}
 
-    // Listener botón principal (UNICO)
+    // Botón único
     btn.addEventListener('click', async ()=>{
       try{
         const ok = await copyTextUniversal(cachedText);
@@ -280,25 +254,6 @@ async function init(){
         alert('No pudimos copiar automáticamente. Mantén presionado el texto y selecciona "Copiar".');
       }
     }, { once:false });
-
-    // Plan B (por campo)
-    fieldsWrap.style.display = 'grid';
-
-    const enableBtn = (el, hasValue) => { el.disabled = !hasValue; };
-
-    enableBtn(btnNombre, !!fields.nombre);
-    enableBtn(btnRut,    !!fields.rut);
-    enableBtn(btnBanco,  !!fields.banco);
-    enableBtn(btnTipo,   !!fields.tipo);
-    enableBtn(btnNumero, !!fields.numero);
-    enableBtn(btnCorreo, !!fields.correo);
-
-    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(fields.nombre); showCopied(); } }catch(e){} });
-    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextUniversal(fields.rut);    showCopied(); } }catch(e){} });
-    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextUniversal(fields.banco);  showCopied(); } }catch(e){} });
-    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextUniversal(fields.tipo);   showCopied(); } }catch(e){} });
-    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(fields.numero); showCopied(); } }catch(e){} });
-    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(fields.correo); showCopied(); } }catch(e){} });
 
   }catch(e){
     datosEl.textContent = 'Error cargando datos';
