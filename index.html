@@ -6,7 +6,7 @@
   <title>TuQR — Datos para transferir</title>
 
   <!-- GA4 -->
-  https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR</script>
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){ dataLayer.push(arguments); }
@@ -150,30 +150,39 @@ function buildText(d){
   const textPlain = lines.join(sep);
 
   // Valores individuales para plan B
-  const fields = {
-    nombre, rut, banco,
-    tipo,   // alias interno para tipoCuenta
-    numero, // alias interno para numeroCuenta
-    correo
-  };
+  const fields = { nombre, rut, banco, tipo, numero, correo };
 
   return { textPlain, fields, lines };
 }
 
 /* =========================
-   Copiado (solo texto plano "Notas") + fallbacks
+   Copiado en texto plano + fallbacks
    ========================= */
-async function copyTextUniversal(text){
-  // 1) Clipboard API (texto plano)
-  if (navigator.clipboard && window.isSecureContext) {
-    await navigator.clipboard.writeText(text);
-    return true;
+async function copyTextPlain(text){
+  // iOS: aseguramos CRLF en el contenido final
+  const payload = isIOS ? text.replace(/\n/g, '\r\n') : text;
+
+  // 0) ClipboardItem con 'text/plain' (si existe)
+  if (navigator.clipboard && window.ClipboardItem && window.isSecureContext) {
+    try {
+      const item = new ClipboardItem({ 'text/plain': new Blob([payload], { type: 'text/plain' }) });
+      await navigator.clipboard.write([item]);
+      return true;
+    } catch(e) { /* caemos a writeText */ }
   }
 
-  // 2) textarea + execCommand
+  // 1) Clipboard API: writeText (si existe)
+  if (navigator.clipboard && window.isSecureContext) {
+    try {
+      await navigator.clipboard.writeText(payload);
+      return true;
+    } catch(e) { /* fallback */ }
+  }
+
+  // 2) textarea + execCommand (legacy)
   try {
     const ta = document.createElement('textarea');
-    ta.value = text;
+    ta.value = payload;
     ta.setAttribute('readonly','');
     ta.style.position = 'fixed';
     ta.style.top = '-9999px';
@@ -187,10 +196,10 @@ async function copyTextUniversal(text){
     if (ok) return true;
   } catch(e){}
 
-  // 3) contentEditable (texto plano)
+  // 3) contentEditable + execCommand (texto plano)
   try {
     const el = document.createElement('div');
-    el.textContent = text;        // texto plano
+    el.textContent = payload;  // texto plano
     el.contentEditable = 'true';
     el.style.position = 'fixed';
     el.style.top = '-9999px';
@@ -251,7 +260,7 @@ async function init(){
     cachedText   = textPlain;
     cachedFields = fields;
 
-    // Mostrar bloque visible (usamos \n; el visor <pre> renderiza bien en todos)
+    // Mostrar bloque visible en texto plano (el <pre> respeta \n)
     datosEl.textContent = lines.join('\n');
     btn.disabled = false;
 
@@ -264,10 +273,10 @@ async function init(){
       });
     }catch(e){}
 
-    // Listener botón principal (UNICO)
+    // Listener botón principal (ÚNICO)
     btn.addEventListener('click', async ()=>{
       try{
-        const ok = await copyTextUniversal(cachedText);
+        const ok = await copyTextPlain(cachedText);
         if(!ok) throw new Error('copy_failed');
         showCopied();
         try{
@@ -293,12 +302,12 @@ async function init(){
     enableBtn(btnNumero, !!fields.numero);
     enableBtn(btnCorreo, !!fields.correo);
 
-    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(fields.nombre); showCopied(); } }catch(e){} });
-    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextUniversal(fields.rut);    showCopied(); } }catch(e){} });
-    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextUniversal(fields.banco);  showCopied(); } }catch(e){} });
-    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextUniversal(fields.tipo);   showCopied(); } }catch(e){} });
-    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(fields.numero); showCopied(); } }catch(e){} });
-    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(fields.correo); showCopied(); } }catch(e){} });
+    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextPlain(fields.nombre); showCopied(); } }catch(e){} });
+    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextPlain(fields.rut);    showCopied(); } }catch(e){} });
+    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextPlain(fields.banco);  showCopied(); } }catch(e){} });
+    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextPlain(fields.tipo);   showCopied(); } }catch(e){} });
+    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextPlain(fields.numero); showCopied(); } }catch(e){} });
+    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextPlain(fields.correo); showCopied(); } }catch(e){} });
 
   }catch(e){
     datosEl.textContent = 'Error cargando datos';
