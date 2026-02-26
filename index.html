@@ -5,6 +5,11 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TuQR — Datos para transferir</title>
 
+  <!-- Fuente Poppins -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
   <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
   <script>
@@ -15,73 +20,234 @@
   </script>
 
   <style>
-    body{
-      font-family: system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
-      margin:0; padding:24px; background:#fff; color:#111;
+    /* Paleta */
+    :root{
+      --pri: #ff6a00;       /* Naranja/rojo (energía, rapidez) */
+      --pri-700:#e65f00;
+      --sec: #ffc107;       /* Amarillo (alegría, emprendimiento) */
+      --trust:#10b981;      /* Verde (confianza/frescura). Alternativa azul: #1e88e5 */
+      --bg:  #f7f9fb;       /* Fondo claro */
+      --ink:#0f172a;        /* Texto principal */
+      --muted:#64748b;      /* Texto secundario */
+      --ok:#109868;         /* Mensaje OK */
+      --err:#c62828;        /* Mensaje Error */
+      --card:#ffffff;       /* Tarjeta */
+      --line:#e6ebf2;       /* Líneas sutiles */
+    }
+
+    html,body{
+      margin:0;
+      background: var(--bg);
+      color: var(--ink);
+      font-family: "Poppins", system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
       -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
     }
+
+    /* Hero estilo “portada” con logo grande */
+    .hero{
+      background:
+        radial-gradient(1200px 300px at 50% -50%, rgba(255,106,0,.18), rgba(255,106,0,0)),
+        linear-gradient(0deg, #fff0, #fff0);
+      padding: 28px 18px 10px;
+      text-align:center;
+    }
+    .hero .logo-wrap{
+      max-width: 760px;
+      margin: 0 auto;
+    }
+    .hero img.logo{
+      width: min(88%, 520px);
+      height: auto;
+      display:block;
+      margin: 0 auto 6px;
+      filter: drop-shadow(0 10px 18px rgba(255,106,0,.15));
+    }
+    .hero .strap{
+      color: var(--muted);
+      font-size: 14px;
+      margin: 6px 0 14px;
+    }
+
+    /* Cinta superior con colores feria */
+    .ribbon{
+      height: 6px;
+      background:
+        linear-gradient(90deg, var(--pri) 0%, #ff8a1d 22%, var(--sec) 45%, #5bd18a 72%, var(--trust) 100%);
+      border-bottom: 1px solid rgba(0,0,0,.04);
+    }
+
+    /* Contenedor de la tarjeta */
+    .wrap{
+      padding: 0 18px 28px;
+    }
     .card{
-      max-width:520px; margin:0 auto; border:1px solid #eee; border-radius:16px; padding:18px;
-      box-shadow: 0 1px 2px rgba(0,0,0,.03);
+      max-width: 560px;
+      margin: 0 auto;
+      background: var(--card);
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      padding: 18px 18px 22px;
+      box-shadow:
+        0 8px 24px rgba(255,106,0,.06),
+        0 2px 6px rgba(16,185,129,.05);
     }
-    h1{ font-size:22px; margin:0 0 8px; font-weight:800; color:#222; }
-    p{ margin:0 0 14px; color:#444; }
+
+    h1{
+      font-size: 24px;
+      margin: 2px 0 6px;
+      font-weight: 800;
+      color: var(--ink);
+    }
+    p{
+      margin: 0 0 14px;
+      color: var(--muted);
+      font-size: 14px;
+    }
+
     pre#datos{
-      background:#f6f6f6; padding:14px; border-radius:12px; min-height:112px;
-      white-space:pre-wrap; word-break:break-word; font-size:15px; line-height:1.28;
-      -webkit-text-size-adjust:100%;
+      background: #fff8f2;
+      padding: 14px;
+      border-radius: 12px;
+      min-height: 112px;
+      white-space: pre-wrap;
+      word-break: break-word;
+      font-size: 15px;
+      line-height: 1.28;
+      border: 1px solid #ffe3cf;
     }
+
+    /* Botón principal estilo feria */
     button{
-      width:100%; padding:16px; font-size:17px; font-weight:700;
-      border:0; border-radius:12px; cursor:pointer; background:#0078ff; color:#fff;
+      width:100%;
+      padding:16px;
+      font-size:17px;
+      font-weight:800;
+      border:0;
+      border-radius:14px;
+      cursor:pointer;
+      background: var(--pri);
+      color:#fff;
       -webkit-tap-highlight-color: transparent;
+      box-shadow:
+        0 10px 18px rgba(255,106,0,.22),
+        0 2px 6px rgba(16,185,129,.12);
+      transition: transform .04s ease, filter .12s ease, box-shadow .12s ease;
     }
-    button:disabled{ background:#999; cursor:not-allowed; }
-    button:active{ filter:brightness(0.96); }
-    .ok{ margin-top:10px; color:#0a7; font-weight:700; display:none; }
-    .err{ margin-top:10px; color:#b00; font-weight:700; display:none; }
-    .small{ margin-top:12px; font-size:12px; color:#777; }
+    button:hover{ filter: brightness(.98); }
+    button:active{ transform: translateY(1px); filter:brightness(.96); }
+    button:disabled{
+      background: #ffb98e;
+      cursor:not-allowed;
+      box-shadow:none;
+    }
+
+    .ok{
+      margin-top:10px;
+      color: var(--ok);
+      font-weight:700;
+      display:none;
+    }
+    .err{
+      margin-top:10px;
+      color: var(--err);
+      font-weight:700;
+      display:none;
+    }
+
+    .small{
+      margin-top:12px;
+      font-size:12px;
+      color:#6b7280;
+      background: #f8fafc;
+      border: 1px dashed var(--line);
+      border-radius: 10px;
+      padding:10px;
+    }
 
     /* Plan B: botones por campo */
     .fields{
-      margin-top:16px; border-top:1px dashed #e5e5e5; padding-top:12px;
-      display:grid; gap:10px; grid-template-columns:1fr;
+      margin-top:16px;
+      border-top:1px dashed var(--line);
+      padding-top:12px;
+      display:grid;
+      gap:10px;
+      grid-template-columns:1fr;
     }
     @media (min-width:520px){ .fields{ grid-template-columns:1fr 1fr; } }
+
     .field-btn{
-      padding:12px; font-size:14px; font-weight:700; line-height:1.1;
-      border-radius:10px; border:1px solid #e5e5e5; background:#fafafa; color:#222;
+      padding:12px;
+      font-size:14px;
+      font-weight:700;
+      line-height:1.1;
+      border-radius:12px;
+      border:2px solid #ffd9b8;   /* borde naranjo suave */
+      background:#fffefb;
+      color:#1f2937;
+      transition: background .12s ease, border-color .12s ease, transform .04s ease;
+      box-shadow: 0 2px 6px rgba(255,193,7,.10);
     }
-    .field-btn:disabled{ color:#aaa; background:#f1f1f1; border-color:#eee; }
+    .field-btn:hover{ background:#fff6e6; border-color:#ffc88d; }
+    .field-btn:active{ transform: translateY(1px); }
+    .field-btn:disabled{
+      color:#a3a3a3; background:#fafafa; border-color:#eee; box-shadow:none;
+    }
+
+    /* Footer mini confianza */
+    .foot{
+      text-align:center;
+      font-size:12px;
+      color:#8a9aab;
+      margin: 18px auto 6px;
+    }
+    .foot b{ color: var(--trust); }
+
   </style>
 </head>
 
 <body>
-  <div class="card">
-    <h1 id="title">Paga con transferencia</h1>
-    <p>Copia y pega en tu aplicación bancaria.</p>
+  <!-- Hero con logo grande (Opción C) -->
+  <header class="hero" aria-label="TuQR portada">
+    <div class="logo-wrap">
+      <!-- Coloca tu archivo en ./assets/tuqr-logo.png -->
+      <img class="logo" src="./TuQRLogo.png" alt="TuQR — Transferencias simples">
+      <div class="strap">Rápido para cobrar, fácil para pagar.</div>
+    </div>
+  </header>
 
-    <pre id="datos">Cargando…</pre>
+  <!-- Cinta multicolor tipo feria -->
+  <div class="ribbon" aria-hidden="true"></div>
 
-    <button id="copiar" disabled>Copiar datos para transferir</button>
+  <!-- Contenido -->
+  <main class="wrap">
+    <div class="card">
+      <h1 id="title">Paga con transferencia</h1>
+      <p>Copia y pega en tu aplicación bancaria.</p>
 
-    <div id="ok" class="ok">Copiado</div>
-    <div id="err" class="err">No encontramos este comercio</div>
+      <pre id="datos">Cargando…</pre>
 
-    <!-- Plan B: copiar por campo -->
-    <div id="fields" class="fields" style="display:none;">
-      <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
-      <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
-      <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
-      <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
-      <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
-      <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
+      <button id="copiar" disabled>Copiar datos para transferir</button>
+
+      <div id="ok" class="ok">¡Copiado! Ahora pégalo en tu banco.</div>
+      <div id="err" class="err">No encontramos este comercio</div>
+
+      <!-- Plan B: copiar por campo -->
+      <div id="fields" class="fields" style="display:none;">
+        <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
+        <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
+        <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
+        <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
+        <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
+        <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
+      </div>
+
+      <div class="small">
+        En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
+      </div>
     </div>
 
-    <div class="small">
-      En TuQR solo copias los datos. <b>La transferencia se hace desde tu banco.</b>
-    </div>
-  </div>
+    <div class="foot">Hecho con <b>TuQR</b> — simple y confiable.</div>
+  </main>
 
 <script>
 /* =========================
@@ -133,15 +299,7 @@ function buildText(d){
   const rut    = sanitizeValue(d.rut);
   const banco  = sanitizeValue(d.banco);
   const tipo   = sanitizeValue(d.tipoCuenta);
-  const numero = sanitizeValue(d.numeroCuenta);
-  const correo = d.correo ? sanitizeValue(d.correo) : '';
-
-  const lines = [
-    `Nombre: ${nombre}`,
-    `Rut: ${rut}`,
-    `Banco: ${banco}`,
-    `Tipo de cuenta: ${tipo}`,
-    `Número de cuenta: ${numero}`
+  constmero de cuenta: ${numero}`
   ];
   if (correo) lines.push(`Correo: ${correo}`);
 
@@ -293,12 +451,12 @@ async function init(){
     enableBtn(btnNumero, !!fields.numero);
     enableBtn(btnCorreo, !!fields.correo);
 
-    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(fields.nombre); showCopied(); } }catch(e){} });
-    btnRut.addEventListener('click',    async ()=>{ try{ if(!btnRut.disabled){    await copyTextUniversal(fields.rut);    showCopied(); } }catch(e){} });
-    btnBanco.addEventListener('click',  async ()=>{ try{ if(!btnBanco.disabled){  await copyTextUniversal(fields.banco);  showCopied(); } }catch(e){} });
-    btnTipo.addEventListener('click',   async ()=>{ try{ if(!btnTipo.disabled){   await copyTextUniversal(fields.tipo);   showCopied(); } }catch(e){} });
-    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(fields.numero); showCopied(); } }catch(e){} });
-    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(fields.correo); showCopied(); } }catch(e){} });
+    btnNombre.addEventListener('click', async ()=>{ try{ if(!btnNombre.disabled){ await copyTextUniversal(cachedFields.nombre); showCopied(); } }catch(e){} });
+    btnRut   .addEventListener('click', async ()=>{ try{ if(!btnRut   .disabled){ await copyTextUniversal(cachedFields.rut);    showCopied(); } }catch(e){} });
+    btnBanco .addEventListener('click', async ()=>{ try{ if(!btnBanco .disabled){ await copyTextUniversal(cachedFields.banco);  showCopied(); } }catch(e){} });
+    btnTipo  .addEventListener('click', async ()=>{ try{ if(!btnTipo  .disabled){ await copyTextUniversal(cachedFields.tipo);   showCopied(); } }catch(e){} });
+    btnNumero.addEventListener('click', async ()=>{ try{ if(!btnNumero.disabled){ await copyTextUniversal(cachedFields.numero); showCopied(); } }catch(e){} });
+    btnCorreo.addEventListener('click', async ()=>{ try{ if(!btnCorreo.disabled){ await copyTextUniversal(cachedFields.correo); showCopied(); } }catch(e){} });
 
   }catch(e){
     datosEl.textContent = 'Error cargando datos';
