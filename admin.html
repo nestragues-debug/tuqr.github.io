@@ -46,7 +46,8 @@
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
 
-  h1{ font-size:20px; font-weight:800; margin:10px 0 18px; letter-spacing:-0.2px; }
+  h1{ font-size:20px; font-weight:800; margin:10px 0 6px; letter-spacing:-0.2px; }
+  .subtitle{ font-size:12px; color:var(--muted); margin:0 0 18px; line-height:1.4; }
 
   label{
     font-weight:700; font-size:13px; color:var(--muted);
@@ -109,7 +110,6 @@
   .cta-nuevo:active{ transform:translateY(1px); }
   .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
 
-  /* ── QR result card ── */
   .qr-card{
     margin-top:16px; padding:18px 16px; border-radius:var(--radius);
     border:1px solid var(--border); background:#fafafa;
@@ -161,9 +161,12 @@
 
   <div class="card">
     <h1>Crear comercio</h1>
+    <p class="subtitle">El ID debe ser único y sin espacios. Ej: <b>ItauCC2</b>, <b>EstadoRut</b></p>
 
     <label for="id">ID único</label>
-    <input id="id" placeholder="ej: ItauCC2" />
+    <input id="id" placeholder="ej: ItauCC2" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+    <div class="field-err" id="err-id">Sin espacios, solo letras y números</div>
+    <div class="field-err" id="err-id-existe">Este ID ya existe en data.json</div>
 
     <div class="row">
       <div>
@@ -218,13 +221,13 @@
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email" />
     <div class="field-err" id="err-correo">Formato de correo inválido</div>
 
-    <label for="wsp">WhatsApp destinatario <span style="font-weight:400;color:#aaa">(opcional, con código país)</span></label>
+    <label for="wsp">WhatsApp destinatario <span style="font-weight:400;color:#aaa">(con código país)</span></label>
     <input id="wsp" placeholder="56912345678" inputmode="numeric" />
+    <div class="field-err" id="err-wsp">Solo números, incluye código de país</div>
 
     <button class="cta" id="save">Guardar</button>
     <div id="msg"></div>
 
-    <!-- QR + link + WhatsApp -->
     <div class="qr-card" id="qrCard">
       <div id="qrContainer"></div>
       <div class="link-box">
@@ -238,11 +241,21 @@
   </div>
 </div>
 
-<!-- qrcode.js desde CDN -->
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-  const WORKER_URL  = 'https://tuqr-worker.nestragues.workers.dev/';
-  const BASE_URL    = 'https://tuqrapp.github.io/';  // ← ajusta si tu dominio es distinto
+  const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL   = 'https://tuqrapp.github.io/';
+
+  // Cache del data.json para validar IDs existentes
+  let dataJson = null;
+
+  async function cargarData(){
+    try{
+      const res = await fetch('./data.json?ts=' + Date.now(), { cache:'no-store' });
+      if(res.ok) dataJson = await res.json();
+    }catch(_){}
+  }
+  cargarData();
 
   function val(id){ return (document.getElementById(id).value || '').trim(); }
   function clean(s){
@@ -253,7 +266,14 @@
       .trim();
   }
 
-  /* ── Validación RUT ── */
+  /* ── Validaciones ── */
+  function validarId(id){
+    return /^[^\s]+$/.test(id); // sin espacios
+  }
+  function idExiste(id){
+    return dataJson && Object.prototype.hasOwnProperty.call(dataJson, id);
+  }
+
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
@@ -282,10 +302,35 @@
     return /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email);
   }
 
+  function validarWsp(wsp){
+    return /^\d{8,15}$/.test(wsp);
+  }
+
   /* ── Eventos en tiempo real ── */
+  const idInput     = document.getElementById('id');
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
   const correoInput = document.getElementById('correo');
+  const wspInput    = document.getElementById('wsp');
+
+  idInput.addEventListener('input', function(){
+    // Elimina espacios al escribir
+    this.value = this.value.replace(/\s/g,'');
+    const errFmt    = document.getElementById('err-id');
+    const errExiste = document.getElementById('err-id-existe');
+    if(this.value.length > 0){
+      const fmtOk = validarId(this.value);
+      const existe = idExiste(this.value);
+      this.classList.toggle('invalid', !fmtOk || existe);
+      this.classList.toggle('valid',    fmtOk && !existe);
+      errFmt.classList.toggle('show',    !fmtOk);
+      errExiste.classList.toggle('show',  fmtOk && existe);
+    } else {
+      this.classList.remove('valid','invalid');
+      errFmt.classList.remove('show');
+      errExiste.classList.remove('show');
+    }
+  });
 
   rutInput.addEventListener('input', function(){
     const raw = this.value.replace(/[\.\-\s]/g,'');
@@ -324,13 +369,25 @@
     }
   });
 
-  /* ── QR ── */
-  let qrInstance = null;
+  wspInput.addEventListener('input', function(){
+    this.value = this.value.replace(/\D/g,'');
+    const errEl = document.getElementById('err-wsp');
+    if(this.value.length > 0){
+      const ok = validarWsp(this.value);
+      this.classList.toggle('valid', ok);
+      this.classList.toggle('invalid', !ok);
+      errEl.classList.toggle('show', !ok);
+    } else {
+      this.classList.remove('valid','invalid');
+      errEl.classList.remove('show');
+    }
+  });
 
+  /* ── QR ── */
   function generarQR(url){
     const container = document.getElementById('qrContainer');
     container.innerHTML = '';
-    qrInstance = new QRCode(container, {
+    new QRCode(container, {
       text: url,
       width: 180,
       height: 180,
@@ -340,23 +397,24 @@
     });
   }
 
-  /* ── Reset formulario ── */
+  /* ── Reset ── */
   function resetForm(){
-    ['id','nombre','rut','numeroCuenta','correo','wsp'].forEach(id => {
-      const el = document.getElementById(id);
+    ['id','nombre','rut','numeroCuenta','correo','wsp'].forEach(fid => {
+      const el = document.getElementById(fid);
       el.value = '';
       el.classList.remove('valid','invalid');
     });
-    ['tipoCuenta','banco'].forEach(id => {
-      document.getElementById(id).value = '';
+    ['tipoCuenta','banco'].forEach(fid => {
+      document.getElementById(fid).value = '';
     });
-    ['err-rut','err-cuenta','err-correo'].forEach(id => {
-      document.getElementById(id).classList.remove('show');
+    ['err-id','err-id-existe','err-rut','err-cuenta','err-correo','err-wsp'].forEach(fid => {
+      document.getElementById(fid).classList.remove('show');
     });
     document.getElementById('msg').innerHTML = '';
     document.getElementById('save').style.display = '';
     document.getElementById('qrCard').classList.remove('show');
     document.getElementById('qrContainer').innerHTML = '';
+    cargarData(); // recarga data.json para que el nuevo ID quede registrado
     document.getElementById('id').focus();
   }
 
@@ -383,10 +441,20 @@
       numeroCuenta: clean(val('numeroCuenta')),
       correo:       clean(val('correo'))
     };
+    const wspVal = val('wsp').replace(/\D/g,'');
 
-    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta){
+    // Campos obligatorios
+    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco || !payload.tipoCuenta || !payload.numeroCuenta || !wspVal){
       msg.innerHTML = '<div class="err">Faltan campos obligatorios.</div>';
       return;
+    }
+    if(!validarId(payload.id)){
+      msg.innerHTML = '<div class="err">El ID no puede contener espacios.</div>';
+      idInput.focus(); return;
+    }
+    if(idExiste(payload.id)){
+      msg.innerHTML = '<div class="err">El ID "' + payload.id + '" ya existe en data.json. Elige otro.</div>';
+      idInput.focus(); return;
     }
     if(!validarRut(payload.rut)){
       msg.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
@@ -399,6 +467,10 @@
     if(payload.correo && !validarEmail(payload.correo)){
       msg.innerHTML = '<div class="err">El formato del correo no es válido.</div>';
       correoInput.focus(); return;
+    }
+    if(!validarWsp(wspVal)){
+      msg.innerHTML = '<div class="err">El WhatsApp debe tener entre 8 y 15 dígitos e incluir código de país.</div>';
+      wspInput.focus(); return;
     }
 
     try{
@@ -419,18 +491,12 @@
         return;
       }
 
-      // Éxito — generar QR y mostrar opciones
       const link = BASE_URL + '?id=' + encodeURIComponent(payload.id);
-
       generarQR(link);
       document.getElementById('linkText').textContent = link;
       document.getElementById('qrCard').classList.add('show');
 
-      // Botón WhatsApp — usa número ingresado o abre selector de contacto
-      const wspNum = val('wsp').replace(/\D/g,'');
-      const wspUrl = wspNum
-        ? `https://wa.me/${wspNum}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`
-        : `https://wa.me/?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
+      const wspUrl = `https://wa.me/${wspVal}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
       document.getElementById('btnWsp').onclick = () => window.open(wspUrl, '_blank');
 
       msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
@@ -444,10 +510,14 @@
 
   /* ── Copiar link ── */
   document.getElementById('btnCopyLink').addEventListener('click', function(){
-    const link = document.getElementById('linkText').textContent;
+    const link  = document.getElementById('linkText').textContent;
     const flash = document.getElementById('copiedFlash');
+    function flashCopied(){
+      flash.classList.add('show');
+      setTimeout(() => flash.classList.remove('show'), 1800);
+    }
     if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(link).then(() => flashCopied());
+      navigator.clipboard.writeText(link).then(flashCopied);
     } else {
       const ta = document.createElement('textarea');
       ta.value = link;
@@ -457,10 +527,6 @@
       document.execCommand('copy');
       document.body.removeChild(ta);
       flashCopied();
-    }
-    function flashCopied(){
-      flash.classList.add('show');
-      setTimeout(() => flash.classList.remove('show'), 1800);
     }
   });
 </script>
