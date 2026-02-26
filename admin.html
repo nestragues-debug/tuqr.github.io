@@ -115,6 +115,17 @@
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
 
+  .cta-nuevo{
+    margin-top:12px; padding:13px; width:100%;
+    font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
+    color:var(--primary); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .12s ease, color .12s ease;
+  }
+  .cta-nuevo:active{ transform:translateY(1px); }
+  .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
+
   .help{
     margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
   }
@@ -277,6 +288,24 @@
     }
   });
 
+  /* ── Reset formulario ── */
+  function resetForm(){
+    ['id','nombre','rut','numeroCuenta','correo'].forEach(id => {
+      const el = document.getElementById(id);
+      el.value = '';
+      el.classList.remove('valid','invalid');
+    });
+    ['tipoCuenta','banco'].forEach(id => {
+      document.getElementById(id).value = '';
+    });
+    ['err-rut','err-cuenta','err-correo'].forEach(id => {
+      document.getElementById(id).classList.remove('show');
+    });
+    document.getElementById('msg').innerHTML = '';
+    document.getElementById('save').style.display = '';
+    document.getElementById('id').focus();
+  }
+
   /* ── Guard Worker URL ── */
   (function guard(){
     const msg = document.getElementById('msg');
@@ -336,7 +365,9 @@
         return;
       }
 
-      msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div>';
+      msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
+      document.getElementById('save').style.display = 'none';
+      document.getElementById('nuevo').addEventListener('click', resetForm);
     }catch(e){
       msg.innerHTML = '<div class="err">Fallo de red: ' + e + '</div>';
     }
