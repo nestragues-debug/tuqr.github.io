@@ -130,25 +130,23 @@
   .qr-wrap canvas{ border-radius:8px; }
   .qr-label{ font-size:12px; color:var(--muted); font-weight:600; text-align:center; word-break:break-all; }
 
-  .qr-actions{ display:grid; grid-template-columns:1fr 1fr; gap:10px; width:100%; }
-  .btn-wa{
-    padding:11px 10px; font-size:13px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff;
-    background:#25d366; box-shadow:0 4px 10px rgba(37,211,102,.25);
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, filter .06s ease;
-    display:flex; align-items:center; justify-content:center; gap:6px;
-  }
-  .btn-wa:active{ transform:translateY(1px); filter:brightness(.97); }
   .btn-save{
-    padding:11px 10px; font-size:13px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff;
+    margin-top:4px; padding:11px 10px; font-size:13px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; width:100%;
     background:#555; box-shadow:0 4px 10px rgba(0,0,0,.12);
     -webkit-tap-highlight-color:transparent;
     transition:transform .06s ease, filter .06s ease;
     display:flex; align-items:center; justify-content:center; gap:6px;
   }
   .btn-save:active{ transform:translateY(1px); filter:brightness(.97); }
+
+  .wa-link{
+    display:block; margin-top:10px; padding:11px 12px;
+    background:#f0fdf4; border:1px solid rgba(0,170,120,.2); border-radius:12px;
+    font-size:13px; font-weight:700; color:#0a7; word-break:break-all; line-height:1.4;
+    text-align:center;
+  }
+  .wa-link span{ display:block; font-size:11px; font-weight:600; color:var(--muted); margin-bottom:3px; }
 
   .help{
     margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
@@ -165,8 +163,9 @@
   <div class="card">
     <h1>Crear comercio</h1>
 
-    <label for="id">ID único</label>
-    <input id="id" placeholder="ej: ItauCC2" />
+    <label for="id">Crea tu usuario</label>
+    <input id="id" placeholder="ej: JuanLopez" autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false" />
+    <div class="field-err" id="err-id">El usuario no puede contener espacios</div>
 
     <div class="row">
       <div>
@@ -241,15 +240,15 @@
       <div class="qr-wrap">
         <canvas id="qrCanvas"></canvas>
         <div class="qr-label" id="qrLabel"></div>
-        <div class="qr-actions">
-          <button class="btn-wa" id="btnWA">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.112.549 4.1 1.508 5.83L0 24l6.335-1.652A11.954 11.954 0 0012 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 01-5.006-1.371l-.36-.214-3.732.973.998-3.632-.235-.374A9.818 9.818 0 1112 21.818z"/></svg>
-            WhatsApp
-          </button>
-          <button class="btn-save" id="btnGuardarQR">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Guardar QR
-          </button>
+
+        <button class="btn-save" id="btnGuardarQR">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+          Guardar QR
+        </button>
+
+        <div class="wa-link" id="waLinkBox">
+          <span>Manda este link por WhatsApp al comercio</span>
+          <span id="waLinkText"></span>
         </div>
       </div>
 
@@ -275,6 +274,7 @@
       .trim();
   }
 
+  function validarId(s){ return s.length > 0 && !/\s/.test(s); }
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
@@ -295,10 +295,24 @@
   function validarEmail(e){ return !e || /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
   function validarTelefono(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
 
+  const idInput     = document.getElementById('id');
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
   const correoInput = document.getElementById('correo');
   const telInput    = document.getElementById('telefono');
+
+  idInput.addEventListener('input', function(){
+    const errEl = document.getElementById('err-id');
+    if(this.value.length > 0){
+      const ok = validarId(this.value);
+      this.classList.toggle('valid', ok);
+      this.classList.toggle('invalid', !ok);
+      errEl.classList.toggle('show', !ok);
+    } else {
+      this.classList.remove('valid','invalid');
+      errEl.classList.remove('show');
+    }
+  });
 
   rutInput.addEventListener('input', function(){
     const raw = this.value.replace(/[\.\-\s]/g,'');
@@ -340,7 +354,6 @@
 
   let qrURL = '';
   let qrGenerated = false;
-  let numeroWA = '';
 
   function generarQR(url){
     qrURL = url;
@@ -369,28 +382,19 @@
     link.click();
   });
 
-  document.getElementById('btnWA').addEventListener('click', ()=>{
-    if(!qrURL || !numeroWA) return;
-    // Elimina el 0 inicial si existe (ej: 09... → 9...)
-    const num = '56' + numeroWA.replace(/^0+/,'');
-    // api.whatsapp.com funciona en desktop (WhatsApp Web) y móvil
-    const waURL = 'https://api.whatsapp.com/send?phone=' + num + '&text=' + encodeURIComponent(qrURL);
-    window.open(waURL, '_blank');
-  });
-
   function resetForm(){
     ['id','nombre','rut','numeroCuenta','correo','telefono'].forEach(id => {
       const el = document.getElementById(id);
       el.value = ''; el.classList.remove('valid','invalid');
     });
     ['tipoCuenta','banco'].forEach(id => { document.getElementById(id).value = ''; });
-    ['err-rut','err-cuenta','err-correo','err-tel'].forEach(id => {
+    ['err-id','err-rut','err-cuenta','err-correo','err-tel'].forEach(id => {
       document.getElementById(id).classList.remove('show');
     });
     document.getElementById('msg-err').innerHTML = '';
     document.getElementById('resultado').style.display = 'none';
     document.getElementById('save').style.display = '';
-    qrURL = ''; qrGenerated = false; numeroWA = '';
+    qrURL = ''; qrGenerated = false;
     document.getElementById('id').focus();
   }
 
@@ -420,6 +424,10 @@
 
     if(!payload.id||!payload.nombre||!payload.rut||!payload.banco||!payload.tipoCuenta||!payload.numeroCuenta){
       msgErr.innerHTML = '<div class="err">Faltan campos obligatorios.</div>'; return;
+    }
+    if(!validarId(payload.id)){
+      msgErr.innerHTML = '<div class="err">El usuario no puede contener espacios.</div>';
+      idInput.focus(); return;
     }
     if(!validarRut(payload.rut)){
       msgErr.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
@@ -456,10 +464,21 @@
         return;
       }
 
-      numeroWA = telefono;
       document.getElementById('save').style.display = 'none';
       const url = BASE_URL + '?id=' + encodeURIComponent(payload.id);
       generarQR(url);
+
+      // Mostrar link para copiar y mandar manualmente por WhatsApp
+      const waLink = 'https://api.whatsapp.com/send?phone=56'
+        + telefono.replace(/^0+/,'')
+        + '&text=' + encodeURIComponent(url);
+      document.getElementById('waLinkText').textContent = waLink;
+      document.getElementById('waLinkBox').href = waLink;
+      document.getElementById('waLinkBox').setAttribute('target','_blank');
+      document.getElementById('waLinkBox').style.cursor = 'pointer';
+      // Hacer el div clickeable como link
+      document.getElementById('waLinkBox').onclick = function(){ window.open(waLink,'_blank'); };
+
       document.getElementById('resultado').style.display = 'block';
 
     }catch(e){
