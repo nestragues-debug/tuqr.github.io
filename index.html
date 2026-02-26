@@ -21,13 +21,12 @@
 
   <style>
     :root{
-      /* Paleta “confianza” (cálida pero sobria) */
-      --primary: #ff7a18;   /* naranja menos intenso */
-      --accent:  #ffd400;   /* amarillo vibrante */
-      --bg:      #f2f3f5;   /* gris claro limpio */
-      --card:    #ffffff;   /* blanco */
-      --text:    #1a1a1a;   /* negro/gris oscuro */
-      --muted:   #5a5a5a;   /* texto secundario */
+      --primary: #ff7a18;   /* naranja sobrio */
+      --accent:  #ffd400;   /* amarillo */
+      --bg:      #f2f3f5;   /* gris claro */
+      --card:    #ffffff;
+      --text:    #1a1a1a;
+      --muted:   #5a5a5a;
       --border:  rgba(0,0,0,.08);
       --shadow:  0 10px 24px rgba(0,0,0,.08);
       --radius:  18px;
@@ -38,7 +37,7 @@
     body{
       font-family: "Poppins", system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
       margin:0;
-      padding:18px 12px;
+      padding:16px 12px;
       background: var(--bg);
       color:var(--text);
       -webkit-font-smoothing: antialiased;
@@ -46,19 +45,20 @@
     }
 
     .wrap{
-      max-width:440px; /* más angosto para ver “botones por campo” en celular */
+      max-width:440px;
       margin:0 auto;
     }
 
-    /* Header con logo */
+    /* Logo: mismo ancho visual que la tarjeta */
     .brand{
       display:flex;
       justify-content:center;
       align-items:center;
-      margin: 6px 0 12px;
+      margin: 6px 0 6px; /* más cerca de la card */
     }
     .brand img{
-      width:min(240px, 72vw); /* logo más ancho */
+      width:100%;
+      max-width:440px;        /* mismo tope que .wrap */
       height:auto;
       display:block;
       filter: drop-shadow(0 6px 10px rgba(0,0,0,.10));
@@ -74,7 +74,6 @@
       overflow:hidden;
     }
 
-    /* Franja superior sobria */
     .card::before{
       content:"";
       position:absolute;
@@ -83,24 +82,28 @@
       background: linear-gradient(90deg, rgba(255,212,0,.95), rgba(255,122,24,.95));
     }
 
+    /* Badge centrado */
     .badge{
-      display:inline-flex;
+      display:flex;
+      justify-content:center;  /* centrado */
       align-items:center;
       gap:8px;
       font-weight:700;
-      font-size:11px;          /* mejora opcional */
+      font-size:11px;
       color:rgba(26,26,26,.9);
       background: rgba(255,212,0,.18);
       border:1px solid rgba(255,212,0,.32);
-      padding:6px 9px;         /* mejora opcional */
+      padding:6px 10px;
       border-radius:999px;
       margin-top:10px;
+      text-align:center;
     }
     .badge .dot{
       width:10px; height:10px;
       border-radius:999px;
       background: var(--accent);
       box-shadow: 0 0 0 4px rgba(255,212,0,.16);
+      flex: 0 0 auto;
     }
 
     h1{
@@ -124,7 +127,7 @@
       border:1px solid rgba(0,0,0,.10);
       padding:14px;
       border-radius:14px;
-      min-height:96px; /* más compacto */
+      min-height:96px;
       white-space:pre-wrap;
       word-break:break-word;
       font-size:15px;
@@ -134,17 +137,17 @@
     }
 
     .cta{
-      width:92%;               /* más angosto */
+      width:88%;
       margin:0 auto;
       display:block;
-      padding:13px;            /* menos alto */
+      padding:13px;
       font-size:15px;
       font-weight:800;
       border:0;
       border-radius:12px;
       cursor:pointer;
       color:#fff;
-      background:#ff7a18;      /* naranja menos intenso */
+      background:#ff7a18;
       box-shadow: 0 6px 12px rgba(255,122,24,.22);
       -webkit-tap-highlight-color: transparent;
       transition: transform .06s ease, filter .06s ease;
@@ -175,22 +178,29 @@
       border:1px solid rgba(190,0,0,.14);
     }
 
-    /* Plan B: botones por campo */
+    .or-copy{
+      margin:10px 0 6px;
+      text-align:center;
+      font-size:13px;
+      color: rgba(26,26,26,.75);
+      font-weight:700;
+    }
+
+    /* 2 x 3 siempre en móvil (2 columnas) */
     .fields{
-      margin-top:14px;
+      margin-top:8px;
       border-top:1px dashed rgba(0,0,0,.12);
       padding-top:12px;
       display:grid;
       gap:10px;
-      grid-template-columns:1fr;
+      grid-template-columns:1fr 1fr; /* 2 columnas */
     }
-    @media (min-width:520px){ .fields{ grid-template-columns:1fr 1fr; } }
 
     .field-btn{
-      padding:12px;
-      font-size:14px;
+      padding:12px 10px;
+      font-size:13px;
       font-weight:800;
-      line-height:1.1;
+      line-height:1.15;
       border-radius:12px;
       border:1px solid rgba(0,0,0,.10);
       background: #fff;
@@ -198,6 +208,7 @@
       cursor:pointer;
       box-shadow: 0 6px 12px rgba(0,0,0,.05);
       transition: transform .06s ease, filter .06s ease;
+      text-align:center;
     }
     .field-btn:active{ transform: translateY(1px); filter:brightness(0.99); }
     .field-btn:disabled{
@@ -232,7 +243,6 @@
 <body>
   <div class="wrap">
 
-    <!-- Logo centrado arriba -->
     <div class="brand">
       <!-- Si no aparece, cambia src a "./main/TuQRLogo.png" -->
       <img src="./TuQRLogo.png" alt="TuQR" />
@@ -242,23 +252,25 @@
       <div class="badge"><span class="dot"></span> Transferencia rápida y sin errores</div>
 
       <h1 id="title">Paga con transferencia</h1>
-      <p>Copia y pega en tu app bancaria (sin escribir a mano)</p>
+      <p>Copia y pega en tu app bancaria</p>
 
       <pre id="datos">Cargando…</pre>
 
-      <button id="copiar" class="cta" disabled>Copiar datos para transferir</button>
+      <button id="copiar" class="cta" disabled>Copia todos los datos</button>
 
       <div id="ok" class="ok">✅ Copiado</div>
       <div id="err" class="err">❌ No encontramos este comercio</div>
 
+      <div class="or-copy">... o cópialos de a uno</div>
+
       <!-- Plan B: copiar por campo -->
       <div id="fields" class="fields" style="display:none;">
-        <button id="copyNombre" class="field-btn" disabled>Copiar Nombre</button>
-        <button id="copyRut" class="field-btn" disabled>Copiar Rut</button>
-        <button id="copyBanco" class="field-btn" disabled>Copiar Banco</button>
-        <button id="copyTipo" class="field-btn" disabled>Copiar Tipo de cuenta</button>
-        <button id="copyNumero" class="field-btn" disabled>Copiar Número de cuenta</button>
-        <button id="copyCorreo" class="field-btn" disabled>Copiar Correo</button>
+        <button id="copyNombre" class="field-btn" disabled>Copia Nombre</button>
+        <button id="copyRut" class="field-btn" disabled>Copia Rut</button>
+        <button id="copyBanco" class="field-btn" disabled>Copia Banco</button>
+        <button id="copyTipo" class="field-btn" disabled>Copia Tipo de cuenta</button>
+        <button id="copyNumero" class="field-btn" disabled>Copia Nº de cuenta</button>
+        <button id="copyCorreo" class="field-btn" disabled>Copia Correo</button>
       </div>
 
       <div class="hint">
