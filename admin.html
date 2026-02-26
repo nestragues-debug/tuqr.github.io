@@ -30,14 +30,12 @@
   }
   .wrap{ max-width:480px; margin:0 auto; }
 
-  /* Logo */
   .brand{ display:flex; justify-content:center; margin:6px 0 6px; }
   .brand img{
     width:100%; max-width:440px; height:auto; display:block;
     filter:drop-shadow(0 6px 10px rgba(0,0,0,.10));
   }
 
-  /* Card */
   .card{
     background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius); padding:22px 20px 24px;
@@ -48,21 +46,8 @@
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
 
-  /* Badge */
-  .badge{
-    display:flex; justify-content:center; align-items:center; gap:8px;
-    font-weight:700; font-size:11px; color:rgba(26,26,26,.9);
-    background:rgba(255,212,0,.18); border:1px solid rgba(255,212,0,.32);
-    padding:6px 10px; border-radius:999px; margin-top:10px; text-align:center;
-  }
-  .badge .dot{
-    width:10px; height:10px; border-radius:999px;
-    background:var(--accent); box-shadow:0 0 0 4px rgba(255,212,0,.16);
-  }
-
   h1{ font-size:20px; font-weight:800; margin:10px 0 18px; letter-spacing:-0.2px; }
 
-  /* Labels & inputs */
   label{
     font-weight:700; font-size:13px; color:var(--muted);
     margin-top:14px; display:block; margin-bottom:5px;
@@ -91,7 +76,6 @@
 
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
 
-  /* Botón */
   .cta{
     margin-top:22px; padding:13px; width:100%;
     font-size:15px; font-weight:800; font-family:inherit;
@@ -103,7 +87,6 @@
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  /* Mensajes */
   .ok{
     margin-top:12px; font-weight:800; padding:10px 12px;
     border-radius:12px; font-size:14px;
@@ -126,9 +109,47 @@
   .cta-nuevo:active{ transform:translateY(1px); }
   .cta-nuevo:hover{ background:rgba(255,122,24,.07); }
 
-  .help{
-    margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
+  /* ── QR result card ── */
+  .qr-card{
+    margin-top:16px; padding:18px 16px; border-radius:var(--radius);
+    border:1px solid var(--border); background:#fafafa;
+    display:none; text-align:center;
   }
+  .qr-card.show{ display:block; }
+  .qr-card canvas, .qr-card img{ margin:0 auto 12px; display:block; border-radius:10px; }
+
+  .link-box{
+    display:flex; align-items:center; gap:8px;
+    background:#fff; border:1.5px solid rgba(0,0,0,.10);
+    border-radius:10px; padding:8px 10px; margin-bottom:12px;
+  }
+  .link-box span{
+    flex:1; font-size:12px; color:var(--muted);
+    word-break:break-all; text-align:left;
+  }
+  .btn-copy-link{
+    flex-shrink:0; padding:6px 10px; font-size:12px; font-weight:800;
+    font-family:inherit; border:0; border-radius:8px; cursor:pointer;
+    background:var(--primary); color:#fff;
+    transition:filter .1s;
+  }
+  .btn-copy-link:active{ filter:brightness(.95); }
+
+  .btn-wsp{
+    width:100%; padding:12px; font-size:14px; font-weight:800;
+    font-family:inherit; border:0; border-radius:12px; cursor:pointer;
+    background:#25D366; color:#fff;
+    box-shadow:0 4px 10px rgba(37,211,102,.25);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+  }
+  .btn-wsp:active{ transform:translateY(1px); filter:brightness(.97); }
+
+  .copied-flash{
+    font-size:12px; font-weight:700; color:#0a7;
+    margin-top:6px; opacity:0; transition:opacity .2s;
+  }
+  .copied-flash.show{ opacity:1; }
 </style>
 </head>
 <body>
@@ -197,14 +218,31 @@
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email" />
     <div class="field-err" id="err-correo">Formato de correo inválido</div>
 
+    <label for="wsp">WhatsApp destinatario <span style="font-weight:400;color:#aaa">(opcional, con código país)</span></label>
+    <input id="wsp" placeholder="56912345678" inputmode="numeric" />
+
     <button class="cta" id="save">Guardar</button>
     <div id="msg"></div>
+
+    <!-- QR + link + WhatsApp -->
+    <div class="qr-card" id="qrCard">
+      <div id="qrContainer"></div>
+      <div class="link-box">
+        <span id="linkText"></span>
+        <button class="btn-copy-link" id="btnCopyLink">Copiar</button>
+      </div>
+      <div class="copied-flash" id="copiedFlash">¡Link copiado!</div>
+      <button class="btn-wsp" id="btnWsp">Enviar por WhatsApp</button>
+    </div>
 
   </div>
 </div>
 
+<!-- qrcode.js desde CDN -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
-  const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
+  const WORKER_URL  = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL    = 'https://tuqrapp.github.io/';  // ← ajusta si tu dominio es distinto
 
   function val(id){ return (document.getElementById(id).value || '').trim(); }
   function clean(s){
@@ -215,7 +253,7 @@
       .trim();
   }
 
-  /* ── Validación RUT chileno con dígito verificador ── */
+  /* ── Validación RUT ── */
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
@@ -286,9 +324,25 @@
     }
   });
 
+  /* ── QR ── */
+  let qrInstance = null;
+
+  function generarQR(url){
+    const container = document.getElementById('qrContainer');
+    container.innerHTML = '';
+    qrInstance = new QRCode(container, {
+      text: url,
+      width: 180,
+      height: 180,
+      colorDark: '#1a1a1a',
+      colorLight: '#ffffff',
+      correctLevel: QRCode.CorrectLevel.M
+    });
+  }
+
   /* ── Reset formulario ── */
   function resetForm(){
-    ['id','nombre','rut','numeroCuenta','correo'].forEach(id => {
+    ['id','nombre','rut','numeroCuenta','correo','wsp'].forEach(id => {
       const el = document.getElementById(id);
       el.value = '';
       el.classList.remove('valid','invalid');
@@ -301,6 +355,8 @@
     });
     document.getElementById('msg').innerHTML = '';
     document.getElementById('save').style.display = '';
+    document.getElementById('qrCard').classList.remove('show');
+    document.getElementById('qrContainer').innerHTML = '';
     document.getElementById('id').focus();
   }
 
@@ -363,11 +419,48 @@
         return;
       }
 
+      // Éxito — generar QR y mostrar opciones
+      const link = BASE_URL + '?id=' + encodeURIComponent(payload.id);
+
+      generarQR(link);
+      document.getElementById('linkText').textContent = link;
+      document.getElementById('qrCard').classList.add('show');
+
+      // Botón WhatsApp — usa número ingresado o abre selector de contacto
+      const wspNum = val('wsp').replace(/\D/g,'');
+      const wspUrl = wspNum
+        ? `https://wa.me/${wspNum}?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`
+        : `https://wa.me/?text=${encodeURIComponent('Tus datos de transferencia: ' + link)}`;
+      document.getElementById('btnWsp').onclick = () => window.open(wspUrl, '_blank');
+
       msg.innerHTML = '<div class="ok">¡Comercio creado correctamente!</div><button class="cta-nuevo" id="nuevo">+ Crear otro comercio</button>';
       document.getElementById('save').style.display = 'none';
       document.getElementById('nuevo').addEventListener('click', resetForm);
+
     }catch(e){
       msg.innerHTML = '<div class="err">Fallo de red: ' + e + '</div>';
+    }
+  });
+
+  /* ── Copiar link ── */
+  document.getElementById('btnCopyLink').addEventListener('click', function(){
+    const link = document.getElementById('linkText').textContent;
+    const flash = document.getElementById('copiedFlash');
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(link).then(() => flashCopied());
+    } else {
+      const ta = document.createElement('textarea');
+      ta.value = link;
+      ta.style.cssText = 'position:fixed;opacity:0;pointer-events:none;';
+      document.body.appendChild(ta);
+      ta.select();
+      document.execCommand('copy');
+      document.body.removeChild(ta);
+      flashCopied();
+    }
+    function flashCopied(){
+      flash.classList.add('show');
+      setTimeout(() => flash.classList.remove('show'), 1800);
     }
   });
 </script>
