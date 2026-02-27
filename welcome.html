@@ -58,14 +58,6 @@
   .card-title{ font-size:22px; font-weight:800; text-align:center; margin-top:4px; }
   .card-sub{ font-size:14px; color:var(--muted); text-align:center; line-height:1.5; }
 
-  .divider{
-    width:100%; display:flex; align-items:center; gap:10px;
-  }
-  .divider::before, .divider::after{
-    content:""; flex:1; height:1px; background:var(--border);
-  }
-  .divider span{ font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; }
-
   .steps{ width:100%; display:flex; flex-direction:column; gap:10px; }
   .step{
     display:flex; align-items:center; gap:14px;
@@ -79,6 +71,14 @@
   }
   .step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
   .step-text span{ color:var(--primary); font-weight:800; }
+
+  .divider{
+    width:100%; display:flex; align-items:center; gap:10px;
+  }
+  .divider::before, .divider::after{
+    content:""; flex:1; height:1px; background:var(--border);
+  }
+  .divider span{ font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; }
 
   .cta{
     width:100%; padding:14px; font-size:16px; font-weight:800; font-family:inherit;
@@ -102,8 +102,8 @@
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
 
   .info-box{
-    width:100%; font-size:12px; color:var(--muted); text-align:center;
-    background:#f7f7f7; border-radius:10px; padding:10px 14px; line-height:1.6;
+    width:100%; font-size:13px; color:var(--muted); text-align:center;
+    background:#f7f7f7; border-radius:12px; padding:12px 14px; line-height:1.6;
   }
   .info-box span{ color:var(--primary); font-weight:700; }
 
@@ -136,7 +136,6 @@
   const card = document.getElementById('card');
   let deferredPrompt = null;
 
-  /* Si ya está en modo standalone redirigir directo */
   if(isStandalone){
     window.location.replace('./admin.html');
   }
@@ -144,17 +143,13 @@
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
-    renderAndroid(true);
+    renderAndroid();
   });
 
-  /* ── iOS Safari: muestra ambas opciones siempre ── */
+  /* ── iOS Safari ── */
   function renderIOS(){
     card.innerHTML = `
-      <div class="card-title">TuQR</div>
-
-      <a class="cta" href="${PWA_URL}">Abrir TuQR →</a>
-
-      <div class="divider"><span>o instala TuQR en tu iPhone</span></div>
+      <div class="card-title">Instala TuQR</div>
 
       <div class="steps">
         <div class="step">
@@ -165,15 +160,21 @@
           <div class="step-num">2</div>
           <div class="step-text">Busca en las opciones <span>"Agregar a inicio"</span></div>
         </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Toca <span>"Agregar"</span> para confirmar</div>
+        </div>
       </div>
 
+      <div class="divider"><span>¿ya tienes TuQR instalado?</span></div>
+
       <div class="info-box">
-        Una vez instalada, abre <span>TuQR</span> desde tu pantalla de inicio.
+        Abre <span>TuQR</span> desde tu listado de aplicaciones o pantalla de inicio.
       </div>
     `;
   }
 
-  /* ── iOS pero no Safari ── */
+  /* ── iOS no Safari ── */
   function renderIOSNoSafari(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
@@ -186,42 +187,32 @@
     `;
   }
 
-  /* ── Android / otros ── */
-  function renderAndroid(hasPrompt){
+  /* ── Android ── */
+  function renderAndroid(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
       <div class="card-sub">Genera tu QR de cobro y muéstraselo a tus clientes.</div>
-      ${hasPrompt ? `
-        <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
-        <a class="cta-outline" href="${PWA_URL}">Abrir sin instalar →</a>
-      ` : `
-        <div class="steps">
-          <div class="step">
-            <div class="step-num">1</div>
-            <div class="step-text">Toca el menú <span>${isSamsung?'☰':'⋮'}</span> de tu navegador</div>
-          </div>
-          <div class="step">
-            <div class="step-num">2</div>
-            <div class="step-text">Elige <span>"Agregar a pantalla de inicio"</span></div>
-          </div>
-        </div>
-        <a class="cta-outline" href="${PWA_URL}">Ya la instalé — Abrir TuQR →</a>
-      `}
+      <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
+      <div class="info-box" id="msgListado" style="display:none">
+        Abre <span>TuQR</span> desde tu <span>listado de aplicaciones</span>.
+      </div>
     `;
-    if(hasPrompt){
-      document.getElementById('btnInstall').addEventListener('click', async () => {
+
+    document.getElementById('btnInstall').addEventListener('click', async () => {
+      const btn = document.getElementById('btnInstall');
+      const msg = document.getElementById('msgListado');
+      if(deferredPrompt){
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         deferredPrompt = null;
-        if(outcome === 'accepted'){
-          card.innerHTML = `
-            <div class="card-title">✓ ¡Instalado!</div>
-            <div class="card-sub">TuQR fue instalado.</div>
-            <div class="info-box">Busca el ícono de <span>TuQR</span> en tu pantalla de inicio y ábrelo desde ahí.</div>
-          `;
-        }
-      });
-    }
+        btn.style.display = 'none';
+        msg.style.display = '';
+      } else {
+        // Ya instalada — no se puede abrir PWA desde JS, indicar al usuario
+        btn.style.display = 'none';
+        msg.style.display = '';
+      }
+    });
   }
 
   /* ── Desktop ── */
@@ -236,7 +227,7 @@
   /* ── Render inicial ── */
   if(isIOS && isSafari)                    renderIOS();
   else if(isIOS && !isSafari)              renderIOSNoSafari();
-  else if(isAndroid||isSamsung||isFirefox) renderAndroid(false);
+  else if(isAndroid||isSamsung||isFirefox) renderAndroid();
   else                                     renderDesktop();
 </script>
 </body>
