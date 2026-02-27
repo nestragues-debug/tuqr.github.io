@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="TuQR"/>
 <link rel="manifest" href="./manifest.json"/>
-<link rel="apple-touch-icon" href="./PWA/LogoQ_transparent.png"/>
+<link rel="apple-touch-icon" href="./LogoQ_transparent.png"/>
 <title>TuQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -88,10 +88,23 @@
     50%{     box-shadow:0 0 0 6px rgba(255,212,0,.05); }
   }
 
-  .hint{
-    font-size:12px; color:var(--muted); text-align:center; line-height:1.4;
-  }
+  .hint{ font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
 
+  /* Link copiable */
+  .link-box{
+    width:100%; background:#f7f7f7; border:1px solid var(--border);
+    border-radius:12px; padding:10px 12px;
+    display:flex; align-items:center; gap:10px; cursor:pointer;
+  }
+  .link-box:active{ background:#efefef; }
+  .link-text{
+    flex:1; font-size:11px; font-weight:600; color:var(--muted);
+    word-break:break-all; line-height:1.4;
+  }
+  .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
+  .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
+
+  /* Setup primer uso */
   #setup{
     width:100%; max-width:360px;
     display:none; flex-direction:column; align-items:center; gap:16px;
@@ -125,6 +138,7 @@
 </head>
 <body>
 
+<!-- Vista principal: QR + link -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
   <div class="brand">
     <img src="./TuQRLogo.png" alt="TuQR"/>
@@ -136,9 +150,15 @@
     </div>
     <div class="badge"><span class="dot"></span> Muéstrale este QR al cliente</div>
     <div class="hint">El cliente lo escanea y copia tus datos bancarios<br>para hacerte la transferencia.</div>
+    <div class="link-box" id="linkBox">
+      <div class="link-text" id="linkText"></div>
+      <div class="link-label" id="copyLabel">Copiar link</div>
+      <div class="copy-ok" id="copyOk">✓ Copiado</div>
+    </div>
   </div>
 </div>
 
+<!-- Primer uso: activación -->
 <div id="setup">
   <div class="brand">
     <img src="./TuQRLogo.png" alt="TuQR"/>
@@ -194,9 +214,12 @@
       const all = await res.json();
       const d   = all[id];
       if(!d) return false;
+
+      const url = BASE_URL+'?id='+encodeURIComponent(id);
       document.getElementById('nombreEl').textContent = clean(d.nombre);
       document.title = 'TuQR — ' + clean(d.nombre);
-      generarQR(BASE_URL+'?id='+encodeURIComponent(id));
+      generarQR(url);
+      document.getElementById('linkText').textContent = url;
       document.getElementById('main').style.display = 'flex';
       return true;
     }catch(e){
@@ -204,6 +227,31 @@
     }
   }
 
+  /* ── Copiar link ── */
+  document.getElementById('linkBox').addEventListener('click', function(){
+    const text  = document.getElementById('linkText').textContent;
+    const label = document.getElementById('copyLabel');
+    const okEl  = document.getElementById('copyOk');
+    const doCopy = () => {
+      label.style.display='none'; okEl.style.display='block';
+      setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1600);
+    };
+    if(navigator.clipboard && navigator.clipboard.writeText){
+      navigator.clipboard.writeText(text).then(doCopy).catch(()=>{
+        const ta=document.createElement('textarea');
+        ta.value=text; ta.style.cssText='position:fixed;opacity:0';
+        document.body.appendChild(ta); ta.select();
+        document.execCommand('copy'); document.body.removeChild(ta); doCopy();
+      });
+    } else {
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.cssText='position:fixed;opacity:0';
+      document.body.appendChild(ta); ta.select();
+      document.execCommand('copy'); document.body.removeChild(ta); doCopy();
+    }
+  });
+
+  /* ── Init ── */
   async function init(){
     const params  = new URLSearchParams(location.search);
     const urlId   = (params.get('id')||'').trim();
@@ -216,6 +264,7 @@
     document.getElementById('setup').style.display = 'flex';
   }
 
+  /* ── Activación primer uso ── */
   const setupInput = document.getElementById('setupId');
 
   setupInput.addEventListener('input', function(){
