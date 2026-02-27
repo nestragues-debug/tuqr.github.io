@@ -38,11 +38,10 @@
   body{
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    padding:20px 16px;
+    padding:20px 16px; gap:16px;
     overscroll-behavior:none;
   }
 
-  .brand{ margin-bottom:16px; }
   .brand img{
     width:160px; height:auto; display:block;
     filter:drop-shadow(0 4px 8px rgba(0,0,0,.10));
@@ -61,8 +60,7 @@
   }
 
   .comercio-nombre{
-    font-size:18px; font-weight:800; letter-spacing:-0.2px;
-    text-align:center; margin-top:4px;
+    font-size:18px; font-weight:800; text-align:center; margin-top:4px;
   }
 
   .qr-box{
@@ -90,7 +88,6 @@
 
   .hint{ font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
 
-  /* Link copiable */
   .link-box{
     width:100%; background:#f7f7f7; border:1px solid var(--border);
     border-radius:12px; padding:10px 12px;
@@ -104,27 +101,32 @@
   .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
   .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
 
-  /* Setup primer uso */
-  #setup{
+  /* Pantalla reactivar (si pierde sesión) */
+  #screenReactivar{
     width:100%; max-width:360px;
     display:none; flex-direction:column; align-items:center; gap:16px;
   }
-  #setup .card{ gap:14px; }
-  #setup input{
+  #screenReactivar .card{ gap:14px; }
+  #screenReactivar input{
     width:100%; padding:12px; font-size:15px; font-family:inherit;
     border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
     outline:none; background:#fff;
     transition:border-color .15s, box-shadow .15s;
   }
-  #setup input:focus{
-    border-color:var(--primary);
-    box-shadow:0 0 0 3px rgba(255,122,24,.12);
-  }
-  #setup input.invalid{ border-color:#e00; background:#fff8f8; }
-  .setup-title{ font-size:18px; font-weight:800; margin-top:4px; }
-  .setup-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
+  #screenReactivar input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
+  #screenReactivar input.invalid{ border-color:#e00; background:#fff8f8; }
+  #screenReactivar input.valid{ border-color:#0a7; background:#f5fbf8; }
+  .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
+  .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
   .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; }
   .field-err.show{ display:block; }
+  .phone-wrap{ display:flex; gap:8px; width:100%; }
+  .phone-prefix{
+    width:72px; flex-shrink:0; padding:11px 10px; font-size:14px; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
+    background:#f7f7f7; color:var(--muted); text-align:center; outline:none;
+  }
+  .phone-wrap input{ flex:1; }
 
   .cta{
     width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
@@ -138,16 +140,12 @@
 </head>
 <body>
 
-<!-- Vista principal: QR + link -->
+<!-- Vista principal: QR -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
-  <div class="brand">
-    <img src="./TuQRLogo.png" alt="TuQR"/>
-  </div>
+  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="comercio-nombre" id="nombreEl">Cargando…</div>
-    <div class="qr-box">
-      <canvas id="qrCanvas"></canvas>
-    </div>
+    <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
     <div class="badge"><span class="dot"></span> Muéstrale este QR al cliente</div>
     <div class="hint">El cliente lo escanea y copia tus datos bancarios<br>para hacerte la transferencia.</div>
     <div class="link-box" id="linkBox">
@@ -158,21 +156,30 @@
   </div>
 </div>
 
-<!-- Primer uso: activación -->
-<div id="setup">
-  <div class="brand">
-    <img src="./TuQRLogo.png" alt="TuQR"/>
-  </div>
+<!-- Reactivar sesión con RUT + teléfono -->
+<div id="screenReactivar">
+  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
-    <div class="setup-title">Activa tu TuQR</div>
-    <div class="setup-sub">Ingresa el usuario que te asignaron al crear tu cuenta.</div>
+    <div class="react-title">Vuelve a activar TuQR</div>
+    <div class="react-sub">Ingresa tu RUT y teléfono para recuperar tu cuenta.</div>
+
     <div style="width:100%">
-      <input id="setupId" placeholder="Tu usuario (ej: JuanLopez)"
-             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-      <div class="field-err" id="err-setup">Usuario inválido — sin espacios</div>
+      <label style="font-weight:700;font-size:13px;color:var(--muted);margin-bottom:5px;display:block">RUT</label>
+      <input id="reactRut" placeholder="12.345.678-9" maxlength="12"/>
+      <div class="field-err" id="err-reactRut">RUT inválido</div>
     </div>
-    <div id="err-notfound" class="field-err">No encontramos ese usuario. Verifica con tu administrador.</div>
-    <button class="cta" id="btnActivar">Activar</button>
+
+    <div style="width:100%">
+      <label style="font-weight:700;font-size:13px;color:var(--muted);margin-bottom:5px;display:block">Teléfono</label>
+      <div class="phone-wrap">
+        <input class="phone-prefix" value="+56" readonly/>
+        <input id="reactTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
+      </div>
+      <div class="field-err" id="err-reactTel">Número inválido</div>
+    </div>
+
+    <div id="err-reactGeneral" class="field-err">No encontramos una cuenta con esos datos.</div>
+    <button class="cta" id="btnReactivar">Activar</button>
   </div>
 </div>
 
@@ -190,53 +197,64 @@
     return String(s??'').normalize('NFC')
       .replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim();
   }
+  function validarRut(rut){
+    const r=rut.replace(/[\.\-\s]/g,'').toUpperCase();
+    if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
+    const cuerpo=r.slice(0,-1), dv=r.slice(-1);
+    let suma=0, mul=2;
+    for(let i=cuerpo.length-1;i>=0;i--){
+      suma+=parseInt(cuerpo[i])*mul; mul=mul===7?2:mul+1;
+    }
+    const dvE=11-(suma%11);
+    return dv===(dvE===11?'0':dvE===10?'K':String(dvE));
+  }
+  function formatearRut(rut){
+    const r=rut.replace(/[\.\-\s]/g,'');
+    if(r.length<2) return r;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
+  }
+  function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
+  function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
 
   function generarQR(url){
-    const canvas = document.getElementById('qrCanvas');
-    const size   = Math.min(260, window.innerWidth - 100);
+    const canvas=document.getElementById('qrCanvas');
+    const size=Math.min(260,window.innerWidth-100);
     canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
-    const tmp = document.createElement('div');
-    new QRCode(tmp,{ text:url, width:size, height:size, correctLevel:QRCode.CorrectLevel.M });
+    const tmp=document.createElement('div');
+    new QRCode(tmp,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
     setTimeout(()=>{
-      const src = tmp.querySelector('canvas');
-      if(src){
-        canvas.width  = src.width;
-        canvas.height = src.height;
-        canvas.getContext('2d').drawImage(src,0,0);
-      }
+      const src=tmp.querySelector('canvas');
+      if(src){ canvas.width=src.width; canvas.height=src.height; canvas.getContext('2d').drawImage(src,0,0); }
     },100);
   }
 
   async function mostrarApp(id){
     try{
-      const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       if(!res.ok) throw new Error('fetch');
-      const all = await res.json();
-      const d   = all[id];
+      const all=await res.json();
+      const d=all[id];
       if(!d) return false;
-
-      const url = BASE_URL+'?id='+encodeURIComponent(id);
-      document.getElementById('nombreEl').textContent = clean(d.nombre);
-      document.title = 'TuQR — ' + clean(d.nombre);
+      const url=BASE_URL+'?id='+encodeURIComponent(id);
+      document.getElementById('nombreEl').textContent=clean(d.nombre);
+      document.title='TuQR — '+clean(d.nombre);
       generarQR(url);
-      document.getElementById('linkText').textContent = url;
-      document.getElementById('main').style.display = 'flex';
+      document.getElementById('linkText').textContent=url;
+      document.getElementById('main').style.display='flex';
       return true;
-    }catch(e){
-      return false;
-    }
+    }catch(e){ return false; }
   }
 
   /* ── Copiar link ── */
   document.getElementById('linkBox').addEventListener('click', function(){
-    const text  = document.getElementById('linkText').textContent;
-    const label = document.getElementById('copyLabel');
-    const okEl  = document.getElementById('copyOk');
-    const doCopy = () => {
+    const text=document.getElementById('linkText').textContent;
+    const label=document.getElementById('copyLabel');
+    const okEl=document.getElementById('copyOk');
+    const doCopy=()=>{
       label.style.display='none'; okEl.style.display='block';
       setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1600);
     };
-    if(navigator.clipboard && navigator.clipboard.writeText){
+    if(navigator.clipboard&&navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(doCopy).catch(()=>{
         const ta=document.createElement('textarea');
         ta.value=text; ta.style.cssText='position:fixed;opacity:0';
@@ -253,44 +271,75 @@
 
   /* ── Init ── */
   async function init(){
-    const params  = new URLSearchParams(location.search);
-    const urlId   = (params.get('id')||'').trim();
-    const savedId = localStorage.getItem(STORAGE_KEY);
-    const id      = urlId || savedId;
-    if(id){
-      const ok = await mostrarApp(id);
-      if(ok){ localStorage.setItem(STORAGE_KEY, id); return; }
+    const savedId=localStorage.getItem(STORAGE_KEY);
+    if(savedId){
+      const ok=await mostrarApp(savedId);
+      if(ok) return;
+      // Sesión guardada pero no encontrado en data.json — limpiar y pedir reactivación
+      localStorage.removeItem(STORAGE_KEY);
     }
-    document.getElementById('setup').style.display = 'flex';
+    // Sin sesión — mostrar pantalla de reactivación
+    document.getElementById('screenReactivar').style.display='flex';
   }
 
-  /* ── Activación primer uso ── */
-  const setupInput = document.getElementById('setupId');
+  /* ── Reactivar con RUT + teléfono ── */
+  const reactRutInput=document.getElementById('reactRut');
+  const reactTelInput=document.getElementById('reactTel');
 
-  setupInput.addEventListener('input', function(){
-    const ok = this.value.length===0 || !/\s/.test(this.value);
-    this.classList.toggle('invalid', !ok && this.value.length>0);
-    document.getElementById('err-setup').classList.toggle('show', !ok && this.value.length>0);
-    document.getElementById('err-notfound').classList.remove('show');
+  reactRutInput.addEventListener('input', function(){
+    const raw=this.value.replace(/[\.\-\s]/g,'');
+    if(raw.length>=2) this.value=formatearRut(raw);
+    const ok=validarRut(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-reactRut').classList.toggle('show', this.value.length>0&&!ok);
+    document.getElementById('err-reactGeneral').classList.remove('show');
+  });
+  reactTelInput.addEventListener('input', function(){
+    this.value=this.value.replace(/\D/g,'');
+    const ok=validarTel(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-reactTel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
-  document.getElementById('btnActivar').addEventListener('click', async function(){
-    const id = setupInput.value.trim();
-    if(!id || /\s/.test(id)){
-      setupInput.classList.add('invalid');
-      document.getElementById('err-setup').classList.add('show');
-      return;
+  document.getElementById('btnReactivar').addEventListener('click', async function(){
+    const rutVal=reactRutInput.value.trim();
+    const telVal=reactTelInput.value.replace(/\D/g,'');
+    const errGen=document.getElementById('err-reactGeneral');
+    errGen.classList.remove('show');
+
+    if(!validarRut(rutVal)){
+      reactRutInput.classList.add('invalid');
+      document.getElementById('err-reactRut').classList.add('show'); return;
     }
-    this.textContent = 'Verificando…';
-    this.disabled    = true;
-    const ok = await mostrarApp(id);
-    if(ok){
-      localStorage.setItem(STORAGE_KEY, id);
-      document.getElementById('setup').style.display = 'none';
-    } else {
-      document.getElementById('err-notfound').classList.add('show');
-      this.textContent = 'Activar';
-      this.disabled    = false;
+    if(!validarTel(telVal)){
+      reactTelInput.classList.add('invalid');
+      document.getElementById('err-reactTel').classList.add('show'); return;
+    }
+
+    this.textContent='Verificando…'; this.disabled=true;
+
+    try{
+      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      const all=await res.json();
+      const rutNorm=normalizarRut(rutVal);
+      const match=Object.entries(all).find(([id,d])=>
+        normalizarRut(d.rut||'')===rutNorm &&
+        (d.telefono||'').replace(/\D/g,'')===telVal
+      );
+      if(match){
+        localStorage.setItem(STORAGE_KEY,match[0]);
+        await mostrarApp(match[0]);
+        document.getElementById('screenReactivar').style.display='none';
+      } else {
+        errGen.classList.add('show');
+        this.textContent='Activar'; this.disabled=false;
+      }
+    }catch(e){
+      errGen.textContent='Error al conectar. Intenta de nuevo.';
+      errGen.classList.add('show');
+      this.textContent='Activar'; this.disabled=false;
     }
   });
 
