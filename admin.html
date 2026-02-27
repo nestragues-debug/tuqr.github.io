@@ -120,13 +120,24 @@
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 
+  .cta-ir{
+    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease; display:block; text-align:center; margin-top:0;
+  }
+  .cta-ir:active{ transform:translateY(1px); }
+  .cta-ir.secondary{
+    background:#f0f0f0; color:var(--text); box-shadow:none; margin-top:10px;
+  }
+
   .link-back{
     display:block; text-align:center; margin-top:14px;
     font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;
   }
   .link-back:active{ color:var(--primary); }
 
-  /* Lista de usuarios para elegir */
   .user-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
   .user-item{
     padding:14px 16px; border-radius:14px; cursor:pointer;
@@ -156,15 +167,16 @@
     color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
   }
   .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
-  .cta-ir{
-    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
-    box-shadow:0 6px 12px rgba(255,122,24,.22);
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease; text-decoration:none;
-    display:block; text-align:center; margin-top:0;
+
+  .wait-box{
+    font-size:13px; color:var(--muted); line-height:1.6;
+    background:#f7f7f7; border-radius:12px; padding:14px; text-align:center;
   }
-  .cta-ir:active{ transform:translateY(1px); }
+  .err-box{
+    font-size:13px; color:#b00; font-weight:600; text-align:center;
+    background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
+    border-radius:12px; padding:12px;
+  }
 
   .err{
     margin-top:12px; font-weight:800; padding:10px 12px;
@@ -318,7 +330,14 @@
         <div class="ok-pill">✓ Cuenta creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
-      <a class="cta-ir" href="./app.html">Ver mi QR →</a>
+      <div class="wait-box">
+        ⏳ Tu cuenta se está activando. Espera <strong>1-2 minutos</strong> antes de abrir tu QR por primera vez.
+      </div>
+      <button class="cta-ir" id="btnIrApp">Ver mi QR →</button>
+      <div id="msgQRError" style="display:none; display:flex; flex-direction:column; gap:10px;">
+        <div class="err-box">Tu cuenta aún no está lista. Espera un momento más e inténtalo de nuevo.</div>
+        <button class="cta-ir secondary" id="btnReintentar">← Volver a intentar</button>
+      </div>
     </div>
   </div>
 
@@ -447,11 +466,9 @@
         errGen.classList.add('show');
         this.textContent='Activar'; this.disabled=false;
       } else if(matches.length===1){
-        // Un solo usuario → activar directo
         localStorage.setItem(STORAGE_KEY, matches[0][0]);
         window.location.replace('./app.html');
       } else {
-        // Más de un usuario → mostrar lista para elegir
         const list=document.getElementById('userList');
         list.innerHTML='';
         matches.forEach(([id,d])=>{
@@ -467,8 +484,7 @@
           });
           list.appendChild(item);
         });
-        hide('screenActivar');
-        show('screenElegir');
+        hide('screenActivar'); show('screenElegir');
         this.textContent='Activar'; this.disabled=false;
       }
     }catch(e){
@@ -577,12 +593,45 @@
 
       localStorage.setItem(STORAGE_KEY, payload.id);
       document.getElementById('resNombre').textContent=clean(payload.nombre);
+      document.getElementById('msgQRError').style.display='none';
+      const btnIr=document.getElementById('btnIrApp');
+      btnIr.style.display='';
+      btnIr.textContent='Ver mi QR →';
+      btnIr.disabled=false;
       hide('screenCrear'); show('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
 
     }catch(e){
       msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>';
     }
+  });
+
+  /* ── Ir al QR por primera vez ── */
+  document.getElementById('btnIrApp').addEventListener('click', async function(){
+    this.textContent='Verificando…'; this.disabled=true;
+    const id=localStorage.getItem(STORAGE_KEY);
+    try{
+      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      const all=await res.json();
+      if(all[id]){
+        window.location.replace('./app.html');
+      } else {
+        this.style.display='none'; this.disabled=false;
+        document.getElementById('msgQRError').style.display='flex';
+      }
+    }catch(e){
+      this.style.display='none'; this.disabled=false;
+      document.getElementById('msgQRError').style.display='flex';
+    }
+  });
+
+  /* ── Reintentar ── */
+  document.getElementById('btnReintentar').addEventListener('click', function(){
+    document.getElementById('msgQRError').style.display='none';
+    const btnIr=document.getElementById('btnIrApp');
+    btnIr.style.display='';
+    btnIr.textContent='Ver mi QR →';
+    btnIr.disabled=false;
   });
 </script>
 </body>
