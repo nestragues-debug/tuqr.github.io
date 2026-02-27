@@ -201,5 +201,14 @@
     "numeroCuenta": "54545484",
     "correo": "nestragues@gmail.com",
     "telefono": "982897919"
+  },
+  "Ñecle": {
+    "banco": "Banco BCI",
+    "rut": "23.182.071-k",
+    "nombre": "Juan Ñecle",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "545548",
+    "correo": "nestragues@gmail.com",
+    "telefono": "982897919"
   }
 }
