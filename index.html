@@ -66,10 +66,10 @@
       background:#fff; border:1px solid rgba(0,0,0,.10); padding:14px; border-radius:14px; min-height:96px;
       white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.55;
       -webkit-text-size-adjust:100%; margin:0 0 12px; font-family: inherit;
-      user-select: all; -webkit-user-select: all;
+      user-select: all; -webkit-user-select: all; cursor:pointer;
     }
     .cta{
-      width:88%; margin:0 auto; display:block; padding:13px; font-size:13px; font-weight:800;
+      width:88%; margin:0 auto; display:block; padding:9px; font-size:13px; font-weight:800;
       border:0; border-radius:12px; cursor:pointer; color:#fff; background:#ff7a18;
       box-shadow: 0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color: transparent;
       transition: transform .06s ease, filter .06s ease;
@@ -81,7 +81,7 @@
     }
     .ok{ color:#0a7; background: rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18); }
     .err{ color:#b00; background: rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); }
-    .or-copy{ margin:10px 0 6px; text-align:center; font-size:13px; color: rgba(26,26,26,.75); font-weight:700; }
+    .or-copy{ margin:10px 0 6px; text-align:center; font-size:12px; color: rgba(26,26,26,.6); font-weight:600; }
     .fields{
       margin-top:8px; border-top:1px dashed rgba(0,0,0,.12); padding-top:12px;
       display:grid; gap:10px; grid-template-columns:1fr 1fr;
@@ -91,19 +91,10 @@
       border-radius:12px; border:1px solid rgba(0,0,0,.10); background:#fff; color:var(--text);
       cursor:pointer; box-shadow: 0 4px 10px rgba(0,0,0,.05);
       transition: transform .06s ease, filter .06s ease; text-align:center;
-      display:flex; flex-direction:column; align-items:center; gap:3px;
     }
-    .field-btn .btn-label{ font-size:10px; font-weight:600; color:var(--muted); }
-    .field-btn .btn-val{ font-size:12px; font-weight:800; color:var(--text); word-break:break-all; }
     .field-btn:active{ transform: translateY(1px); filter:brightness(0.99); }
     .field-btn:disabled{ color:#9a9a9a; background:#f2f2f2; border-color:#e9e9e9; box-shadow:none; cursor:not-allowed; }
-    .hint{
-      margin-top:12px; background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.08);
-      border-radius: 14px; padding: 12px; font-size: 12px; color: rgba(26,26,26,.75); line-height: 1.45;
-    }
-    .hint b{ font-weight:800; color: var(--text); }
-    /* RUT badge — destaca que copia sin puntos */
-    .rut-note{ font-size:10px; font-weight:600; color:var(--primary); margin-top:2px; }
+    .rut-note{ font-size:10px; font-weight:600; color:var(--primary); }
   </style>
 </head>
 
@@ -119,48 +110,22 @@
       <h1 id="title">Paga con transferencia</h1>
       <p>Copia y pega en tu app bancaria</p>
 
-      <pre id="datos">Cargando…</pre>
+      <pre id="datos" onclick="copiarDatos()">Cargando…</pre>
 
       <button id="copiar" class="cta" disabled>Copiar todos los datos</button>
-<p style="text-align:center; font-size:12px; color:var(--muted); margin:6px 0 0; font-weight:600;">Si no funciona, presiona el texto y copia como en WhatsApp</p>
 
-<div id="ok"  class="ok">✓ Copiado</div>
-      <div id="ok"  class="ok">✓ Copiado</div>
+      <div id="ok"  class="ok">✓ Copiado al portapapeles</div>
       <div id="err" class="err">No encontramos este comercio</div>
 
-      <div class="or-copy">...o copia de a uno</div>
+      <div class="or-copy">Si un campo no acepta pegar, usa los botones individuales</div>
 
       <div id="fields" class="fields" style="display:none;">
-        <button id="copyNombre" class="field-btn" disabled>
-          <span class="btn-label">Nombre</span>
-          <span class="btn-val" id="valNombre">—</span>
-        </button>
-        <button id="copyRut" class="field-btn" disabled>
-          <span class="btn-label">RUT <span class="rut-note">(sin puntos)</span></span>
-          <span class="btn-val" id="valRut">—</span>
-        </button>
-        <button id="copyBanco" class="field-btn" disabled>
-          <span class="btn-label">Banco</span>
-          <span class="btn-val" id="valBanco">—</span>
-        </button>
-        <button id="copyTipo" class="field-btn" disabled>
-          <span class="btn-label">Tipo de cuenta</span>
-          <span class="btn-val" id="valTipo">—</span>
-        </button>
-        <button id="copyNumero" class="field-btn" disabled>
-          <span class="btn-label">N° de cuenta</span>
-          <span class="btn-val" id="valNumero">—</span>
-        </button>
-        <button id="copyCorreo" class="field-btn" disabled style="display:none;">
-          <span class="btn-label">Correo</span>
-          <span class="btn-val" id="valCorreo">—</span>
-        </button>
-      </div>
-
-      <div class="hint">
-        Copia los datos con el botón naranja y pégalos en tu app bancaria.<br>
-        <b>Si un campo no acepta pegar, usa los botones individuales.</b><br>
-        El RUT se copia sin puntos para mejor compatibilidad.
+        <button id="copyNombre" class="field-btn" disabled>Nombre</button>
+        <button id="copyRut"    class="field-btn" disabled>RUT <span class="rut-note">(sin puntos)</span></button>
+        <button id="copyBanco"  class="field-btn" disabled>Banco</button>
+        <button id="copyTipo"   class="field-btn" disabled>Tipo de cuenta</button>
+        <button id="copyNumero" class="field-btn" disabled>N° de cuenta</button>
+        <button id="copyCorreo" class="field-btn" disabled style="display:none;">Correo</button>
       </div>
     </div>
   </div>
@@ -187,7 +152,6 @@ function clean(s){
 }
 const sv = s => clean(s);
 
-// Formatea RUT para mostrar: 123456789 → 12.345.678-9
 function formatRut(raw){
   const r = raw.replace(/[\.\-\s]/g, '');
   if(r.length < 2) return r;
@@ -195,26 +159,20 @@ function formatRut(raw){
   return cuerpo + '-' + r.slice(-1);
 }
 
-// RUT para copiar: sin puntos, sin guión, solo dígitos + dígito verificador
-// Ej: 123456789 o 12345678K — lo que sea que esté en data.json sin formatear
 function rutParaCopiar(raw){
-  // Quita puntos y espacios, deja dígitos y K
   return raw.replace(/[\.\s]/g, '').toUpperCase();
-  // Resultado: "123456789" o "12345678-9" → dejamos el guión porque
-  // la mayoría de apps bancarias chilenas lo aceptan con guión
 }
 
 function buildText(d){
-  const nombre = sv(d.nombre);
-  const rutRaw = sv(d.rut);
-  const rutDisplay = formatRut(rutRaw);   // con puntos, para leer
-  const rutCopy    = rutParaCopiar(rutRaw); // sin puntos, para pegar en apps
-  const banco  = sv(d.banco);
-  const tipo   = sv(d.tipoCuenta);
-  const numero = sv(d.numeroCuenta);
-  const correo = d.correo ? sv(d.correo) : '';
+  const nombre     = sv(d.nombre);
+  const rutRaw     = sv(d.rut);
+  const rutDisplay = formatRut(rutRaw);
+  const rutCopy    = rutParaCopiar(rutRaw);
+  const banco      = sv(d.banco);
+  const tipo       = sv(d.tipoCuenta);
+  const numero     = sv(d.numeroCuenta);
+  const correo     = d.correo ? sv(d.correo) : '';
 
-  // Bloque completo: RUT con formato legible
   const lines = [
     `Nombre: ${nombre}`,
     `RUT: ${rutDisplay}`,
@@ -222,7 +180,7 @@ function buildText(d){
     `Tipo de cuenta: ${tipo}`,
     `N° de cuenta: ${numero}`
   ];
-  if (correo) lines.push(`Correo: ${correo}`);
+  if(correo) lines.push(`Correo: ${correo}`);
 
   return {
     textPlain : lines.join('\n'),
@@ -231,17 +189,12 @@ function buildText(d){
   };
 }
 
-// Copia texto — versión robusta para iOS Safari y Android
 function copyText(text){
   const payload = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-
-  // Método 1: Clipboard API moderna (Chrome Android, iOS Safari 13.4+)
   if(navigator.clipboard && typeof navigator.clipboard.writeText === 'function'){
-    // Para Safari: intentar también con ClipboardItem/Blob si writeText falla
     return navigator.clipboard.writeText(payload)
       .then(() => true)
       .catch(() => {
-        // Intento Safari con ClipboardItem
         if(window.ClipboardItem){
           return navigator.clipboard.write([
             new ClipboardItem({
@@ -255,7 +208,6 @@ function copyText(text){
   return Promise.resolve(legacyCopy(payload));
 }
 
-// Método legado: execCommand — funciona en Android WebView antiguo y Safari viejo
 function legacyCopy(text){
   try{
     const ta = document.createElement('textarea');
@@ -270,7 +222,6 @@ function legacyCopy(text){
     document.body.removeChild(ta);
     if(ok) return true;
   }catch(_){}
-  // Último recurso: seleccionar el <pre> visualmente
   try{
     const range = document.createRange();
     range.selectNodeContents(datosEl);
@@ -303,11 +254,9 @@ function makeFieldHandler(getVal){
   };
 }
 
-function setupBtn(id, getVal, labelId, displayVal){
+function setupBtn(id, getVal){
   const el = document.getElementById(id);
-  const valEl = document.getElementById(labelId);
   if(!el) return;
-  if(displayVal && valEl) valEl.textContent = displayVal;
   if(getVal()){
     el.disabled = false;
     el.addEventListener('click', makeFieldHandler(getVal));
@@ -316,6 +265,16 @@ function setupBtn(id, getVal, labelId, displayVal){
 
 let cachedText   = '';
 let cachedFields = null;
+
+function copiarDatos(){
+  if(!cachedText) return;
+  copyText(cachedText).then(ok => {
+    if(ok){
+      showCopied();
+      try{ gtag('event','copy_click',{ merchant_id: id, source: 'pre_tap' }); }catch(_){}
+    }
+  });
+}
 
 async function init(){
   try{
@@ -341,9 +300,8 @@ async function init(){
       copyText(cachedText).then(ok => {
         if(ok){
           showCopied();
-          try{ gtag('event','copy_click',{ merchant_id: id }); }catch(_){}
+          try{ gtag('event','copy_click',{ merchant_id: id, source: 'button' }); }catch(_){}
         } else {
-          // Si falla todo: seleccionar el <pre> para que el usuario pueda copiar manualmente
           try{
             const range = document.createRange();
             range.selectNodeContents(datosEl);
@@ -357,16 +315,16 @@ async function init(){
 
     fieldsWrap.style.display = 'grid';
 
-    setupBtn('copyNombre', () => cachedFields.nombre,   'valNombre', fields.nombre);
-    setupBtn('copyRut',    () => cachedFields.rutCopy,  'valRut',    fields.rutDisplay);
-    setupBtn('copyBanco',  () => cachedFields.banco,    'valBanco',  fields.banco);
-    setupBtn('copyTipo',   () => cachedFields.tipo,     'valTipo',   fields.tipo);
-    setupBtn('copyNumero', () => cachedFields.numero,   'valNumero', fields.numero);
+    setupBtn('copyNombre', () => cachedFields.nombre);
+    setupBtn('copyRut',    () => cachedFields.rutCopy);
+    setupBtn('copyBanco',  () => cachedFields.banco);
+    setupBtn('copyTipo',   () => cachedFields.tipo);
+    setupBtn('copyNumero', () => cachedFields.numero);
 
     if(fields.correo){
       const correoBtn = document.getElementById('copyCorreo');
       if(correoBtn) correoBtn.style.display = '';
-      setupBtn('copyCorreo', () => cachedFields.correo, 'valCorreo', fields.correo);
+      setupBtn('copyCorreo', () => cachedFields.correo);
     }
 
     try{
