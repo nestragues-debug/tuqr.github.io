@@ -168,7 +168,6 @@
   }
   .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
 
-  /* Animación de espera */
   .wait-box{
     display:flex; flex-direction:column; align-items:center; gap:12px;
     background:#f7f7f7; border-radius:14px; padding:20px 16px; text-align:center;
@@ -188,7 +187,6 @@
     background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
     border-radius:12px; padding:12px;
   }
-
   .err{
     margin-top:12px; font-weight:800; padding:10px 12px;
     border-radius:12px; font-size:14px; white-space:pre-wrap;
@@ -341,15 +339,11 @@
         <div class="ok-pill">✓ Cuenta creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
-
-      <!-- Estado: esperando -->
       <div class="wait-box" id="waitBox">
         <div class="spinner"></div>
         <div class="wait-text">Activando tu cuenta…</div>
         <div class="wait-sub" id="waitSub">Esto toma unos segundos</div>
       </div>
-
-      <!-- Estado: error tras timeout -->
       <div id="msgQRError" style="display:none; flex-direction:column; gap:10px;">
         <div class="err-box">No pudimos confirmar la activación. Intenta abriendo tu QR manualmente.</div>
         <button class="cta-ir" id="btnIrApp">Ver mi QR →</button>
@@ -361,21 +355,22 @@
 </div>
 
 <script>
-  const WORKER_URL  = 'https://tuqr-worker.nestragues.workers.dev/';
-  const BASE_URL    = 'https://tuqrapp.github.io/tuqr.github.io/';
-  const DATA_URL    = BASE_URL + 'data.json';
-  const STORAGE_KEY = 'tuqr_id';
-  const POLL_INTERVAL = 5000;   // cada 5 segundos
-  const POLL_MAX      = 24;     // máximo 2 minutos
+  const WORKER_URL    = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL      = 'https://tuqrapp.github.io/tuqr.github.io/';
+  const DATA_URL      = BASE_URL + 'data.json';
+  const STORAGE_KEY   = 'tuqr_id';
+  const POLL_INTERVAL = 5000;
+  const POLL_MAX      = 24;
 
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-const isStandalone = window.matchMedia('(display-mode:standalone)').matches
-                     || window.navigator.standalone === true;
-  const params = new URLSearchParams(location.search);
-  const fromWelcome = params.get('from') === 'welcome';
+  /* ── Detección standalone + parámetro from=welcome ── */
+  const isStandalone  = window.matchMedia('(display-mode:standalone)').matches
+                      || window.navigator.standalone === true;
+  const urlParams     = new URLSearchParams(location.search);
+  const fromWelcome   = urlParams.get('from') === 'welcome';
 
   if(!isStandalone && !fromWelcome){
     window.location.replace('./welcome.html');
@@ -425,30 +420,37 @@ const isStandalone = window.matchMedia('(display-mode:standalone)').matches
   function iniciarPolling(id){
     pollCount = 0;
     clearInterval(pollTimer);
-    pollTimer = setInterval(async () => {
-      pollCount++;
-      try{
-        const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
-        const all = await res.json();
-        if(all[id]){
-          clearInterval(pollTimer);
-          window.location.replace('./app.html');
-          return;
-        }
-      }catch(e){}
+    // Primer intento inmediato
+    checkId(id);
+    pollTimer = setInterval(()=>{ checkId(id); }, POLL_INTERVAL);
+  }
 
-      // Actualizar texto de espera
-      const secs = pollCount * (POLL_INTERVAL/1000);
-      document.getElementById('waitSub').textContent =
-        secs < 60 ? `${secs} seg…` : `${Math.floor(secs/60)}m ${secs%60}s…`;
-
-      // Timeout tras POLL_MAX intentos
-      if(pollCount >= POLL_MAX){
+  async function checkId(id){
+    pollCount++;
+    try{
+      const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      if(!res.ok) throw new Error('fetch');
+      const all = await res.json();
+      if(all[id]){
         clearInterval(pollTimer);
-        hide('waitBox');
-        document.getElementById('msgQRError').style.display='flex';
+        window.location.replace('./app.html');
+        return;
       }
-    }, POLL_INTERVAL);
+    }catch(e){}
+
+    const secs = pollCount * (POLL_INTERVAL/1000);
+    const subEl = document.getElementById('waitSub');
+    if(subEl) subEl.textContent = secs < 60
+      ? `${secs} seg...`
+      : `${Math.floor(secs/60)}m ${secs%60}s...`;
+
+    if(pollCount >= POLL_MAX){
+      clearInterval(pollTimer);
+      const waitBox = document.getElementById('waitBox');
+      const errBox  = document.getElementById('msgQRError');
+      if(waitBox) waitBox.style.display='none';
+      if(errBox)  errBox.style.display='flex';
+    }
   }
 
   /* ── Navegación ── */
@@ -645,10 +647,9 @@ const isStandalone = window.matchMedia('(display-mode:standalone)').matches
         msgErr.innerHTML='<div class="err">Error guardando.'+detail+'</div>'; return;
       }
 
-      // Mostrar pantalla de espera e iniciar polling
       localStorage.setItem(STORAGE_KEY, payload.id);
       document.getElementById('resNombre').textContent=clean(payload.nombre);
-      show('waitBox');
+      document.getElementById('waitBox').style.display='flex';
       document.getElementById('msgQRError').style.display='none';
       document.getElementById('waitSub').textContent='Esto toma unos segundos';
       hide('screenCrear');
@@ -661,13 +662,13 @@ const isStandalone = window.matchMedia('(display-mode:standalone)').matches
     }
   });
 
-  /* ── Botones de error / reintento ── */
-  document.getElementById('btnIrApp').addEventListener('click', ()=>{
+  /* ── Botones error / reintento ── */
+  document.getElementById('btnIrApp').addEventListener('click',()=>{
     window.location.replace('./app.html');
   });
 
-  document.getElementById('btnReintentar').addEventListener('click', ()=>{
-    show('waitBox');
+  document.getElementById('btnReintentar').addEventListener('click',()=>{
+    document.getElementById('waitBox').style.display='flex';
     document.getElementById('msgQRError').style.display='none';
     document.getElementById('waitSub').textContent='Esto toma unos segundos';
     const id=localStorage.getItem(STORAGE_KEY);
