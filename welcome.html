@@ -40,12 +40,10 @@
     align-items:center; justify-content:center;
     padding:24px 16px; gap:20px; min-height:100vh;
   }
-
   .logo img{
     width:200px; height:auto; display:block;
     filter:drop-shadow(0 6px 10px rgba(0,0,0,.10));
   }
-
   .card{
     width:100%; max-width:400px;
     background:var(--card); border:1px solid var(--border);
@@ -57,10 +55,8 @@
     content:""; position:absolute; top:0; left:0; right:0; height:8px;
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
-
   .card-title{ font-size:22px; font-weight:800; text-align:center; margin-top:4px; }
   .card-sub{ font-size:14px; color:var(--muted); text-align:center; line-height:1.5; }
-
   .steps{ width:100%; display:flex; flex-direction:column; gap:12px; }
   .step{
     display:flex; align-items:center; gap:14px;
@@ -74,7 +70,6 @@
   }
   .step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
   .step-text span{ color:var(--primary); font-weight:800; }
-
   .cta{
     width:100%; padding:14px; font-size:16px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
@@ -84,7 +79,6 @@
     text-decoration:none; display:block; text-align:center;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-
   .cta-outline{
     width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
     border:2px solid var(--primary); border-radius:12px; cursor:pointer;
@@ -95,14 +89,12 @@
   }
   .cta-outline:active{ transform:translateY(1px); }
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
-
   .info-box{
     width:100%; font-size:13px; color:var(--muted); text-align:center;
     background:#fff8f0; border:1px solid rgba(255,122,24,.2);
     border-radius:10px; padding:12px 14px; line-height:1.6;
   }
   .info-box span{ color:var(--primary); font-weight:800; }
-
   .safari-warning{
     width:100%; font-size:13px; color:var(--muted); text-align:center;
     background:#f7f7f7; border:1px solid var(--border);
@@ -120,7 +112,7 @@
 <div class="card" id="card"></div>
 
 <script>
-  const PWA_URL = './admin.html?from=welcome';
+  const PWA_URL   = './admin.html?from=welcome';
   const ua        = navigator.userAgent || '';
   const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
   const isSafari  = isIOS && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua);
@@ -132,7 +124,6 @@
   const card = document.getElementById('card');
   let deferredPrompt = null;
 
-  /* Si ya está en modo standalone redirigir directo */
   if(isStandalone){
     window.location.replace('./admin.html');
   }
@@ -143,7 +134,6 @@
     renderAndroid(true);
   });
 
-  /* ── iOS Safari ── */
   function renderIOS(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR en tu iPhone</div>
@@ -168,7 +158,6 @@
     `;
   }
 
-  /* ── iOS pero no Safari ── */
   function renderIOSNoSafari(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
@@ -181,7 +170,6 @@
     `;
   }
 
-  /* ── Android / otros ── */
   function renderAndroid(hasPrompt){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
@@ -215,7 +203,7 @@
         if(outcome === 'accepted'){
           card.innerHTML = `
             <div class="card-title">✓ ¡Instalado!</div>
-            <div class="card-sub">TuQR fue instalado. Ábrelo desde tu pantalla de inicio.</div>
+            <div class="card-sub">TuQR fue instalado.</div>
             <div class="info-box">Busca el ícono de <span>TuQR</span> en tu pantalla de inicio y ábrelo desde ahí.</div>
           `;
         }
@@ -223,7 +211,6 @@
     }
   }
 
-  /* ── Desktop ── */
   function renderDesktop(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
@@ -232,7 +219,6 @@
     `;
   }
 
-  /* ── Render inicial ── */
   if(isIOS && isSafari)        renderIOS();
   else if(isIOS && !isSafari)  renderIOSNoSafari();
   else if(isAndroid||isSamsung||isFirefox) renderAndroid(false);
