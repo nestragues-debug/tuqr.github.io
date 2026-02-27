@@ -7,13 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="TuQR"/>
+<meta name="apple-mobile-web-app-title" content="TQR"/>
 <link rel="manifest" href="./manifest.json"/>
 <link rel="apple-touch-icon" href="./TuQRLogo.png"/>
-<meta name="apple-mobile-web-app-capable" content="yes"/>
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent"/>
-<meta name="apple-mobile-web-app-title" content="TuQR"/>
-<title>TuQR</title>
+<title>TQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -91,32 +88,11 @@
     50%{     box-shadow:0 0 0 6px rgba(255,212,0,.05); }
   }
 
-  .hint{ font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
-
-  /* Botón instalar */
-  .install-bar{
-    width:100%; max-width:360px;
-    background:var(--card); border:1px solid var(--border);
-    border-radius:14px; padding:14px 16px;
-    box-shadow:var(--shadow);
-    display:none; flex-direction:column; gap:8px;
+  .hint{
+    font-size:12px; color:var(--muted); text-align:center; line-height:1.4;
   }
-  .install-bar p{
-    font-size:13px; font-weight:600; color:var(--text); line-height:1.4;
-  }
-  .install-bar p span{ color:var(--primary); }
 
-  .cta{
-    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
-    box-shadow:0 6px 12px rgba(255,122,24,.22);
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, filter .06s ease;
-  }
-  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-  .cta:disabled{ background:#bdbdbd; box-shadow:none; cursor:not-allowed; }
-
-  /* Setup */
+  /* Setup primer uso */
   #setup{
     width:100%; max-width:360px;
     display:none; flex-direction:column; align-items:center; gap:16px;
@@ -137,32 +113,41 @@
   .setup-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
   .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; }
   .field-err.show{ display:block; }
+
+  .cta{
+    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+  }
+  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 </style>
 </head>
 <body>
 
 <!-- Vista principal: QR -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
-  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
+  <div class="brand">
+    <img src="./TuQRLogo.png" alt="TQR"/>
+  </div>
   <div class="card">
     <div class="comercio-nombre" id="nombreEl">Cargando…</div>
-    <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
+    <div class="qr-box">
+      <canvas id="qrCanvas"></canvas>
+    </div>
     <div class="badge"><span class="dot"></span> Muéstrale este QR al cliente</div>
     <div class="hint">El cliente lo escanea y copia tus datos bancarios<br>para hacerte la transferencia.</div>
   </div>
-
-  <!-- Barra de instalación (se muestra solo si no está instalada) -->
-  <div class="install-bar" id="installBar">
-    <p id="installMsg"></p>
-    <button class="cta" id="btnInstall">Instalar app</button>
-  </div>
 </div>
 
-<!-- Primer uso -->
+<!-- Primer uso: activación -->
 <div id="setup">
-  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
+  <div class="brand">
+    <img src="./TuQRLogo.png" alt="TQR"/>
+  </div>
   <div class="card">
-    <div class="setup-title">Activa tu TuQR</div>
+    <div class="setup-title">Activa tu TQR</div>
     <div class="setup-sub">Ingresa el usuario que te asignaron al crear tu cuenta.</div>
     <div style="width:100%">
       <input id="setupId" placeholder="Tu usuario (ej: JuanLopez)"
@@ -185,66 +170,6 @@
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  /* ── Detectar navegador ── */
-  const ua        = navigator.userAgent || '';
-  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  const isSamsung = /SamsungBrowser/.test(ua);
-  const isFirefox = /Firefox/.test(ua);
-  const isChrome  = /Chrome/.test(ua) && !/Edg|OPR/.test(ua);
-  const isEdge    = /Edg\//.test(ua);
-  const isOpera   = /OPR\//.test(ua);
-
-  /* ── Lógica de instalación PWA ── */
-  let deferredPrompt = null; // solo disponible en Chrome/Edge/Opera Android
-
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    mostrarBarraInstall();
-  });
-
-  // Si ya está instalada como PWA, ocultar barra
-  const isStandalone = window.matchMedia('(display-mode:standalone)').matches
-                    || window.navigator.standalone === true;
-
-  function mostrarBarraInstall(){
-    if(isStandalone) return; // ya instalada, no mostrar nada
-
-    const bar = document.getElementById('installBar');
-    const msg = document.getElementById('installMsg');
-    const btn = document.getElementById('btnInstall');
-
-    if(deferredPrompt){
-      // Chrome Android, Edge Android, Opera Android — banner nativo disponible
-      msg.innerHTML = '📲 Instala TuQR como app para acceder más rápido.';
-      btn.style.display = '';
-      btn.onclick = async () => {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if(outcome === 'accepted') bar.style.display = 'none';
-        deferredPrompt = null;
-      };
-    } else if(isIOS){
-      // Safari iOS — debe hacerse manual
-      msg.innerHTML = '📲 Para instalar: toca <span>Compartir ↑</span> y luego <span>"Agregar a pantalla de inicio"</span>.';
-      btn.style.display = 'none';
-    } else if(isSamsung){
-      // Samsung Internet
-      msg.innerHTML = '📲 Para instalar: toca el menú <span>☰</span> y elige <span>"Agregar página a"</span> → <span>"Pantalla de inicio"</span>.';
-      btn.style.display = 'none';
-    } else if(isFirefox){
-      // Firefox Android
-      msg.innerHTML = '📲 Para instalar: toca el menú <span>⋮</span> y elige <span>"Instalar"</span> o <span>"Agregar a pantalla de inicio"</span>.';
-      btn.style.display = 'none';
-    } else {
-      // Cualquier otro navegador
-      msg.innerHTML = '📲 Para instalar: busca en el menú del navegador la opción <span>"Agregar a pantalla de inicio"</span>.';
-      btn.style.display = 'none';
-    }
-
-    bar.style.display = 'flex';
-  }
-
   /* ── Helpers ── */
   function clean(s){
     return String(s??'').normalize('NFC')
@@ -260,7 +185,8 @@
     setTimeout(()=>{
       const src = tmp.querySelector('canvas');
       if(src){
-        canvas.width=src.width; canvas.height=src.height;
+        canvas.width  = src.width;
+        canvas.height = src.height;
         canvas.getContext('2d').drawImage(src,0,0);
       }
     },100);
@@ -268,21 +194,17 @@
 
   async function mostrarApp(id){
     try{
-      const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      const res = await fetch(DATA_URL + '?ts=' + Date.now(), { cache:'no-store' });
       if(!res.ok) throw new Error('fetch');
       const all = await res.json();
       const d   = all[id];
       if(!d) return false;
 
       document.getElementById('nombreEl').textContent = clean(d.nombre);
-      document.title = 'TuQR — ' + clean(d.nombre);
+      document.title = 'TQR — ' + clean(d.nombre);
       generarQR(BASE_URL + '?id=' + encodeURIComponent(id));
 
       document.getElementById('main').style.display = 'flex';
-
-      // Mostrar instrucciones de instalación si aún no está instalada
-      if(!isStandalone) mostrarBarraInstall();
-
       return true;
     }catch(e){
       return false;
@@ -292,7 +214,7 @@
   /* ── Init ── */
   async function init(){
     const params  = new URLSearchParams(location.search);
-    const urlId   = (params.get('id')||'').trim();
+    const urlId   = (params.get('id') || '').trim();
     const savedId = localStorage.getItem(STORAGE_KEY);
     const id      = urlId || savedId;
 
@@ -303,6 +225,7 @@
         return;
       }
     }
+    // Sin id válido → pantalla de activación
     document.getElementById('setup').style.display = 'flex';
   }
 
@@ -310,14 +233,14 @@
   const setupInput = document.getElementById('setupId');
 
   setupInput.addEventListener('input', function(){
-    const ok = this.value.length===0 || !/\s/.test(this.value);
-    this.classList.toggle('invalid', !ok && this.value.length>0);
-    document.getElementById('err-setup').classList.toggle('show', !ok && this.value.length>0);
+    const ok = this.value.length === 0 || !/\s/.test(this.value);
+    this.classList.toggle('invalid', !ok && this.value.length > 0);
+    document.getElementById('err-setup').classList.toggle('show', !ok && this.value.length > 0);
     document.getElementById('err-notfound').classList.remove('show');
   });
 
   document.getElementById('btnActivar').addEventListener('click', async function(){
-    const id  = setupInput.value.trim();
+    const id = setupInput.value.trim();
     if(!id || /\s/.test(id)){
       setupInput.classList.add('invalid');
       document.getElementById('err-setup').classList.add('show');
