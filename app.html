@@ -68,54 +68,38 @@
   .link-text{ flex:1; font-size:11px; font-weight:600; color:var(--muted); word-break:break-all; line-height:1.4; }
   .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
   .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
-
-  /* Botón cambiar cuenta destino */
   .btn-cambiar{
     width:100%; padding:13px; font-size:14px; font-weight:800; font-family:inherit;
     border:2px solid var(--primary); border-radius:12px; cursor:pointer;
     color:var(--primary); background:rgba(255,122,24,.06);
-    -webkit-tap-highlight-color:transparent;
-    transition:background .12s, transform .06s;
+    -webkit-tap-highlight-color:transparent; transition:background .12s, transform .06s;
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn-cambiar:active{ transform:translateY(1px); background:rgba(255,122,24,.12); }
-
-  /* Botón crear nueva cuenta destino — muy destacado */
   .btn-nueva-cuenta{
     width:100%; padding:14px; font-size:15px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer;
-    color:#fff; background:var(--primary);
-    box-shadow:0 6px 16px rgba(255,122,24,.30);
-    -webkit-tap-highlight-color:transparent;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 16px rgba(255,122,24,.30); -webkit-tap-highlight-color:transparent;
     transition:transform .06s, filter .06s;
     display:flex; align-items:center; justify-content:center; gap:8px;
   }
   .btn-nueva-cuenta:active{ transform:translateY(1px); filter:brightness(.96); }
-
   .link-contacto{
     font-size:13px; font-weight:700; color:var(--primary); cursor:pointer;
     text-decoration:underline; background:none; border:none; font-family:inherit;
   }
-
-  /* Pantalla elegir cuenta destino */
   #screenElegirCuenta{
-    width:100%; max-width:360px; display:none;
-    flex-direction:column; align-items:center; gap:16px;
+    width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
   }
   #screenElegirCuenta .card{ gap:14px; width:100%; align-items:stretch; }
-
-  /* Reactivar */
   #screenReactivar{
-    width:100%; max-width:360px; display:none;
-    flex-direction:column; align-items:center; gap:16px;
+    width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
   }
   #screenReactivar .card{ gap:14px; width:100%; }
   #screenElegirReact{
-    width:100%; max-width:360px; display:none;
-    flex-direction:column; align-items:center; gap:16px;
+    width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
   }
   #screenElegirReact .card{ gap:14px; width:100%; }
-
   .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
   .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
   .r-label{ font-weight:700; font-size:13px; color:var(--muted); margin-bottom:5px; display:block; }
@@ -160,8 +144,6 @@
     transition:transform .06s ease, filter .06s ease;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-
-  /* Modal contacto */
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
     z-index:1000; align-items:flex-end; justify-content:center;
@@ -406,7 +388,6 @@
     document.getElementById('main').style.display='flex';
   });
 
-  /* ── Crear nueva cuenta destino → admin con parámetro ── */
   function irACrearCuentaDestino(){
     window.location.replace('./admin.html?accion=nueva_cuenta');
   }
