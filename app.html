@@ -28,7 +28,7 @@
     --radius:  18px;
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
-  html, body{
+  html,body{
     height:100%;
     font-family:"Poppins",system-ui,-apple-system,Helvetica,Arial,sans-serif;
     background:var(--bg); color:var(--text);
@@ -38,7 +38,6 @@
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
     padding:20px 16px;
-    /* Evita el bounce scroll en iOS */
     overscroll-behavior:none;
   }
 
@@ -65,7 +64,6 @@
     text-align:center; margin-top:4px;
   }
 
-  /* QR container */
   .qr-box{
     background:#fff; border-radius:16px; padding:16px;
     box-shadow:0 4px 16px rgba(0,0,0,.07);
@@ -82,28 +80,42 @@
   .badge .dot{
     width:8px; height:8px; border-radius:999px;
     background:var(--accent); box-shadow:0 0 0 3px rgba(255,212,0,.2);
-    animation: pulse 2s infinite;
+    animation:pulse 2s infinite;
   }
   @keyframes pulse{
     0%,100%{ box-shadow:0 0 0 3px rgba(255,212,0,.2); }
     50%{     box-shadow:0 0 0 6px rgba(255,212,0,.05); }
   }
 
-  .hint{
-    font-size:12px; color:var(--muted); text-align:center; line-height:1.4;
-  }
+  .hint{ font-size:12px; color:var(--muted); text-align:center; line-height:1.4; }
 
-  /* Pantalla de error / carga */
-  .state{
-    font-size:15px; font-weight:600; color:var(--muted);
-    text-align:center; padding:20px 0;
+  /* Botón instalar */
+  .install-bar{
+    width:100%; max-width:360px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:14px; padding:14px 16px;
+    box-shadow:var(--shadow);
+    display:none; flex-direction:column; gap:8px;
   }
-  .state.err{ color:#b00; }
+  .install-bar p{
+    font-size:13px; font-weight:600; color:var(--text); line-height:1.4;
+  }
+  .install-bar p span{ color:var(--primary); }
 
-  /* Pantalla de primer uso (no hay id guardado) */
+  .cta{
+    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+  }
+  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
+  .cta:disabled{ background:#bdbdbd; box-shadow:none; cursor:not-allowed; }
+
+  /* Setup */
   #setup{
-    width:100%; max-width:360px; display:none;
-    flex-direction:column; align-items:center; gap:16px;
+    width:100%; max-width:360px;
+    display:none; flex-direction:column; align-items:center; gap:16px;
   }
   #setup .card{ gap:14px; }
   #setup input{
@@ -121,39 +133,30 @@
   .setup-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
   .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; }
   .field-err.show{ display:block; }
-
-  .cta{
-    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
-    box-shadow:0 6px 12px rgba(255,122,24,.22);
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, filter .06s ease;
-  }
-  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 </style>
 </head>
 <body>
 
 <!-- Vista principal: QR -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
-  <div class="brand">
-    <img src="./TuQRLogo.png" alt="TuQR"/>
-  </div>
+  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="comercio-nombre" id="nombreEl">Cargando…</div>
-    <div class="qr-box">
-      <canvas id="qrCanvas"></canvas>
-    </div>
+    <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
     <div class="badge"><span class="dot"></span> Muéstrale este QR al cliente</div>
     <div class="hint">El cliente lo escanea y copia tus datos bancarios<br>para hacerte la transferencia.</div>
   </div>
+
+  <!-- Barra de instalación (se muestra solo si no está instalada) -->
+  <div class="install-bar" id="installBar">
+    <p id="installMsg"></p>
+    <button class="cta" id="btnInstall">Instalar app</button>
+  </div>
 </div>
 
-<!-- Primer uso: pedir ID -->
+<!-- Primer uso -->
 <div id="setup">
-  <div class="brand">
-    <img src="./TuQRLogo.png" alt="TuQR"/>
-  </div>
+  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="setup-title">Activa tu TuQR</div>
     <div class="setup-sub">Ingresa el usuario que te asignaron al crear tu cuenta.</div>
@@ -178,6 +181,66 @@
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
+  /* ── Detectar navegador ── */
+  const ua        = navigator.userAgent || '';
+  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const isSamsung = /SamsungBrowser/.test(ua);
+  const isFirefox = /Firefox/.test(ua);
+  const isChrome  = /Chrome/.test(ua) && !/Edg|OPR/.test(ua);
+  const isEdge    = /Edg\//.test(ua);
+  const isOpera   = /OPR\//.test(ua);
+
+  /* ── Lógica de instalación PWA ── */
+  let deferredPrompt = null; // solo disponible en Chrome/Edge/Opera Android
+
+  window.addEventListener('beforeinstallprompt', e => {
+    e.preventDefault();
+    deferredPrompt = e;
+    mostrarBarraInstall();
+  });
+
+  // Si ya está instalada como PWA, ocultar barra
+  const isStandalone = window.matchMedia('(display-mode:standalone)').matches
+                    || window.navigator.standalone === true;
+
+  function mostrarBarraInstall(){
+    if(isStandalone) return; // ya instalada, no mostrar nada
+
+    const bar = document.getElementById('installBar');
+    const msg = document.getElementById('installMsg');
+    const btn = document.getElementById('btnInstall');
+
+    if(deferredPrompt){
+      // Chrome Android, Edge Android, Opera Android — banner nativo disponible
+      msg.innerHTML = '📲 Instala TuQR como app para acceder más rápido.';
+      btn.style.display = '';
+      btn.onclick = async () => {
+        deferredPrompt.prompt();
+        const { outcome } = await deferredPrompt.userChoice;
+        if(outcome === 'accepted') bar.style.display = 'none';
+        deferredPrompt = null;
+      };
+    } else if(isIOS){
+      // Safari iOS — debe hacerse manual
+      msg.innerHTML = '📲 Para instalar: toca <span>Compartir ↑</span> y luego <span>"Agregar a pantalla de inicio"</span>.';
+      btn.style.display = 'none';
+    } else if(isSamsung){
+      // Samsung Internet
+      msg.innerHTML = '📲 Para instalar: toca el menú <span>☰</span> y elige <span>"Agregar página a"</span> → <span>"Pantalla de inicio"</span>.';
+      btn.style.display = 'none';
+    } else if(isFirefox){
+      // Firefox Android
+      msg.innerHTML = '📲 Para instalar: toca el menú <span>⋮</span> y elige <span>"Instalar"</span> o <span>"Agregar a pantalla de inicio"</span>.';
+      btn.style.display = 'none';
+    } else {
+      // Cualquier otro navegador
+      msg.innerHTML = '📲 Para instalar: busca en el menú del navegador la opción <span>"Agregar a pantalla de inicio"</span>.';
+      btn.style.display = 'none';
+    }
+
+    bar.style.display = 'flex';
+  }
+
   /* ── Helpers ── */
   function clean(s){
     return String(s??'').normalize('NFC')
@@ -186,8 +249,7 @@
 
   function generarQR(url){
     const canvas = document.getElementById('qrCanvas');
-    // Tamaño según pantalla, máx 260px
-    const size = Math.min(260, window.innerWidth - 100);
+    const size   = Math.min(260, window.innerWidth - 100);
     canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
     const tmp = document.createElement('div');
     new QRCode(tmp,{ text:url, width:size, height:size, correctLevel:QRCode.CorrectLevel.M });
@@ -210,10 +272,13 @@
 
       document.getElementById('nombreEl').textContent = clean(d.nombre);
       document.title = 'TuQR — ' + clean(d.nombre);
-      const url = BASE_URL + '?id=' + encodeURIComponent(id);
-      generarQR(url);
+      generarQR(BASE_URL + '?id=' + encodeURIComponent(id));
 
       document.getElementById('main').style.display = 'flex';
+
+      // Mostrar instrucciones de instalación si aún no está instalada
+      if(!isStandalone) mostrarBarraInstall();
+
       return true;
     }catch(e){
       return false;
@@ -222,7 +287,6 @@
 
   /* ── Init ── */
   async function init(){
-    // Primero intenta leer el ?id= de la URL (link que mandó el admin)
     const params  = new URLSearchParams(location.search);
     const urlId   = (params.get('id')||'').trim();
     const savedId = localStorage.getItem(STORAGE_KEY);
@@ -231,13 +295,10 @@
     if(id){
       const ok = await mostrarApp(id);
       if(ok){
-        // Guarda el id para sesiones futuras (sin login)
         localStorage.setItem(STORAGE_KEY, id);
         return;
       }
     }
-
-    // Si no hay id o no se encontró, mostrar pantalla de activación
     document.getElementById('setup').style.display = 'flex';
   }
 
@@ -245,23 +306,19 @@
   const setupInput = document.getElementById('setupId');
 
   setupInput.addEventListener('input', function(){
-    const errEl = document.getElementById('err-setup');
-    const ok    = this.value.length === 0 || !/\s/.test(this.value);
-    this.classList.toggle('invalid',!ok && this.value.length > 0);
-    errEl.classList.toggle('show',!ok && this.value.length > 0);
+    const ok = this.value.length===0 || !/\s/.test(this.value);
+    this.classList.toggle('invalid', !ok && this.value.length>0);
+    document.getElementById('err-setup').classList.toggle('show', !ok && this.value.length>0);
     document.getElementById('err-notfound').classList.remove('show');
   });
 
   document.getElementById('btnActivar').addEventListener('click', async function(){
-    const id    = setupInput.value.trim();
-    const errEl = document.getElementById('err-setup');
-    const errNF = document.getElementById('err-notfound');
-
+    const id  = setupInput.value.trim();
     if(!id || /\s/.test(id)){
       setupInput.classList.add('invalid');
-      errEl.classList.add('show'); return;
+      document.getElementById('err-setup').classList.add('show');
+      return;
     }
-
     this.textContent = 'Verificando…';
     this.disabled    = true;
 
@@ -270,7 +327,7 @@
       localStorage.setItem(STORAGE_KEY, id);
       document.getElementById('setup').style.display = 'none';
     } else {
-      errNF.classList.add('show');
+      document.getElementById('err-notfound').classList.add('show');
       this.textContent = 'Activar';
       this.disabled    = false;
     }
