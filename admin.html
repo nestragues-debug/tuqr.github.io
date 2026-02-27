@@ -126,6 +126,20 @@
   }
   .link-back:active{ color:var(--primary); }
 
+  /* Lista de usuarios para elegir */
+  .user-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+  .user-item{
+    padding:14px 16px; border-radius:14px; cursor:pointer;
+    border:2px solid var(--border); background:#fff;
+    display:flex; flex-direction:column; gap:2px;
+    -webkit-tap-highlight-color:transparent;
+    transition:border-color .12s, background .12s;
+  }
+  .user-item:active{ background:#f7f7f7; }
+  .user-item:hover{ border-color:var(--primary); background:rgba(255,122,24,.04); }
+  .user-item-nombre{ font-size:15px; font-weight:800; color:var(--text); }
+  .user-item-id{ font-size:12px; font-weight:600; color:var(--muted); }
+
   .ok-card{
     background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius); padding:24px 20px 28px;
@@ -210,6 +224,14 @@
 
     <button class="cta" id="btnDoActivar">Activar</button>
     <a class="link-back" id="backFromActivar">← Volver</a>
+  </div>
+
+  <!-- Pantalla: elegir usuario cuando hay más de uno -->
+  <div id="screenElegir" class="card" style="display:none">
+    <h1>Elige tu usuario</h1>
+    <p class="sub">Encontramos más de una cuenta con esos datos. ¿Cuál quieres activar?</p>
+    <div class="user-list" id="userList"></div>
+    <a class="link-back" id="backFromElegir">← Volver</a>
   </div>
 
   <!-- Pantalla: crear cuenta -->
@@ -312,15 +334,12 @@
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  /* ── Solo dentro de la PWA instalada ── */
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                      || window.navigator.standalone === true;
 
   if(!isStandalone){
-    // Abierto en navegador normal → redirigir a welcome.html
     window.location.replace('./welcome.html');
   } else {
-    // Dentro de la PWA: ver si ya tiene sesión
     const savedId = localStorage.getItem(STORAGE_KEY);
     if(savedId){
       window.location.replace('./app.html');
@@ -369,6 +388,9 @@
   document.getElementById('backFromActivar').addEventListener('click',()=>{
     hide('screenActivar'); show('screenOpciones');
   });
+  document.getElementById('backFromElegir').addEventListener('click',()=>{
+    hide('screenElegir'); show('screenActivar');
+  });
   document.getElementById('backFromCrear').addEventListener('click',()=>{
     hide('screenCrear'); show('screenOpciones');
   });
@@ -415,15 +437,38 @@
       const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       const all=await res.json();
       const rutNorm=normalizarRut(rutVal);
-      const match=Object.entries(all).find(([id,d])=>
+
+      const matches=Object.entries(all).filter(([id,d])=>
         normalizarRut(d.rut||'')===rutNorm &&
         (d.telefono||'').replace(/\D/g,'')===telVal
       );
-      if(match){
-        localStorage.setItem(STORAGE_KEY, match[0]);
+
+      if(matches.length===0){
+        errGen.classList.add('show');
+        this.textContent='Activar'; this.disabled=false;
+      } else if(matches.length===1){
+        // Un solo usuario → activar directo
+        localStorage.setItem(STORAGE_KEY, matches[0][0]);
         window.location.replace('./app.html');
       } else {
-        errGen.classList.add('show');
+        // Más de un usuario → mostrar lista para elegir
+        const list=document.getElementById('userList');
+        list.innerHTML='';
+        matches.forEach(([id,d])=>{
+          const item=document.createElement('div');
+          item.className='user-item';
+          item.innerHTML=`
+            <div class="user-item-nombre">${clean(d.nombre)}</div>
+            <div class="user-item-id">@${id} · ${clean(d.banco)}</div>
+          `;
+          item.addEventListener('click',()=>{
+            localStorage.setItem(STORAGE_KEY, id);
+            window.location.replace('./app.html');
+          });
+          list.appendChild(item);
+        });
+        hide('screenActivar');
+        show('screenElegir');
         this.textContent='Activar'; this.disabled=false;
       }
     }catch(e){
