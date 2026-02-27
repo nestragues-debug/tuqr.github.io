@@ -1,0 +1,282 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#ff7a18"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="TuQR"/>
+<link rel="manifest" href="./manifest.json"/>
+<title>TuQR</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+  :root{
+    --primary: #ff7a18;
+    --accent:  #ffd400;
+    --bg:      #f2f3f5;
+    --card:    #ffffff;
+    --text:    #1a1a1a;
+    --muted:   #5a5a5a;
+    --border:  rgba(0,0,0,.08);
+    --shadow:  0 10px 24px rgba(0,0,0,.08);
+    --radius:  18px;
+  }
+  *{ box-sizing:border-box; margin:0; padding:0; }
+  html, body{
+    height:100%;
+    font-family:"Poppins",system-ui,-apple-system,Helvetica,Arial,sans-serif;
+    background:var(--bg); color:var(--text);
+    -webkit-font-smoothing:antialiased;
+  }
+  body{
+    display:flex; flex-direction:column;
+    align-items:center; justify-content:center;
+    padding:20px 16px;
+    /* Evita el bounce scroll en iOS */
+    overscroll-behavior:none;
+  }
+
+  .brand{ margin-bottom:16px; }
+  .brand img{
+    width:160px; height:auto; display:block;
+    filter:drop-shadow(0 4px 8px rgba(0,0,0,.10));
+  }
+
+  .card{
+    width:100%; max-width:360px;
+    background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px 20px 28px;
+    box-shadow:var(--shadow); position:relative; overflow:hidden;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+  }
+  .card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:8px;
+    background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
+  }
+
+  .comercio-nombre{
+    font-size:18px; font-weight:800; letter-spacing:-0.2px;
+    text-align:center; margin-top:4px;
+  }
+
+  /* QR container */
+  .qr-box{
+    background:#fff; border-radius:16px; padding:16px;
+    box-shadow:0 4px 16px rgba(0,0,0,.07);
+    display:flex; align-items:center; justify-content:center;
+  }
+  .qr-box canvas{ border-radius:8px; display:block; }
+
+  .badge{
+    display:flex; align-items:center; gap:6px;
+    font-weight:700; font-size:12px; color:rgba(26,26,26,.85);
+    background:rgba(255,212,0,.18); border:1px solid rgba(255,212,0,.32);
+    padding:6px 12px; border-radius:999px;
+  }
+  .badge .dot{
+    width:8px; height:8px; border-radius:999px;
+    background:var(--accent); box-shadow:0 0 0 3px rgba(255,212,0,.2);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse{
+    0%,100%{ box-shadow:0 0 0 3px rgba(255,212,0,.2); }
+    50%{     box-shadow:0 0 0 6px rgba(255,212,0,.05); }
+  }
+
+  .hint{
+    font-size:12px; color:var(--muted); text-align:center; line-height:1.4;
+  }
+
+  /* Pantalla de error / carga */
+  .state{
+    font-size:15px; font-weight:600; color:var(--muted);
+    text-align:center; padding:20px 0;
+  }
+  .state.err{ color:#b00; }
+
+  /* Pantalla de primer uso (no hay id guardado) */
+  #setup{
+    width:100%; max-width:360px; display:none;
+    flex-direction:column; align-items:center; gap:16px;
+  }
+  #setup .card{ gap:14px; }
+  #setup input{
+    width:100%; padding:12px; font-size:15px; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
+    outline:none; background:#fff;
+    transition:border-color .15s, box-shadow .15s;
+  }
+  #setup input:focus{
+    border-color:var(--primary);
+    box-shadow:0 0 0 3px rgba(255,122,24,.12);
+  }
+  #setup input.invalid{ border-color:#e00; background:#fff8f8; }
+  .setup-title{ font-size:18px; font-weight:800; margin-top:4px; }
+  .setup-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
+  .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; }
+  .field-err.show{ display:block; }
+
+  .cta{
+    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22);
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, filter .06s ease;
+  }
+  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
+</style>
+</head>
+<body>
+
+<!-- Vista principal: QR -->
+<div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
+  <div class="brand">
+    <img src="./TuQRLogo.png" alt="TuQR"/>
+  </div>
+  <div class="card">
+    <div class="comercio-nombre" id="nombreEl">Cargando…</div>
+    <div class="qr-box">
+      <canvas id="qrCanvas"></canvas>
+    </div>
+    <div class="badge"><span class="dot"></span> Muéstrale este QR al cliente</div>
+    <div class="hint">El cliente lo escanea y copia tus datos bancarios<br>para hacerte la transferencia.</div>
+  </div>
+</div>
+
+<!-- Primer uso: pedir ID -->
+<div id="setup">
+  <div class="brand">
+    <img src="./TuQRLogo.png" alt="TuQR"/>
+  </div>
+  <div class="card">
+    <div class="setup-title">Activa tu TuQR</div>
+    <div class="setup-sub">Ingresa el usuario que te asignaron al crear tu cuenta.</div>
+    <div style="width:100%">
+      <input id="setupId" placeholder="Tu usuario (ej: JuanLopez)"
+             autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
+      <div class="field-err" id="err-setup">Usuario inválido — sin espacios</div>
+    </div>
+    <div id="err-notfound" class="field-err">No encontramos ese usuario. Verifica con tu administrador.</div>
+    <button class="cta" id="btnActivar">Activar</button>
+  </div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script>
+  const BASE_URL    = 'https://tuqrapp.github.io/tuqr.github.io/';
+  const DATA_URL    = BASE_URL + 'data.json';
+  const STORAGE_KEY = 'tuqr_id';
+
+  /* ── Service Worker ── */
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+
+  /* ── Helpers ── */
+  function clean(s){
+    return String(s??'').normalize('NFC')
+      .replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim();
+  }
+
+  function generarQR(url){
+    const canvas = document.getElementById('qrCanvas');
+    // Tamaño según pantalla, máx 260px
+    const size = Math.min(260, window.innerWidth - 100);
+    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+    const tmp = document.createElement('div');
+    new QRCode(tmp,{ text:url, width:size, height:size, correctLevel:QRCode.CorrectLevel.M });
+    setTimeout(()=>{
+      const src = tmp.querySelector('canvas');
+      if(src){
+        canvas.width=src.width; canvas.height=src.height;
+        canvas.getContext('2d').drawImage(src,0,0);
+      }
+    },100);
+  }
+
+  async function mostrarApp(id){
+    try{
+      const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      if(!res.ok) throw new Error('fetch');
+      const all = await res.json();
+      const d   = all[id];
+      if(!d) return false;
+
+      document.getElementById('nombreEl').textContent = clean(d.nombre);
+      document.title = 'TuQR — ' + clean(d.nombre);
+      const url = BASE_URL + '?id=' + encodeURIComponent(id);
+      generarQR(url);
+
+      document.getElementById('main').style.display = 'flex';
+      return true;
+    }catch(e){
+      return false;
+    }
+  }
+
+  /* ── Init ── */
+  async function init(){
+    // Primero intenta leer el ?id= de la URL (link que mandó el admin)
+    const params  = new URLSearchParams(location.search);
+    const urlId   = (params.get('id')||'').trim();
+    const savedId = localStorage.getItem(STORAGE_KEY);
+    const id      = urlId || savedId;
+
+    if(id){
+      const ok = await mostrarApp(id);
+      if(ok){
+        // Guarda el id para sesiones futuras (sin login)
+        localStorage.setItem(STORAGE_KEY, id);
+        return;
+      }
+    }
+
+    // Si no hay id o no se encontró, mostrar pantalla de activación
+    document.getElementById('setup').style.display = 'flex';
+  }
+
+  /* ── Activación primer uso ── */
+  const setupInput = document.getElementById('setupId');
+
+  setupInput.addEventListener('input', function(){
+    const errEl = document.getElementById('err-setup');
+    const ok    = this.value.length === 0 || !/\s/.test(this.value);
+    this.classList.toggle('invalid',!ok && this.value.length > 0);
+    errEl.classList.toggle('show',!ok && this.value.length > 0);
+    document.getElementById('err-notfound').classList.remove('show');
+  });
+
+  document.getElementById('btnActivar').addEventListener('click', async function(){
+    const id    = setupInput.value.trim();
+    const errEl = document.getElementById('err-setup');
+    const errNF = document.getElementById('err-notfound');
+
+    if(!id || /\s/.test(id)){
+      setupInput.classList.add('invalid');
+      errEl.classList.add('show'); return;
+    }
+
+    this.textContent = 'Verificando…';
+    this.disabled    = true;
+
+    const ok = await mostrarApp(id);
+    if(ok){
+      localStorage.setItem(STORAGE_KEY, id);
+      document.getElementById('setup').style.display = 'none';
+    } else {
+      errNF.classList.add('show');
+      this.textContent = 'Activar';
+      this.disabled    = false;
+    }
+  });
+
+  init();
+</script>
+</body>
+</html>
