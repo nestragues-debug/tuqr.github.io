@@ -24,7 +24,7 @@
   }
   *{ box-sizing:border-box; margin:0; padding:0; }
   html,body{
-    height:100%;
+    min-height:100%;
     font-family:"Poppins",system-ui,-apple-system,Helvetica,Arial,sans-serif;
     background:var(--bg); color:var(--text);
     -webkit-font-smoothing:antialiased;
@@ -32,7 +32,7 @@
   body{
     display:flex; flex-direction:column;
     align-items:center; justify-content:center;
-    padding:24px 16px; gap:20px;
+    padding:24px 16px; gap:20px; min-height:100vh;
   }
 
   .logo img{
@@ -55,7 +55,6 @@
   .card-title{ font-size:22px; font-weight:800; text-align:center; margin-top:4px; }
   .card-sub{ font-size:14px; color:var(--muted); text-align:center; line-height:1.5; }
 
-  /* Pasos instalación */
   .steps{ width:100%; display:flex; flex-direction:column; gap:12px; }
   .step{
     display:flex; align-items:center; gap:14px;
@@ -80,10 +79,23 @@
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  .already{
-    font-size:13px; color:var(--muted); text-align:center;
+  .cta-outline{
+    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
+    color:var(--primary); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .12s ease;
+    text-decoration:none; display:block; text-align:center;
   }
-  .already a{ color:var(--primary); font-weight:700; text-decoration:none; }
+  .cta-outline:active{ transform:translateY(1px); }
+  .cta-outline:hover{ background:rgba(255,122,24,.07); }
+
+  .safari-warning{
+    font-size:12px; color:var(--muted); text-align:center;
+    background:#fff8f0; border:1px solid rgba(255,122,24,.2);
+    border-radius:10px; padding:10px 14px; line-height:1.5;
+  }
+  .safari-warning span{ color:var(--primary); font-weight:700; }
 </style>
 </head>
 <body>
@@ -92,74 +104,110 @@
   <img src="./TuQRLogo.png" alt="TuQR"/>
 </div>
 
-<div class="card" id="cardContent">
-  <!-- contenido dinámico según dispositivo -->
-</div>
+<div class="card" id="card"></div>
 
 <script>
-  const PWA_URL = './admin.html';
-  const ua        = navigator.userAgent || '';
-  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const PWA_URL  = './admin.html';
+  const ua       = navigator.userAgent || '';
+  const isIOS    = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const isSafari = isIOS && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua);
   const isSamsung = /SamsungBrowser/.test(ua);
   const isFirefox = /Firefox/.test(ua) && !/Seamonkey/.test(ua);
-  const isAndroid = /Android/.test(ua);
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                      || window.navigator.standalone === true;
+  const card = document.getElementById('card');
+  let deferredPrompt = null;
 
-  const card = document.getElementById('cardContent');
-
-  // Si ya está instalada como PWA, redirigir directo
+  /* ── Si ya está instalada como PWA, ir directo ── */
   if(isStandalone){
     window.location.replace(PWA_URL);
   }
 
-  let deferredPrompt = null;
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
     renderAndroid(true);
   });
 
+  /* ── iOS Safari ── */
+  function renderIOS(){
+    card.innerHTML = `
+      <div class="card-title">Instala TuQR en tu iPhone</div>
+      <div class="card-sub">Sigue estos pasos para agregar TuQR a tu pantalla de inicio.</div>
+      <div class="steps">
+        <div class="step">
+          <div class="step-num">1</div>
+          <div class="step-text">Toca el botón <span>Compartir ↑</span> en la barra de Safari</div>
+        </div>
+        <div class="step">
+          <div class="step-num">2</div>
+          <div class="step-text">Baja y toca <span>"Agregar a pantalla de inicio"</span></div>
+        </div>
+        <div class="step">
+          <div class="step-num">3</div>
+          <div class="step-text">Toca <span>"Agregar"</span> — listo, TuQR queda en tu pantalla</div>
+        </div>
+      </div>
+      <a class="cta-outline" href="${PWA_URL}">Ya la instalé — Abrir TuQR →</a>
+    `;
+  }
+
+  /* ── iOS pero no Safari (Chrome, Firefox iOS) ── */
+  function renderIOSNoSafari(){
+    card.innerHTML = `
+      <div class="card-title">Instala TuQR</div>
+      <div class="card-sub">En iPhone, TuQR solo se puede instalar desde Safari.</div>
+      <div class="safari-warning">
+        Copia este link, ábrelo en <span>Safari</span> y sigue las instrucciones para instalar.<br><br>
+        <span>tuqrapp.github.io/tuqr.github.io/welcome.html</span>
+      </div>
+      <a class="cta-outline" href="${PWA_URL}">Continuar sin instalar →</a>
+    `;
+  }
+
+  /* ── Android con prompt nativo ── */
   function renderAndroid(hasPrompt){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
-      <div class="card-sub">Genera tu QR de cobro en segundos y muéstraselo a tus clientes.</div>
+      <div class="card-sub">Genera tu QR de cobro y muéstraselo a tus clientes.</div>
       ${hasPrompt ? `
         <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
+        <a class="cta-outline" href="${PWA_URL}">Abrir sin instalar →</a>
       ` : `
         <div class="steps">
-          <div class="step"><div class="step-num">1</div><div class="step-text">Toca el menú <span>${isSamsung ? '☰' : isFirefox ? '⋮' : '⋮'}</span> de tu navegador</div></div>
-          <div class="step"><div class="step-num">2</div><div class="step-text">Elige <span>"Agregar a pantalla de inicio"</span>${isSamsung ? ' → "Pantalla de inicio"' : ''}</div></div>
-          <div class="step"><div class="step-num">3</div><div class="step-text">Toca <span>"Agregar"</span> y abre TuQR desde tu pantalla</div></div>
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Toca el menú <span>${isSamsung?'☰':'⋮'}</span> de tu navegador</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">Elige <span>"Agregar a pantalla de inicio"</span></div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Toca <span>"Agregar"</span> y abre TuQR desde tu pantalla</div>
+          </div>
         </div>
+        <a class="cta-outline" href="${PWA_URL}">Ya la instalé — Abrir TuQR →</a>
       `}
-      <div class="already">¿Ya la instalaste? <a href="${PWA_URL}">Abrir TuQR →</a></div>
     `;
     if(hasPrompt){
       document.getElementById('btnInstall').addEventListener('click', async () => {
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
-        if(outcome === 'accepted'){
-          card.innerHTML = `<div class="card-title">✓ ¡Listo!</div><div class="card-sub">TuQR fue instalado. Ábrelo desde tu pantalla de inicio.</div><a class="cta" href="${PWA_URL}">Abrir TuQR →</a>`;
-        }
         deferredPrompt = null;
+        if(outcome === 'accepted'){
+          card.innerHTML = `
+            <div class="card-title">✓ ¡Instalado!</div>
+            <div class="card-sub">TuQR fue instalado. Ábrelo desde tu pantalla de inicio.</div>
+            <a class="cta" href="${PWA_URL}">Abrir TuQR →</a>
+          `;
+        }
       });
     }
   }
 
-  function renderIOS(){
-    card.innerHTML = `
-      <div class="card-title">Instala TuQR en tu iPhone</div>
-      <div class="card-sub">Sigue estos pasos en Safari para agregar TuQR a tu pantalla de inicio.</div>
-      <div class="steps">
-        <div class="step"><div class="step-num">1</div><div class="step-text">Toca el botón <span>Compartir ↑</span> en la barra de Safari</div></div>
-        <div class="step"><div class="step-num">2</div><div class="step-text">Baja y toca <span>"Agregar a pantalla de inicio"</span></div></div>
-        <div class="step"><div class="step-num">3</div><div class="step-text">Toca <span>"Agregar"</span> — listo, TuQR queda en tu pantalla</div></div>
-      </div>
-      <div class="already">¿Ya la instalaste? <a href="${PWA_URL}">Abrir TuQR →</a></div>
-    `;
-  }
-
+  /* ── Desktop ── */
   function renderDesktop(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
@@ -168,14 +216,11 @@
     `;
   }
 
-  // Render inicial
-  if(isIOS){
-    renderIOS();
-  } else if(isAndroid || isSamsung || isFirefox){
-    renderAndroid(false); // se actualizará si llega beforeinstallprompt
-  } else {
-    renderDesktop();
-  }
+  /* ── Render inicial ── */
+  if(isIOS && isSafari)        renderIOS();
+  else if(isIOS && !isSafari)  renderIOSNoSafari();
+  else if(/Android/.test(ua) || isSamsung || isFirefox) renderAndroid(false);
+  else                         renderDesktop();
 </script>
 </body>
 </html>
