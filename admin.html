@@ -168,10 +168,21 @@
   }
   .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
 
+  /* Animación de espera */
   .wait-box{
-    font-size:13px; color:var(--muted); line-height:1.6;
-    background:#f7f7f7; border-radius:12px; padding:14px; text-align:center;
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    background:#f7f7f7; border-radius:14px; padding:20px 16px; text-align:center;
   }
+  .spinner{
+    width:36px; height:36px; border-radius:50%;
+    border:4px solid rgba(255,122,24,.15);
+    border-top-color:var(--primary);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .wait-text{ font-size:14px; font-weight:700; color:var(--text); line-height:1.4; }
+  .wait-sub{ font-size:12px; color:var(--muted); }
+
   .err-box{
     font-size:13px; color:#b00; font-weight:600; text-align:center;
     background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
@@ -323,20 +334,26 @@
     <div class="help">Los datos se guardan vía Cloudflare Worker.</div>
   </div>
 
-  <!-- Pantalla: cuenta creada -->
+  <!-- Pantalla: cuenta creada + polling -->
   <div id="screenCreado" style="display:none">
     <div class="ok-card">
       <div>
         <div class="ok-pill">✓ Cuenta creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
-      <div class="wait-box">
-        ⏳ Tu cuenta se está activando. Espera <strong>1-2 minutos</strong> antes de abrir tu QR por primera vez.
+
+      <!-- Estado: esperando -->
+      <div class="wait-box" id="waitBox">
+        <div class="spinner"></div>
+        <div class="wait-text">Activando tu cuenta…</div>
+        <div class="wait-sub" id="waitSub">Esto toma unos segundos</div>
       </div>
-      <button class="cta-ir" id="btnIrApp">Ver mi QR →</button>
-      <div id="msgQRError" style="display:none; display:flex; flex-direction:column; gap:10px;">
-        <div class="err-box">Tu cuenta aún no está lista. Espera un momento más e inténtalo de nuevo.</div>
-        <button class="cta-ir secondary" id="btnReintentar">← Volver a intentar</button>
+
+      <!-- Estado: error tras timeout -->
+      <div id="msgQRError" style="display:none; flex-direction:column; gap:10px;">
+        <div class="err-box">No pudimos confirmar la activación. Intenta abriendo tu QR manualmente.</div>
+        <button class="cta-ir" id="btnIrApp">Ver mi QR →</button>
+        <button class="cta-ir secondary" id="btnReintentar">↺ Reintentar</button>
       </div>
     </div>
   </div>
@@ -348,6 +365,8 @@
   const BASE_URL    = 'https://tuqrapp.github.io/tuqr.github.io/';
   const DATA_URL    = BASE_URL + 'data.json';
   const STORAGE_KEY = 'tuqr_id';
+  const POLL_INTERVAL = 5000;   // cada 5 segundos
+  const POLL_MAX      = 24;     // máximo 2 minutos
 
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
@@ -396,6 +415,39 @@
   function validarEmail(e){ return e.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
   function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
   function validarId(s){ return s.length>0 && !/\s/.test(s); }
+
+  /* ── Polling ── */
+  let pollTimer = null;
+  let pollCount = 0;
+
+  function iniciarPolling(id){
+    pollCount = 0;
+    clearInterval(pollTimer);
+    pollTimer = setInterval(async () => {
+      pollCount++;
+      try{
+        const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+        const all = await res.json();
+        if(all[id]){
+          clearInterval(pollTimer);
+          window.location.replace('./app.html');
+          return;
+        }
+      }catch(e){}
+
+      // Actualizar texto de espera
+      const secs = pollCount * (POLL_INTERVAL/1000);
+      document.getElementById('waitSub').textContent =
+        secs < 60 ? `${secs} seg…` : `${Math.floor(secs/60)}m ${secs%60}s…`;
+
+      // Timeout tras POLL_MAX intentos
+      if(pollCount >= POLL_MAX){
+        clearInterval(pollTimer);
+        hide('waitBox');
+        document.getElementById('msgQRError').style.display='flex';
+      }
+    }, POLL_INTERVAL);
+  }
 
   /* ── Navegación ── */
   document.getElementById('btnIrActivar').addEventListener('click',()=>{
@@ -591,47 +643,33 @@
         msgErr.innerHTML='<div class="err">Error guardando.'+detail+'</div>'; return;
       }
 
+      // Mostrar pantalla de espera e iniciar polling
       localStorage.setItem(STORAGE_KEY, payload.id);
       document.getElementById('resNombre').textContent=clean(payload.nombre);
+      show('waitBox');
       document.getElementById('msgQRError').style.display='none';
-      const btnIr=document.getElementById('btnIrApp');
-      btnIr.style.display='';
-      btnIr.textContent='Ver mi QR →';
-      btnIr.disabled=false;
-      hide('screenCrear'); show('screenCreado');
+      document.getElementById('waitSub').textContent='Esto toma unos segundos';
+      hide('screenCrear');
+      show('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
+      iniciarPolling(payload.id);
 
     }catch(e){
       msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>';
     }
   });
 
-  /* ── Ir al QR por primera vez ── */
-  document.getElementById('btnIrApp').addEventListener('click', async function(){
-    this.textContent='Verificando…'; this.disabled=true;
-    const id=localStorage.getItem(STORAGE_KEY);
-    try{
-      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
-      const all=await res.json();
-      if(all[id]){
-        window.location.replace('./app.html');
-      } else {
-        this.style.display='none'; this.disabled=false;
-        document.getElementById('msgQRError').style.display='flex';
-      }
-    }catch(e){
-      this.style.display='none'; this.disabled=false;
-      document.getElementById('msgQRError').style.display='flex';
-    }
+  /* ── Botones de error / reintento ── */
+  document.getElementById('btnIrApp').addEventListener('click', ()=>{
+    window.location.replace('./app.html');
   });
 
-  /* ── Reintentar ── */
-  document.getElementById('btnReintentar').addEventListener('click', function(){
+  document.getElementById('btnReintentar').addEventListener('click', ()=>{
+    show('waitBox');
     document.getElementById('msgQRError').style.display='none';
-    const btnIr=document.getElementById('btnIrApp');
-    btnIr.style.display='';
-    btnIr.textContent='Ver mi QR →';
-    btnIr.disabled=false;
+    document.getElementById('waitSub').textContent='Esto toma unos segundos';
+    const id=localStorage.getItem(STORAGE_KEY);
+    if(id) iniciarPolling(id);
   });
 </script>
 </body>
