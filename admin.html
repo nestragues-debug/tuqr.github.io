@@ -85,13 +85,6 @@
     transition:transform .06s ease, filter .06s ease;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-  .cta-sec{
-    margin-top:10px; padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
-    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
-    color:var(--primary); background:transparent; -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease;
-  }
-  .cta-sec:active{ transform:translateY(1px); }
   .cta-ir{
     padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
@@ -109,16 +102,16 @@
     display:block; text-align:center; margin-top:18px;
     font-size:13px; font-weight:700; color:var(--primary); cursor:pointer; text-decoration:underline;
   }
-  .user-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
-  .user-item{
+  .cuenta-destino-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
+  .cuenta-destino-item{
     padding:14px 16px; border-radius:14px; cursor:pointer;
     border:2px solid var(--border); background:#fff; display:flex; flex-direction:column; gap:2px;
     -webkit-tap-highlight-color:transparent; transition:border-color .12s, background .12s;
   }
-  .user-item:active{ background:#f7f7f7; }
-  .user-item:hover{ border-color:var(--primary); background:rgba(255,122,24,.04); }
-  .user-item-nombre{ font-size:15px; font-weight:800; color:var(--text); }
-  .user-item-id{ font-size:12px; font-weight:600; color:var(--muted); }
+  .cuenta-destino-item:active{ background:#f7f7f7; }
+  .cuenta-destino-item:hover{ border-color:var(--primary); background:rgba(255,122,24,.04); }
+  .cuenta-destino-nombre{ font-size:15px; font-weight:800; color:var(--text); }
+  .cuenta-destino-id{ font-size:12px; font-weight:600; color:var(--muted); }
   .ok-card{
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
     padding:24px 20px 28px; box-shadow:var(--shadow); position:relative; overflow:hidden;
@@ -155,11 +148,6 @@
     white-space:pre-wrap; color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
   .help{ margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center; }
-
-  /* ── Opciones tras identificarse ── */
-  .opciones-mod{ display:flex; flex-direction:column; gap:12px; margin-top:8px; }
-
-  /* ── Modal contacto ── */
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
     z-index:1000; align-items:flex-end; justify-content:center;
@@ -168,14 +156,10 @@
   .modal-box{
     background:#fff; border-radius:24px 24px 0 0; padding:28px 20px 40px;
     width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
-    box-shadow:0 -8px 32px rgba(0,0,0,.15);
-    animation:slideUp .25s ease;
+    box-shadow:0 -8px 32px rgba(0,0,0,.15); animation:slideUp .25s ease;
   }
   @keyframes slideUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
-  .modal-handle{
-    width:40px; height:4px; border-radius:999px; background:#ddd;
-    margin:0 auto 20px; display:block;
-  }
+  .modal-handle{ width:40px; height:4px; border-radius:999px; background:#ddd; margin:0 auto 20px; display:block; }
   .modal-title{ font-size:20px; font-weight:800; margin-bottom:4px; }
   .modal-sub{ font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.4; }
   .modal-close{
@@ -204,24 +188,24 @@
       <button class="btn-opcion primary" id="btnIrCrear">
         <div class="icon">✨</div>
         <div class="label">
-          <strong>Crear usuario nuevo</strong>
+          <strong>Crear usuario</strong>
           <span>Primera vez — registra tus datos</span>
         </div>
       </button>
       <button class="btn-opcion secondary" id="btnIrActivar">
         <div class="icon">🔑</div>
         <div class="label">
-          <strong>Ingresar usuario</strong>
-          <span>Ya tengo usuario — acceder o crear nueva Cuenta Destino</span>
+          <strong>Ingresar / Modificar usuario</strong>
+          <span>Ya tengo usuario — acceder o editar mis datos</span>
         </div>
       </button>
     </div>
     <a class="link-contacto" id="btnContactoOpciones">Contacto</a>
   </div>
 
-  <!-- Pantalla: identificarse con RUT + teléfono -->
+  <!-- Pantalla: identificarse -->
   <div id="screenActivar" class="card" style="display:none">
-    <h1>Ingresar / Modificar</h1>
+    <h1>Ingresar / Modificar usuario</h1>
     <p class="sub">Ingresa tu RUT y teléfono para identificarte.</p>
     <label for="actRut">RUT</label>
     <input id="actRut" placeholder="12.345.678-9" maxlength="12"/>
@@ -238,86 +222,21 @@
     <a class="link-contacto" id="btnContactoActivar">Contacto</a>
   </div>
 
-  <!-- Pantalla: elegir Cuenta Destino cuando hay más de uno -->
+  <!-- Pantalla: elegir cuenta destino cuando hay más de una -->
   <div id="screenElegir" class="card" style="display:none">
-    <h1>Elige tu Cuenta Destino</h1>
-    <p class="sub">Encontramos más de una Cuenta Destino. ¿Cuál quieres usar?</p>
-    <div class="user-list" id="userList"></div>
+    <h1>Elige tu cuenta destino</h1>
+    <p class="sub">Encontramos más de una cuenta destino con esos datos. ¿Cuál quieres usar?</p>
+    <div class="cuenta-destino-list" id="cuentaDestinoList"></div>
     <a class="link-back" id="backFromElegir">← Volver</a>
   </div>
 
-  <!-- Pantalla: opciones tras identificarse -->
-  <div id="screenMod" class="card" style="display:none">
-    <h1 id="modNombre"></h1>
-    <p class="sub">¿Qué quieres hacer?</p>
-    <div class="opciones-mod">
-      <button class="btn-opcion primary" id="btnIrQR">
-        <div class="icon">📱</div>
-        <div class="label">
-          <strong>Ver mi QR</strong>
-          <span>Abrir la pantalla de cobro</span>
-        </div>
-      </button>
-      <button class="btn-opcion secondary" id="btnIrEditar">
-        <div class="icon">✏️</div>
-        <div class="label">
-          <strong>Modificar datos bancarios</strong>
-          <span>Banco, tipo y número de cuenta</span>
-        </div>
-      </button>
-    </div>
-    <a class="link-back" id="backFromMod">← Volver</a>
-  </div>
-
-  <!-- Pantalla: editar datos bancarios -->
-  <div id="screenEditar" class="card" style="display:none">
-    <h1>Modificar datos</h1>
-    <p class="sub">Solo puedes modificar banco, tipo y número de cuenta.</p>
-
-    <label for="editBanco">Banco</label>
-    <select id="editBanco">
-      <option value="">— Selecciona —</option>
-      <option>Banco de Chile</option>
-      <option>Banco BICE</option>
-      <option>Banco Consorcio</option>
-      <option>Banco BCI</option>
-      <option>Banco Estado</option>
-      <option>Banco Falabella</option>
-      <option>Banco Internacional</option>
-      <option>Banco Itaú</option>
-      <option>Banco Ripley</option>
-      <option>Banco Santander</option>
-      <option>Banco Security</option>
-      <option>Scotiabank</option>
-      <option>Tapp Caja Los Andes</option>
-      <option>Banco Tenpo</option>
-      <option>Mercado Pago</option>
-    </select>
-
-    <label for="editTipo">Tipo de cuenta</label>
-    <select id="editTipo">
-      <option value="">— Selecciona —</option>
-      <option value="Cuenta Corriente">Corriente</option>
-      <option value="Cuenta Vista">Vista</option>
-      <option value="Cuenta RUT">Cuenta RUT</option>
-    </select>
-
-    <label for="editNumero">Número de cuenta</label>
-    <input id="editNumero" placeholder="Solo números" inputmode="numeric"/>
-    <div class="field-err" id="err-editNumero">Solo números</div>
-
-    <button class="cta" id="btnGuardarEdicion">Guardar cambios</button>
-    <div id="msg-edit-err"></div>
-    <a class="link-back" id="backFromEditar">← Volver</a>
-  </div>
-
-  <!-- Pantalla: crear Cuenta Destino -->
+  <!-- Pantalla: crear usuario -->
   <div id="screenCrear" class="card" style="display:none">
-    <h1>Crear Cuenta Destino</h1>
-    <label for="id">Crea tu Cuenta Destino</label>
-    <input id="id" placeholder="ej: JuanLopezBChile"
+    <h1>Crear usuario</h1>
+    <label for="id">Nombre de tu cuenta destino</label>
+    <input id="id" placeholder="ej: JuanBCI"
            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-    <div class="field-err" id="err-id">La Cuenta Destino no puede contener espacios</div>
+    <div class="field-err" id="err-id">El nombre de cuenta destino no puede contener espacios</div>
     <div class="row">
       <div>
         <label for="nombre">Nombre</label>
@@ -331,7 +250,7 @@
     </div>
     <div class="row">
       <div>
-        <label for="tipoCuenta">Tipo de cuenta</label>
+        <label for="tipoCuenta">Tipo de cuenta destino</label>
         <select id="tipoCuenta">
           <option value="">— Selecciona —</option>
           <option value="Cuenta Corriente">Corriente</option>
@@ -348,21 +267,11 @@
     <label for="banco">Banco</label>
     <select id="banco">
       <option value="">— Selecciona —</option>
-      <option>Banco de Chile</option>
-      <option>Banco BICE</option>
-      <option>Banco Consorcio</option>
-      <option>Banco BCI</option>
-      <option>Banco Estado</option>
-      <option>Banco Falabella</option>
-      <option>Banco Internacional</option>
-      <option>Banco Itaú</option>
-      <option>Banco Ripley</option>
-      <option>Banco Santander</option>
-      <option>Banco Security</option>
-      <option>Scotiabank</option>
-      <option>Tapp Caja Los Andes</option>
-      <option>Banco Tenpo</option>
-      <option>Mercado Pago</option>
+      <option>Banco de Chile</option><option>Banco BICE</option><option>Banco Consorcio</option>
+      <option>Banco BCI</option><option>Banco Estado</option><option>Banco Falabella</option>
+      <option>Banco Internacional</option><option>Banco Itaú</option><option>Banco Ripley</option>
+      <option>Banco Santander</option><option>Banco Security</option><option>Scotiabank</option>
+      <option>Tapp Caja Los Andes</option><option>Banco Tenpo</option><option>Mercado Pago</option>
     </select>
     <label for="correo">Correo</label>
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email"/>
@@ -381,38 +290,22 @@
     <div class="help">Los datos se guardan vía Cloudflare Worker.</div>
   </div>
 
-  <!-- Pantalla: cuenta creada + polling -->
+  <!-- Pantalla: cuenta destino creada + polling -->
   <div id="screenCreado" style="display:none">
     <div class="ok-card">
       <div>
-        <div class="ok-pill">✓ Cuenta Destino creada</div>
+        <div class="ok-pill">✓ Cuenta destino creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
       <div class="wait-box" id="waitBox">
         <div class="spinner"></div>
-        <div class="wait-text">Activando tu usuario y tu primera Cuenta Destino…</div>
+        <div class="wait-text">Activando tu cuenta destino…</div>
         <div class="wait-sub" id="waitSub">Puede tardar hasta un minuto</div>
       </div>
       <div id="msgQRError" style="display:none; flex-direction:column; gap:10px;">
         <div class="err-box">No pudimos confirmar la activación. Intenta abriendo tu QR manualmente.</div>
         <button class="cta-ir" id="btnIrApp">Ver mi QR →</button>
         <button class="cta-ir secondary" id="btnReintentar">↺ Reintentar</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- Pantalla: edición guardada -->
-  <div id="screenEditOk" style="display:none">
-    <div class="ok-card">
-      <div class="ok-pill">✓ Datos actualizados</div>
-      <div class="wait-box" id="waitBoxEdit">
-        <div class="spinner"></div>
-        <div class="wait-text">Guardando cambios…</div>
-        <div class="wait-sub">Puede tardar hasta un minuto</div>
-      </div>
-      <div id="msgEditError" style="display:none; flex-direction:column; gap:10px;">
-        <div class="err-box">No pudimos confirmar la actualización. Intenta de nuevo.</div>
-        <button class="cta-ir secondary" id="btnReintentarEdit">↺ Reintentar</button>
       </div>
     </div>
   </div>
@@ -426,31 +319,24 @@
     <span class="modal-handle"></span>
     <div class="modal-title">Contacto</div>
     <div class="modal-sub">Te responderemos al correo de tu usuario.</div>
-
     <label for="cRut">RUT</label>
     <input id="cRut" placeholder="12.345.678-9" maxlength="12"/>
     <div class="field-err" id="err-cRut">RUT inválido</div>
-
-    <label for="cUsuario" style="margin-top:14px">Usuario</label>
-    <select id="cUsuario">
-      <option value="">— Selecciona —</option>
-    </select>
-    <div class="field-err" id="err-cUsuario">Selecciona un Cuenta Destino</div>
-
+    <label for="cCuentaDestino" style="margin-top:14px">Cuenta Destino</label>
+    <select id="cCuentaDestino"><option value="">— Selecciona —</option></select>
+    <div class="field-err" id="err-cCuentaDestino">Selecciona una cuenta destino</div>
     <label for="cTipo" style="margin-top:14px">Tipo de problema</label>
     <select id="cTipo">
       <option value="">— Selecciona —</option>
-      <option value="cuenta">Cuenta</option>
+      <option value="cuenta_destino">Cuenta Destino</option>
       <option value="modificar_datos">Modificar datos</option>
       <option value="otros">Otros</option>
     </select>
     <div class="field-err" id="err-cTipo">Selecciona un tipo</div>
-
     <label for="cMensaje" style="margin-top:14px">Describe tu problema</label>
     <textarea id="cMensaje" maxlength="500" placeholder="Escribe aquí..."></textarea>
     <div class="char-count"><span id="charCount">0</span>/500</div>
     <div class="field-err" id="err-cMensaje">Escribe al menos 10 caracteres</div>
-
     <button class="cta" id="btnEnviarContacto">Enviar</button>
     <div id="msg-contacto-err"></div>
   </div>
@@ -466,9 +352,7 @@
   const POLL_INTERVAL = 5000;
   const POLL_MAX      = 24;
 
-  if('serviceWorker' in navigator){
-    navigator.serviceWorker.register('./sw.js').catch(()=>{});
-  }
+  if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                      || window.navigator.standalone === true;
@@ -483,7 +367,6 @@
     else { show('screenOpciones'); }
   }
 
-  /* ── Helpers ── */
   function val(id){ return (document.getElementById(id).value||'').trim(); }
   function clean(s){
     return String(s??'').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F]/g,'').trim();
@@ -510,9 +393,6 @@
   function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
   function validarId(s){ return s.length>0 && !/\s/.test(s); }
 
-  /* ── Estado identificación ── */
-  let usuarioActual = null; // { id, data }
-
   /* ── Polling creación ── */
   let pollTimer=null, pollCount=0;
   function iniciarPolling(id){
@@ -529,63 +409,17 @@
     }catch(e){}
     if(pollCount>=POLL_MAX){
       clearInterval(pollTimer);
-      const wb=document.getElementById('waitBox');
-      const eb=document.getElementById('msgQRError');
-      if(wb) wb.style.display='none';
-      if(eb) eb.style.display='flex';
-    }
-  }
-
-  /* ── Polling edición ── */
-  let pollEditTimer=null, pollEditCount=0, editPayload=null;
-  function iniciarPollingEdit(id, expectedBanco){
-    pollEditCount=0; clearInterval(pollEditTimer); checkEdit(id, expectedBanco);
-    pollEditTimer=setInterval(()=>{ checkEdit(id, expectedBanco); }, POLL_INTERVAL);
-  }
-  async function checkEdit(id, expectedBanco){
-    pollEditCount++;
-    try{
-      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
-      if(!res.ok) throw new Error();
-      const all=await res.json();
-      if(all[id] && all[id].banco===expectedBanco){
-        clearInterval(pollEditTimer);
-        localStorage.setItem(STORAGE_KEY, id);
-        window.location.replace('./app.html');
-        return;
-      }
-    }catch(e){}
-    if(pollEditCount>=POLL_MAX){
-      clearInterval(pollEditTimer);
-      const wb=document.getElementById('waitBoxEdit');
-      const eb=document.getElementById('msgEditError');
-      if(wb) wb.style.display='none';
-      if(eb) eb.style.display='flex';
+      document.getElementById('waitBox').style.display='none';
+      document.getElementById('msgQRError').style.display='flex';
     }
   }
 
   /* ── Navegación ── */
-  document.getElementById('btnIrCrear').addEventListener('click',()=>{
-    hide('screenOpciones'); show('screenCrear');
-  });
-  document.getElementById('btnIrActivar').addEventListener('click',()=>{
-    hide('screenOpciones'); show('screenActivar');
-  });
-  document.getElementById('backFromActivar').addEventListener('click',()=>{
-    hide('screenActivar'); show('screenOpciones');
-  });
-  document.getElementById('backFromElegir').addEventListener('click',()=>{
-    hide('screenElegir'); show('screenActivar');
-  });
-  document.getElementById('backFromCrear').addEventListener('click',()=>{
-    hide('screenCrear'); show('screenOpciones');
-  });
-  document.getElementById('backFromMod').addEventListener('click',()=>{
-    hide('screenMod'); show('screenActivar');
-  });
-  document.getElementById('backFromEditar').addEventListener('click',()=>{
-    hide('screenEditar'); show('screenMod');
-  });
+  document.getElementById('btnIrCrear').addEventListener('click',()=>{ hide('screenOpciones'); show('screenCrear'); });
+  document.getElementById('btnIrActivar').addEventListener('click',()=>{ hide('screenOpciones'); show('screenActivar'); });
+  document.getElementById('backFromActivar').addEventListener('click',()=>{ hide('screenActivar'); show('screenOpciones'); });
+  document.getElementById('backFromElegir').addEventListener('click',()=>{ hide('screenElegir'); show('screenActivar'); });
+  document.getElementById('backFromCrear').addEventListener('click',()=>{ hide('screenCrear'); show('screenOpciones'); });
 
   /* ── Identificar usuario ── */
   const actRutInput = document.getElementById('actRut');
@@ -624,19 +458,21 @@
         normalizarRut(d.rut||'')===rutNorm && (d.telefono||'').replace(/\D/g,'')===telVal
       );
       if(matches.length===0){
-        errGen.classList.add('show');
-        this.textContent='Continuar'; this.disabled=false;
+        errGen.classList.add('show'); this.textContent='Continuar'; this.disabled=false;
       } else if(matches.length===1){
-        mostrarOpcionesMod(matches[0][0], matches[0][1]);
-        this.textContent='Continuar'; this.disabled=false;
+        localStorage.setItem(STORAGE_KEY, matches[0][0]);
+        window.location.replace('./app.html');
       } else {
-        const list=document.getElementById('userList');
+        const list=document.getElementById('cuentaDestinoList');
         list.innerHTML='';
         matches.forEach(([id,d])=>{
           const item=document.createElement('div');
-          item.className='user-item';
-          item.innerHTML=`<div class="user-item-nombre">${clean(d.nombre)}</div><div class="user-item-id">@${id} · ${clean(d.banco)}</div>`;
-          item.addEventListener('click',()=>{ mostrarOpcionesMod(id,d); });
+          item.className='cuenta-destino-item';
+          item.innerHTML=`<div class="cuenta-destino-nombre">${clean(d.nombre)}</div><div class="cuenta-destino-id">${id} · ${clean(d.banco)}</div>`;
+          item.addEventListener('click',()=>{
+            localStorage.setItem(STORAGE_KEY, id);
+            window.location.replace('./app.html');
+          });
           list.appendChild(item);
         });
         hide('screenActivar'); show('screenElegir');
@@ -644,107 +480,14 @@
       }
     }catch(e){
       errGen.textContent='Error al conectar. Intenta de nuevo.';
-      errGen.classList.add('show');
-      this.textContent='Continuar'; this.disabled=false;
+      errGen.classList.add('show'); this.textContent='Continuar'; this.disabled=false;
     }
   });
 
-  function mostrarOpcionesMod(id, data){
-    usuarioActual = { id, data };
-    document.getElementById('modNombre').textContent = clean(data.nombre);
-    hide('screenActivar'); hide('screenElegir'); show('screenMod');
-  }
-
-  /* ── Ver QR ── */
-  document.getElementById('btnIrQR').addEventListener('click',()=>{
-    if(usuarioActual){
-      localStorage.setItem(STORAGE_KEY, usuarioActual.id);
-      window.location.replace('./app.html');
-    }
-  });
-
-  /* ── Ir a editar ── */
-  document.getElementById('btnIrEditar').addEventListener('click',()=>{
-    if(!usuarioActual) return;
-    const d=usuarioActual.data;
-    const bancoSel=document.getElementById('editBanco');
-    const tipoSel=document.getElementById('editTipo');
-    const numInp=document.getElementById('editNumero');
-    // Precargar valores actuales
-    Array.from(bancoSel.options).forEach(o=>{ o.selected=(o.value===d.banco||o.text===d.banco); });
-    Array.from(tipoSel.options).forEach(o=>{ o.selected=(o.value===d.tipoCuenta); });
-    numInp.value=d.numeroCuenta||'';
-    document.getElementById('msg-edit-err').innerHTML='';
-    hide('screenMod'); show('screenEditar');
-  });
-
-  /* ── Guardar edición ── */
-  document.getElementById('editNumero').addEventListener('input', function(){
-    this.value=this.value.replace(/\D/g,'');
-  });
-
-  document.getElementById('btnGuardarEdicion').addEventListener('click', async function(){
-    if(!usuarioActual) return;
-    const msgErr=document.getElementById('msg-edit-err');
-    msgErr.innerHTML='';
-    const banco=val('editBanco');
-    const tipoCuenta=val('editTipo');
-    const numeroCuenta=val('editNumero').replace(/\D/g,'');
-    if(!banco||!tipoCuenta||!numeroCuenta){
-      msgErr.innerHTML='<div class="err">Completa todos los campos.</div>'; return;
-    }
-    if(!/^\d+$/.test(numeroCuenta)){
-      msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; return;
-    }
-    this.textContent='Guardando…'; this.disabled=true;
-    const d=usuarioActual.data;
-    const payload={
-      id:           usuarioActual.id,
-      nombre:       d.nombre,
-      rut:          d.rut,
-      correo:       d.correo,
-      telefono:     d.telefono,
-      banco,
-      tipoCuenta,
-      numeroCuenta
-    };
-    try{
-      const res=await fetch(WORKER_URL,{
-        method:'POST',
-        headers:{'Content-Type':'application/json'},
-        body:JSON.stringify(payload)
-      });
-      const txt=await res.text();
-      let data={};
-      try{ data=JSON.parse(txt); }catch{}
-      if(!res.ok||!data.ok){
-        const detail=data.error?('\nDetalle: '+data.error):('\nHTTP '+res.status);
-        msgErr.innerHTML='<div class="err">Error guardando.'+detail+'</div>';
-        this.textContent='Guardar cambios'; this.disabled=false; return;
-      }
-      hide('screenEditar'); show('screenEditOk');
-      window.scrollTo({top:0,behavior:'smooth'});
-      iniciarPollingEdit(usuarioActual.id, banco);
-    }catch(e){
-      msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>';
-      this.textContent='Guardar cambios'; this.disabled=false;
-    }
-  });
-
-  document.getElementById('btnReintentarEdit').addEventListener('click',()=>{
-    if(usuarioActual && editPayload){
-      document.getElementById('waitBoxEdit').style.display='flex';
-      document.getElementById('msgEditError').style.display='none';
-      iniciarPollingEdit(usuarioActual.id, val('editBanco'));
-    }
-  });
-
-  /* ── Crear cuenta: validación ── */
-  const idInput     = document.getElementById('id');
-  const rutInput    = document.getElementById('rut');
-  const cuentaInput = document.getElementById('numeroCuenta');
-  const correoInput = document.getElementById('correo');
-  const telInput    = document.getElementById('telefono');
+  /* ── Crear usuario: validación ── */
+  const idInput=document.getElementById('id'), rutInput=document.getElementById('rut');
+  const cuentaInput=document.getElementById('numeroCuenta'), correoInput=document.getElementById('correo');
+  const telInput=document.getElementById('telefono');
 
   idInput.addEventListener('input', function(){
     const ok=validarId(this.value);
@@ -779,24 +522,20 @@
     document.getElementById('err-tel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
-  /* ── Guardar cuenta nueva ── */
+  /* ── Guardar usuario nuevo ── */
   document.getElementById('save').addEventListener('click', async () => {
     const msgErr=document.getElementById('msg-err');
     msgErr.innerHTML='';
     const payload={
-      id:           clean(val('id')),
-      nombre:       clean(val('nombre')),
-      rut:          clean(val('rut')),
-      banco:        clean(val('banco')),
-      tipoCuenta:   clean(val('tipoCuenta')),
-      numeroCuenta: clean(val('numeroCuenta')),
-      correo:       clean(val('correo')),
-      telefono:     val('telefono').replace(/\D/g,'')
+      id:clean(val('id')), nombre:clean(val('nombre')), rut:clean(val('rut')),
+      banco:clean(val('banco')), tipoCuenta:clean(val('tipoCuenta')),
+      numeroCuenta:clean(val('numeroCuenta')), correo:clean(val('correo')),
+      telefono:val('telefono').replace(/\D/g,'')
     };
     if(!payload.id||!payload.nombre||!payload.rut||!payload.banco||!payload.tipoCuenta||!payload.numeroCuenta){
       msgErr.innerHTML='<div class="err">Faltan campos obligatorios.</div>'; return;
     }
-    if(!validarId(payload.id)){ msgErr.innerHTML='<div class="err">La Cuenta Destino no puede contener espacios.</div>'; idInput.focus(); return; }
+    if(!validarId(payload.id)){ msgErr.innerHTML='<div class="err">El nombre de cuenta destino no puede contener espacios.</div>'; idInput.focus(); return; }
     if(!validarRut(payload.rut)){ msgErr.innerHTML='<div class="err">El RUT no es válido.</div>'; rutInput.focus(); return; }
     if(!/^\d+$/.test(payload.numeroCuenta)){ msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; cuentaInput.focus(); return; }
     if(!validarEmail(payload.correo)){ msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>'; correoInput.focus(); return; }
@@ -805,18 +544,11 @@
     try{
       const chk=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       const all=await chk.json();
-      if(all[payload.id]){
-        msgErr.innerHTML='<div class="err">La Cuenta Destino <strong>'+payload.id+'</strong> ya existe. Elige otro nombre.</div>';
-        idInput.focus(); return;
-      }
-    }catch(e){
-      msgErr.innerHTML='<div class="err">No se pudo verificar disponibilidad. Intenta de nuevo.</div>'; return;
-    }
+      if(all[payload.id]){ msgErr.innerHTML='<div class="err">La cuenta destino <strong>'+payload.id+'</strong> ya existe. Elige otro nombre.</div>'; idInput.focus(); return; }
+    }catch(e){ msgErr.innerHTML='<div class="err">No se pudo verificar disponibilidad. Intenta de nuevo.</div>'; return; }
 
     try{
-      const res=await fetch(WORKER_URL,{
-        method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload)
-      });
+      const res=await fetch(WORKER_URL,{ method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(payload) });
       const txt=await res.text();
       let data={};
       try{ data=JSON.parse(txt); }catch{}
@@ -832,9 +564,7 @@
       hide('screenCrear'); show('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
       iniciarPolling(payload.id);
-    }catch(e){
-      msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>';
-    }
+    }catch(e){ msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>'; }
   });
 
   document.getElementById('btnIrApp').addEventListener('click',()=>{ window.location.replace('./app.html'); });
@@ -847,52 +577,44 @@
   });
 
   /* ── Modal Contacto ── */
-  let dataJson = null;
-
+  let dataJson=null;
   async function cargarDataJson(){
     if(dataJson) return dataJson;
-    try{
-      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
-      dataJson=await res.json();
-    }catch(e){ dataJson={}; }
+    try{ const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'}); dataJson=await res.json(); }
+    catch(e){ dataJson={}; }
     return dataJson;
   }
 
   async function abrirModalContacto(){
     document.getElementById('modalContacto').classList.add('open');
     document.getElementById('cRut').value='';
-    document.getElementById('cUsuario').innerHTML='<option value="">— Selecciona —</option>';
+    document.getElementById('cCuentaDestino').innerHTML='<option value="">— Selecciona —</option>';
     document.getElementById('cTipo').value='';
     document.getElementById('cMensaje').value='';
     document.getElementById('charCount').textContent='0';
     document.getElementById('msg-contacto-err').innerHTML='';
-    ['err-cRut','err-cUsuario','err-cTipo','err-cMensaje'].forEach(id=>{
-      document.getElementById(id).classList.remove('show');
-    });
+    document.getElementById('btnEnviarContacto').textContent='Enviar';
+    document.getElementById('btnEnviarContacto').disabled=false;
+    ['err-cRut','err-cCuentaDestino','err-cTipo','err-cMensaje'].forEach(id=>{ document.getElementById(id).classList.remove('show'); });
   }
 
   function cerrarModal(){ document.getElementById('modalContacto').classList.remove('open'); }
-
   document.getElementById('btnCerrarModal').addEventListener('click', cerrarModal);
-  document.getElementById('modalContacto').addEventListener('click', function(e){
-    if(e.target===this) cerrarModal();
-  });
+  document.getElementById('modalContacto').addEventListener('click', function(e){ if(e.target===this) cerrarModal(); });
 
   ['btnContactoOpciones','btnContactoActivar','btnContactoCrear'].forEach(id=>{
     const el=document.getElementById(id);
     if(el) el.addEventListener('click', abrirModalContacto);
   });
 
-  /* RUT en contacto → cargar Cuentas Destino */
-  const cRutInput=document.getElementById('cRut');
-  cRutInput.addEventListener('input', async function(){
+  document.getElementById('cRut').addEventListener('input', async function(){
     const raw=this.value.replace(/[\.\-\s]/g,'');
     if(raw.length>=2) this.value=formatearRut(raw);
     const ok=validarRut(this.value);
     this.classList.toggle('valid', this.value.length>0&&ok);
     this.classList.toggle('invalid', this.value.length>0&&!ok);
     document.getElementById('err-cRut').classList.toggle('show', this.value.length>0&&!ok);
-    const sel=document.getElementById('cUsuario');
+    const sel=document.getElementById('cCuentaDestino');
     sel.innerHTML='<option value="">— Selecciona —</option>';
     if(ok){
       const all=await cargarDataJson();
@@ -900,51 +622,36 @@
       Object.entries(all).forEach(([id,d])=>{
         if(normalizarRut(d.rut||'')===rutNorm){
           const opt=document.createElement('option');
-          opt.value=id; opt.textContent=`${clean(d.nombre)} (@${id})`;
+          opt.value=id; opt.textContent=`${clean(d.nombre)} — ${clean(d.banco)}`;
           sel.appendChild(opt);
         }
       });
     }
   });
 
-  document.getElementById('cMensaje').addEventListener('input', function(){
-    document.getElementById('charCount').textContent=this.value.length;
-  });
+  document.getElementById('cMensaje').addEventListener('input', function(){ document.getElementById('charCount').textContent=this.value.length; });
 
   document.getElementById('btnEnviarContacto').addEventListener('click', async function(){
     const msgErr=document.getElementById('msg-contacto-err');
     msgErr.innerHTML='';
     let ok=true;
-    const rut=val('cRut');
-    const usuario=val('cUsuario');
-    const tipo=val('cTipo');
-    const mensaje=val('cMensaje');
-
+    const rut=val('cRut'), cuentaDestino=val('cCuentaDestino'), tipo=val('cTipo'), mensaje=val('cMensaje');
     if(!validarRut(rut)){ document.getElementById('err-cRut').classList.add('show'); ok=false; }
-    if(!usuario){ document.getElementById('err-cUsuario').classList.add('show'); ok=false; }
+    if(!cuentaDestino){ document.getElementById('err-cCuentaDestino').classList.add('show'); ok=false; }
     if(!tipo){ document.getElementById('err-cTipo').classList.add('show'); ok=false; }
     if(mensaje.length<10){ document.getElementById('err-cMensaje').classList.add('show'); ok=false; }
     if(!ok) return;
-
     this.textContent='Enviando…'; this.disabled=true;
-
-    // Obtener correo del usuario seleccionado
     const all=await cargarDataJson();
-    const userData=all[usuario]||{};
+    const userData=all[cuentaDestino]||{};
     const replyTo=userData.correo||'sin-correo@tuqr.app';
-    const nombreUsuario=userData.nombre||usuario;
-
+    const nombreUsuario=clean(userData.nombre||cuentaDestino);
     try{
       await emailjs.send('service_pbr7qdo','template_emm0576',{
-        from_name:   nombreUsuario,
-        rut,
-        usuario,
-        tipo_problema: tipo,
-        mensaje,
-        reply_to:    replyTo
+        from_name:nombreUsuario, rut, usuario:cuentaDestino, tipo_problema:tipo, mensaje, reply_to:replyTo
       });
       msgErr.innerHTML='<div style="color:#0a7;font-weight:700;margin-top:10px;">✓ Mensaje enviado. Te responderemos pronto.</div>';
-      this.textContent='Enviado ✓'; this.disabled=true;
+      this.textContent='Enviado ✓';
     }catch(e){
       msgErr.innerHTML='<div class="err">Error al enviar. Intenta de nuevo.</div>';
       this.textContent='Enviar'; this.disabled=false;
