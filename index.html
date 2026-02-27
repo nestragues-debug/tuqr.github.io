@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>TuQR — Datos para transferir</title>
 
-  <!-- GA4 -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-CTV8Y0DJTR"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -32,9 +31,9 @@
     }
     *{ box-sizing:border-box; }
     body{
-      font-family: "Poppins", system-ui, -apple-system, Arial, Segoe UI, Roboto, Helvetica, sans-serif;
+      font-family: "Poppins", system-ui, -apple-system, Arial, sans-serif;
       margin:0; padding:16px 12px; background: var(--bg); color:var(--text);
-      -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale;
+      -webkit-font-smoothing: antialiased;
     }
     .wrap{ max-width:440px; margin:0 auto; }
     .brand{ display:flex; justify-content:center; align-items:center; margin:6px 0 6px; }
@@ -57,13 +56,17 @@
       background: rgba(255,212,0,.18); border:1px solid rgba(255,212,0,.32);
       padding:6px 10px; border-radius:999px; margin-top:10px; text-align:center;
     }
-    .badge .dot{ width:10px; height:10px; border-radius:999px; background: var(--accent); box-shadow: 0 0 0 4px rgba(255,212,0,.16); }
+    .badge .dot{
+      width:10px; height:10px; border-radius:999px;
+      background: var(--accent); box-shadow: 0 0 0 4px rgba(255,212,0,.16);
+    }
     h1{ font-size:20px; line-height:1.15; margin:10px 0 8px; font-weight:800; color:var(--text); letter-spacing:-0.2px; }
     p{ margin:0 0 12px; color:var(--muted); font-size:13px; line-height:1.45; }
     pre#datos{
       background:#fff; border:1px solid rgba(0,0,0,.10); padding:14px; border-radius:14px; min-height:96px;
-      white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.32; -webkit-text-size-adjust:100%;
-      margin:0 0 12px; font-family: inherit;
+      white-space:pre-wrap; word-break:break-word; font-size:13px; line-height:1.55;
+      -webkit-text-size-adjust:100%; margin:0 0 12px; font-family: inherit;
+      user-select: all; -webkit-user-select: all;
     }
     .cta{
       width:88%; margin:0 auto; display:block; padding:13px; font-size:13px; font-weight:800;
@@ -84,18 +87,23 @@
       display:grid; gap:10px; grid-template-columns:1fr 1fr;
     }
     .field-btn{
-      padding:12px 10px; font-size:13px; font-weight:800; line-height:1.15;
+      padding:12px 10px; font-size:12px; font-weight:800; line-height:1.2;
       border-radius:12px; border:1px solid rgba(0,0,0,.10); background:#fff; color:var(--text);
-      cursor:pointer; box-shadow: 0 6px 12px rgba(0,0,0,.05);
+      cursor:pointer; box-shadow: 0 4px 10px rgba(0,0,0,.05);
       transition: transform .06s ease, filter .06s ease; text-align:center;
+      display:flex; flex-direction:column; align-items:center; gap:3px;
     }
+    .field-btn .btn-label{ font-size:10px; font-weight:600; color:var(--muted); }
+    .field-btn .btn-val{ font-size:12px; font-weight:800; color:var(--text); word-break:break-all; }
     .field-btn:active{ transform: translateY(1px); filter:brightness(0.99); }
     .field-btn:disabled{ color:#9a9a9a; background:#f2f2f2; border-color:#e9e9e9; box-shadow:none; cursor:not-allowed; }
     .hint{
       margin-top:12px; background: rgba(0,0,0,.03); border: 1px solid rgba(0,0,0,.08);
-      border-radius: 14px; padding: 12px; font-size: 13px; color: rgba(26,26,26,.9); line-height: 1.35;
+      border-radius: 14px; padding: 12px; font-size: 12px; color: rgba(26,26,26,.75); line-height: 1.45;
     }
-    .hint b{ font-weight:800; }
+    .hint b{ font-weight:800; color: var(--text); }
+    /* RUT badge — destaca que copia sin puntos */
+    .rut-note{ font-size:10px; font-weight:600; color:var(--primary); margin-top:2px; }
   </style>
 </head>
 
@@ -113,44 +121,59 @@
 
       <pre id="datos">Cargando…</pre>
 
-      <button id="copiar" class="cta" disabled>Copia todos los datos</button>
+      <button id="copiar" class="cta" disabled>Copiar todos los datos</button>
+<p style="text-align:center; font-size:12px; color:var(--muted); margin:6px 0 0; font-weight:600;">Si no funciona, presiona el texto y copia como en WhatsApp</p>
 
+<div id="ok"  class="ok">✓ Copiado</div>
       <div id="ok"  class="ok">✓ Copiado</div>
       <div id="err" class="err">No encontramos este comercio</div>
 
-      <div class="or-copy">... o cópialos de a uno</div>
+      <div class="or-copy">— ...o copia de a uno—</div>
 
       <div id="fields" class="fields" style="display:none;">
-        <button id="copyNombre" class="field-btn" disabled>Nombre</button>
-        <button id="copyRut"    class="field-btn" disabled>RUT</button>
-        <button id="copyBanco"  class="field-btn" disabled>Banco</button>
-        <button id="copyTipo"   class="field-btn" disabled>Tipo de cuenta</button>
-        <button id="copyNumero" class="field-btn" disabled>N° de cuenta</button>
-        <button id="copyCorreo" class="field-btn" disabled>Correo</button>
+        <button id="copyNombre" class="field-btn" disabled>
+          <span class="btn-label">Nombre</span>
+          <span class="btn-val" id="valNombre">—</span>
+        </button>
+        <button id="copyRut" class="field-btn" disabled>
+          <span class="btn-label">RUT <span class="rut-note">(sin puntos)</span></span>
+          <span class="btn-val" id="valRut">—</span>
+        </button>
+        <button id="copyBanco" class="field-btn" disabled>
+          <span class="btn-label">Banco</span>
+          <span class="btn-val" id="valBanco">—</span>
+        </button>
+        <button id="copyTipo" class="field-btn" disabled>
+          <span class="btn-label">Tipo de cuenta</span>
+          <span class="btn-val" id="valTipo">—</span>
+        </button>
+        <button id="copyNumero" class="field-btn" disabled>
+          <span class="btn-label">N° de cuenta</span>
+          <span class="btn-val" id="valNumero">—</span>
+        </button>
+        <button id="copyCorreo" class="field-btn" disabled style="display:none;">
+          <span class="btn-label">Correo</span>
+          <span class="btn-val" id="valCorreo">—</span>
+        </button>
       </div>
 
       <div class="hint">
-        En TuQR copias los datos. <b>Transfieres desde tu banco.</b><br>
-        Si tu banco no pega bien, usa los botones por campo.
+        Copia los datos con el botón naranja y pégalos en tu app bancaria.<br>
+        <b>Si un campo no acepta pegar, usa los botones individuales.</b><br>
+        El RUT se copia sin puntos para mejor compatibilidad.
       </div>
     </div>
   </div>
 
 <script>
-const params    = new URLSearchParams(location.search);
-const id        = (params.get('id') || '').trim();
-const datosEl   = document.getElementById('datos');
-const btn       = document.getElementById('copiar');
-const okEl      = document.getElementById('ok');
-const errEl     = document.getElementById('err');
-const titleEl   = document.getElementById('title');
-const fieldsWrap= document.getElementById('fields');
-const btnNombre = document.getElementById('copyNombre');
-const btnRut    = document.getElementById('copyRut');
-const btnBanco  = document.getElementById('copyBanco');
-const btnTipo   = document.getElementById('copyTipo');
-const btnNumero = document.getElementById('copyNumero');
-const btnCorreo = document.getElementById('copyCorreo');
+const params     = new URLSearchParams(location.search);
+const id         = (params.get('id') || '').trim();
+const datosEl    = document.getElementById('datos');
+const btn        = document.getElementById('copiar');
+const okEl       = document.getElementById('ok');
+const errEl      = document.getElementById('err');
+const titleEl    = document.getElementById('title');
+const fieldsWrap = document.getElementById('fields');
 
 function clean(s){
   return String(s ?? '')
@@ -164,17 +187,37 @@ function clean(s){
 }
 const sv = s => clean(s);
 
+// Formatea RUT para mostrar: 123456789 → 12.345.678-9
+function formatRut(raw){
+  const r = raw.replace(/[\.\-\s]/g, '');
+  if(r.length < 2) return r;
+  const cuerpo = r.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+  return cuerpo + '-' + r.slice(-1);
+}
+
+// RUT para copiar: sin puntos, sin guión, solo dígitos + dígito verificador
+// Ej: 123456789 o 12345678K — lo que sea que esté en data.json sin formatear
+function rutParaCopiar(raw){
+  // Quita puntos y espacios, deja dígitos y K
+  return raw.replace(/[\.\s]/g, '').toUpperCase();
+  // Resultado: "123456789" o "12345678-9" → dejamos el guión porque
+  // la mayoría de apps bancarias chilenas lo aceptan con guión
+}
+
 function buildText(d){
   const nombre = sv(d.nombre);
-  const rut    = sv(d.rut);
+  const rutRaw = sv(d.rut);
+  const rutDisplay = formatRut(rutRaw);   // con puntos, para leer
+  const rutCopy    = rutParaCopiar(rutRaw); // sin puntos, para pegar en apps
   const banco  = sv(d.banco);
   const tipo   = sv(d.tipoCuenta);
   const numero = sv(d.numeroCuenta);
   const correo = d.correo ? sv(d.correo) : '';
 
+  // Bloque completo: RUT con formato legible
   const lines = [
     `Nombre: ${nombre}`,
-    `RUT: ${rut}`,
+    `RUT: ${rutDisplay}`,
     `Banco: ${banco}`,
     `Tipo de cuenta: ${tipo}`,
     `N° de cuenta: ${numero}`
@@ -183,21 +226,36 @@ function buildText(d){
 
   return {
     textPlain : lines.join('\n'),
-    fields    : { nombre, rut, banco, tipo, numero, correo },
+    fields    : { nombre, rutDisplay, rutCopy, banco, tipo, numero, correo },
     lines
   };
 }
 
+// Copia texto — versión robusta para iOS Safari y Android
 function copyText(text){
   const payload = text.replace(/\r\n/g, '\n').replace(/\r/g, '\n');
-  if (navigator.clipboard && typeof navigator.clipboard.writeText === 'function'){
+
+  // Método 1: Clipboard API moderna (Chrome Android, iOS Safari 13.4+)
+  if(navigator.clipboard && typeof navigator.clipboard.writeText === 'function'){
+    // Para Safari: intentar también con ClipboardItem/Blob si writeText falla
     return navigator.clipboard.writeText(payload)
       .then(() => true)
-      .catch(() => legacyCopy(payload));
+      .catch(() => {
+        // Intento Safari con ClipboardItem
+        if(window.ClipboardItem){
+          return navigator.clipboard.write([
+            new ClipboardItem({
+              'text/plain': Promise.resolve(new Blob([payload], { type: 'text/plain' }))
+            })
+          ]).then(() => true).catch(() => legacyCopy(payload));
+        }
+        return legacyCopy(payload);
+      });
   }
   return Promise.resolve(legacyCopy(payload));
 }
 
+// Método legado: execCommand — funciona en Android WebView antiguo y Safari viejo
 function legacyCopy(text){
   try{
     const ta = document.createElement('textarea');
@@ -210,22 +268,23 @@ function legacyCopy(text){
     ta.setSelectionRange(0, ta.value.length);
     const ok = document.execCommand('copy');
     document.body.removeChild(ta);
-    if (ok) return true;
+    if(ok) return true;
   }catch(_){}
-
+  // Último recurso: seleccionar el <pre> visualmente
   try{
     const range = document.createRange();
     range.selectNodeContents(datosEl);
     const sel = window.getSelection();
-    if (sel){ sel.removeAllRanges(); sel.addRange(range); }
+    if(sel){ sel.removeAllRanges(); sel.addRange(range); }
   }catch(_){}
-
   return false;
 }
 
+let okTimer = null;
 function showCopied(){
   okEl.style.display = 'block';
-  setTimeout(() => { okEl.style.display = 'none'; }, 1600);
+  if(okTimer) clearTimeout(okTimer);
+  okTimer = setTimeout(() => { okEl.style.display = 'none'; }, 1800);
 }
 
 function showError(msg){
@@ -236,12 +295,23 @@ function showError(msg){
 function makeFieldHandler(getVal){
   return function(){
     const val = getVal();
-    if (!val) return;
+    if(!val) return;
     copyText(val).then(ok => {
-      if (ok) showCopied();
+      if(ok) showCopied();
       else alert('Mantén presionado el texto y elige "Copiar".');
     });
   };
+}
+
+function setupBtn(id, getVal, labelId, displayVal){
+  const el = document.getElementById(id);
+  const valEl = document.getElementById(labelId);
+  if(!el) return;
+  if(displayVal && valEl) valEl.textContent = displayVal;
+  if(getVal()){
+    el.disabled = false;
+    el.addEventListener('click', makeFieldHandler(getVal));
+  }
 }
 
 let cachedText   = '';
@@ -250,12 +320,12 @@ let cachedFields = null;
 async function init(){
   try{
     const res = await fetch('./data.json?ts=' + Date.now(), { cache: 'no-store' });
-    if (!res.ok){ showError('Error cargando datos'); return; }
+    if(!res.ok){ showError('Error cargando datos'); return; }
 
     const all = await res.json();
     const d   = all[id];
 
-    if (!id || !d){ showError('Código inválido'); return; }
+    if(!id || !d){ showError('Código inválido'); return; }
 
     titleEl.textContent = `Paga a ${sv(d.nombre)}`;
     document.title      = `TuQR - ${sv(d.nombre)}`;
@@ -269,29 +339,35 @@ async function init(){
     btn.disabled = false;
     btn.addEventListener('click', function(){
       copyText(cachedText).then(ok => {
-        if (ok){
+        if(ok){
           showCopied();
           try{ gtag('event','copy_click',{ merchant_id: id }); }catch(_){}
         } else {
-          alert('Mantén presionado el texto y elige "Copiar".\n(El texto ya está seleccionado)');
+          // Si falla todo: seleccionar el <pre> para que el usuario pueda copiar manualmente
+          try{
+            const range = document.createRange();
+            range.selectNodeContents(datosEl);
+            const sel = window.getSelection();
+            if(sel){ sel.removeAllRanges(); sel.addRange(range); }
+          }catch(_){}
+          alert('Selecciona el texto y cópialo manualmente, o usa los botones de abajo.');
         }
       });
     });
 
     fieldsWrap.style.display = 'grid';
-    [
-      [btnNombre, () => cachedFields.nombre],
-      [btnRut,    () => cachedFields.rut],
-      [btnBanco,  () => cachedFields.banco],
-      [btnTipo,   () => cachedFields.tipo],
-      [btnNumero, () => cachedFields.numero],
-      [btnCorreo, () => cachedFields.correo],
-    ].forEach(([el, getVal]) => {
-      if (getVal()){
-        el.disabled = false;
-        el.addEventListener('click', makeFieldHandler(getVal));
-      }
-    });
+
+    setupBtn('copyNombre', () => cachedFields.nombre,   'valNombre', fields.nombre);
+    setupBtn('copyRut',    () => cachedFields.rutCopy,  'valRut',    fields.rutDisplay);
+    setupBtn('copyBanco',  () => cachedFields.banco,    'valBanco',  fields.banco);
+    setupBtn('copyTipo',   () => cachedFields.tipo,     'valTipo',   fields.tipo);
+    setupBtn('copyNumero', () => cachedFields.numero,   'valNumero', fields.numero);
+
+    if(fields.correo){
+      const correoBtn = document.getElementById('copyCorreo');
+      if(correoBtn) correoBtn.style.display = '';
+      setupBtn('copyCorreo', () => cachedFields.correo, 'valCorreo', fields.correo);
+    }
 
     try{
       gtag('event','payer_page_view',{
