@@ -34,18 +34,19 @@
     margin:0; padding:16px 12px;
     background:var(--bg); color:var(--text);
     -webkit-font-smoothing:antialiased;
+    min-height:100vh;
   }
   .wrap{ max-width:480px; margin:0 auto; }
 
-  .brand{ display:flex; justify-content:center; margin:6px 0 6px; }
+  .brand{ display:flex; justify-content:center; margin:6px 0 16px; }
   .brand img{
-    width:100%; max-width:440px; height:auto; display:block;
+    width:180px; height:auto; display:block;
     filter:drop-shadow(0 6px 10px rgba(0,0,0,.10));
   }
 
   .card{
     background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:22px 20px 24px;
+    border-radius:var(--radius); padding:24px 20px 28px;
     box-shadow:var(--shadow); position:relative; overflow:hidden;
   }
   .card::before{
@@ -53,7 +54,31 @@
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
 
-  h1{ font-size:20px; font-weight:800; margin:10px 0 18px; letter-spacing:-0.2px; }
+  h1{ font-size:22px; font-weight:800; margin:8px 0 6px; text-align:center; }
+  .sub{ font-size:13px; color:var(--muted); text-align:center; margin-bottom:20px; line-height:1.4; }
+
+  /* Opciones inicio */
+  .opciones{ display:flex; flex-direction:column; gap:12px; margin-top:8px; }
+  .btn-opcion{
+    padding:16px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--border); border-radius:14px; cursor:pointer;
+    background:#fff; color:var(--text); text-align:left;
+    display:flex; align-items:center; gap:14px;
+    -webkit-tap-highlight-color:transparent;
+    transition:border-color .12s, background .12s;
+  }
+  .btn-opcion:active{ background:#f7f7f7; }
+  .btn-opcion.primary{ border-color:var(--primary); background:rgba(255,122,24,.04); }
+  .btn-opcion .icon{
+    width:40px; height:40px; border-radius:12px; flex-shrink:0;
+    display:flex; align-items:center; justify-content:center;
+    font-size:20px;
+  }
+  .btn-opcion.primary .icon{ background:rgba(255,122,24,.12); }
+  .btn-opcion.secondary .icon{ background:#f0f0f0; }
+  .btn-opcion .label{ display:flex; flex-direction:column; gap:2px; }
+  .btn-opcion .label strong{ font-size:15px; font-weight:800; }
+  .btn-opcion .label span{ font-size:12px; font-weight:500; color:var(--muted); }
 
   label{
     font-weight:700; font-size:13px; color:var(--muted);
@@ -71,14 +96,8 @@
     box-shadow:0 0 0 3px rgba(255,122,24,.12);
   }
   input.invalid{ border-color:#e00; background:#fff8f8; }
-  input.invalid:focus{ box-shadow:0 0 0 3px rgba(220,0,0,.10); }
   input.valid{ border-color:#0a7; background:#f5fbf8; }
-  input.valid:focus{ box-shadow:0 0 0 3px rgba(0,170,120,.10); }
-
-  .field-err{
-    color:#c00; font-size:12px; font-weight:600;
-    margin-top:4px; display:none;
-  }
+  .field-err{ color:#c00; font-size:12px; font-weight:600; margin-top:4px; display:none; }
   .field-err.show{ display:block; }
 
   .phone-wrap{ display:flex; gap:8px; }
@@ -93,7 +112,7 @@
   .divider{ margin:20px 0 4px; border:none; border-top:1px dashed rgba(0,0,0,.10); }
 
   .cta{
-    margin-top:22px; padding:13px; width:100%;
+    margin-top:20px; padding:13px; width:100%;
     font-size:15px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer;
     color:#fff; background:var(--primary);
@@ -103,79 +122,16 @@
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  .cta-outline{
-    margin-top:12px; padding:13px; width:100%;
-    font-size:15px; font-weight:800; font-family:inherit;
-    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
-    color:var(--primary); background:transparent;
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, background .12s ease;
-    text-decoration:none; display:block; text-align:center;
+  .link-back{
+    display:block; text-align:center; margin-top:14px;
+    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;
+    text-decoration:none;
   }
-  .cta-outline:active{ transform:translateY(1px); }
-  .cta-outline:hover{ background:rgba(255,122,24,.07); }
+  .link-back:active{ color:var(--primary); }
 
-  /* Banner Android */
-  #installBar{
-    display:none; margin-bottom:14px;
-    background:var(--card); border:1px solid rgba(255,122,24,.3);
-    border-radius:14px; padding:14px 16px;
-    box-shadow:var(--shadow); flex-direction:column; gap:8px;
-  }
-  #installBar p{ font-size:13px; font-weight:600; color:var(--text); line-height:1.5; }
-  .btn-install{
-    padding:11px; width:100%; font-size:14px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
-    box-shadow:0 4px 10px rgba(255,122,24,.22);
-    -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, filter .06s ease;
-  }
-  .btn-install:active{ transform:translateY(1px); filter:brightness(.98); }
-
-  /* Modal iOS */
-  #iosOverlay{
-    display:none; position:fixed; inset:0; z-index:999;
-    background:rgba(0,0,0,.55); align-items:flex-end; justify-content:center;
-    padding:0 0 0 0;
-  }
-  #iosOverlay.show{ display:flex; }
-  .ios-sheet{
-    background:#fff; border-radius:24px 24px 0 0;
-    padding:28px 24px 40px; width:100%; max-width:480px;
-    display:flex; flex-direction:column; align-items:center; gap:18px;
-    box-shadow:0 -8px 32px rgba(0,0,0,.18);
-  }
-  .ios-sheet h2{
-    font-size:20px; font-weight:800; text-align:center; color:var(--text); margin:0;
-  }
-  .ios-steps{
-    width:100%; display:flex; flex-direction:column; gap:14px;
-  }
-  .ios-step{
-    display:flex; align-items:center; gap:14px;
-    background:#f7f7f7; border-radius:14px; padding:14px;
-  }
-  .ios-step-num{
-    width:32px; height:32px; border-radius:999px; flex-shrink:0;
-    background:var(--primary); color:#fff;
-    font-size:15px; font-weight:800;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .ios-step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
-  .ios-step-text span{ color:var(--primary); font-weight:800; }
-  .ios-close{
-    margin-top:4px; padding:13px; width:100%;
-    font-size:15px; font-weight:800; font-family:inherit;
-    border:2px solid rgba(0,0,0,.10); border-radius:12px; cursor:pointer;
-    color:var(--muted); background:transparent;
-    -webkit-tap-highlight-color:transparent;
-  }
-
-  /* Resultado */
-  #resultado{ display:none; margin-top:0; }
   .ok-card{
     background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:22px 20px 24px;
+    border-radius:var(--radius); padding:24px 20px 28px;
     box-shadow:var(--shadow); position:relative; overflow:hidden;
     display:flex; flex-direction:column; gap:14px;
   }
@@ -189,18 +145,15 @@
     color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
   }
   .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
-  .link-box{
-    background:#f7f7f7; border:1px solid var(--border);
-    border-radius:12px; padding:12px;
-    display:flex; align-items:center; gap:10px; cursor:pointer;
+  .cta-outline{
+    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
+    color:var(--primary); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease, background .12s ease;
+    text-decoration:none; display:block; text-align:center; margin-top:0;
   }
-  .link-box:active{ background:#efefef; }
-  .link-text{
-    flex:1; font-size:12px; font-weight:600; color:var(--muted);
-    word-break:break-all; line-height:1.4;
-  }
-  .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
-  .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
+  .cta-outline:active{ transform:translateY(1px); }
 
   .err{
     margin-top:12px; font-weight:800; padding:10px 12px;
@@ -219,15 +172,53 @@
     <img src="./TuQRLogo.png" alt="TuQR"/>
   </div>
 
-  <!-- Banner instalar — Android -->
-  <div id="installBar">
-    <p id="installMsg"></p>
-    <button class="btn-install" id="btnInstall" style="display:none">Instalar app</button>
+  <!-- Pantalla: elegir opción -->
+  <div id="screenOpciones" class="card">
+    <h1>Bienvenido a TuQR</h1>
+    <p class="sub">¿Qué quieres hacer?</p>
+    <div class="opciones">
+      <button class="btn-opcion primary" id="btnActivar">
+        <div class="icon">🔑</div>
+        <div class="label">
+          <strong>Activar mi cuenta</strong>
+          <span>Ya tengo usuario — quiero ver mi QR</span>
+        </div>
+      </button>
+      <button class="btn-opcion secondary" id="btnCrear">
+        <div class="icon">✨</div>
+        <div class="label">
+          <strong>Crear cuenta nueva</strong>
+          <span>Primera vez — registra tus datos</span>
+        </div>
+      </button>
+    </div>
   </div>
 
-  <!-- Formulario -->
-  <div class="card" id="formCard">
-    <h1>Crear comercio</h1>
+  <!-- Pantalla: activar con RUT + teléfono -->
+  <div id="screenActivar" class="card" style="display:none">
+    <h1>Activar cuenta</h1>
+    <p class="sub">Ingresa tu RUT y teléfono para identificarte.</p>
+
+    <label for="actRut">RUT</label>
+    <input id="actRut" placeholder="12.345.678-9" maxlength="12"/>
+    <div class="field-err" id="err-actRut">RUT inválido</div>
+
+    <label for="actTel">Teléfono</label>
+    <div class="phone-wrap">
+      <input class="phone-prefix" value="+56" readonly/>
+      <input id="actTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
+    </div>
+    <div class="field-err" id="err-actTel">Número inválido</div>
+
+    <div id="err-actGeneral" class="field-err">No encontramos una cuenta con esos datos.</div>
+
+    <button class="cta" id="btnDoActivar">Activar</button>
+    <a class="link-back" id="backFromActivar">← Volver</a>
+  </div>
+
+  <!-- Pantalla: crear cuenta -->
+  <div id="screenCrear" class="card" style="display:none">
+    <h1>Crear cuenta</h1>
 
     <label for="id">Crea tu usuario</label>
     <input id="id" placeholder="ej: JuanLopez"
@@ -259,7 +250,7 @@
       <div>
         <label for="numeroCuenta">Número de cuenta</label>
         <input id="numeroCuenta" placeholder="Solo números" inputmode="numeric"/>
-        <div class="field-err" id="err-cuenta">Solo se permiten números</div>
+        <div class="field-err" id="err-cuenta">Solo números</div>
       </div>
     </div>
 
@@ -285,7 +276,7 @@
 
     <label for="correo">Correo</label>
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email"/>
-    <div class="field-err" id="err-correo">Formato de correo inválido</div>
+    <div class="field-err" id="err-correo">Formato inválido</div>
 
     <hr class="divider"/>
 
@@ -294,130 +285,40 @@
       <input class="phone-prefix" value="+56" readonly/>
       <input id="telefono" placeholder="912345678" inputmode="numeric" maxlength="12"/>
     </div>
-    <div class="field-err" id="err-tel">Ingresa un número válido (8-12 dígitos)</div>
+    <div class="field-err" id="err-tel">Número inválido (8-12 dígitos)</div>
 
     <button class="cta" id="save">Guardar</button>
     <div id="msg-err"></div>
-
-    <div class="help">Los datos se guardan en <b>data.json</b> vía Cloudflare Worker.</div>
+    <a class="link-back" id="backFromCrear">← Volver</a>
+    <div class="help">Los datos se guardan vía Cloudflare Worker.</div>
   </div>
 
-  <!-- Resultado post-guardado -->
-  <div id="resultado">
+  <!-- Pantalla: cuenta creada -->
+  <div id="screenCreado" style="display:none">
     <div class="ok-card">
       <div>
-        <div class="ok-pill">✓ Comercio creado</div>
+        <div class="ok-pill">✓ Cuenta creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
-      <div>
-        <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;">
-          Link del pagador — toca para copiar
-        </div>
-        <div class="link-box" id="linkBox">
-          <div class="link-text" id="linkText"></div>
-          <div class="link-label" id="copyLabel">Copiar</div>
-          <div class="copy-ok" id="copyOk">✓ Copiado</div>
-        </div>
-      </div>
-      <a class="cta-outline" id="btnPWA" href="#" target="_blank">Crear primer QR →</a>
-      <button class="cta" id="nuevo" style="margin-top:0">+ Crear otro comercio</button>
+      <a class="cta-outline" id="btnIrApp" href="./app.html">Ver mi QR →</a>
     </div>
   </div>
 
-</div>
-
-<!-- Modal iOS -->
-<div id="iosOverlay">
-  <div class="ios-sheet">
-    <h2>Instala TuQR en tu iPhone</h2>
-    <div class="ios-steps">
-      <div class="ios-step">
-        <div class="ios-step-num">1</div>
-        <div class="ios-step-text">Toca el botón <span>Compartir ↑</span> en la barra de Safari</div>
-      </div>
-      <div class="ios-step">
-        <div class="ios-step-num">2</div>
-        <div class="ios-step-text">Baja y toca <span>"Agregar a pantalla de inicio"</span></div>
-      </div>
-      <div class="ios-step">
-        <div class="ios-step-num">3</div>
-        <div class="ios-step-text">Toca <span>"Agregar"</span> — listo, TuQR queda en tu pantalla</div>
-      </div>
-    </div>
-    <button class="ios-close" id="iosClose">Ya lo hice</button>
-  </div>
 </div>
 
 <script>
-  const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
-  const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
-  const IOS_SHOWN_KEY = 'tuqr_ios_shown';
+  const WORKER_URL  = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL    = 'https://tuqrapp.github.io/tuqr.github.io/';
+  const DATA_URL    = BASE_URL + 'data.json';
+  const STORAGE_KEY = 'tuqr_id';
 
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  /* ── Detectar dispositivo ── */
-  const ua          = navigator.userAgent || '';
-  const isIOS       = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  const isSamsung   = /SamsungBrowser/.test(ua);
-  const isFirefox   = /Firefox/.test(ua);
-  const isStandalone = window.matchMedia('(display-mode:standalone)').matches
-                     || window.navigator.standalone === true;
-
-  let deferredPrompt = null;
-
-  /* ── Banner Android ── */
-  window.addEventListener('beforeinstallprompt', e => {
-    e.preventDefault();
-    deferredPrompt = e;
-    mostrarBannerAndroid();
-  });
-
-  function mostrarBannerAndroid(){
-    if(isStandalone || isIOS) return;
-    const bar = document.getElementById('installBar');
-    const msg = document.getElementById('installMsg');
-    const btn = document.getElementById('btnInstall');
-
-    if(deferredPrompt){
-      msg.innerHTML = '📲 Instala TuQR como app para acceder más rápido.';
-      btn.style.display = '';
-      btn.onclick = async () => {
-        deferredPrompt.prompt();
-        const { outcome } = await deferredPrompt.userChoice;
-        if(outcome === 'accepted') bar.style.display = 'none';
-        deferredPrompt = null;
-      };
-    } else if(isSamsung){
-      msg.innerHTML = '📲 Para instalar: toca el menú ☰ → "Agregar página a" → "Pantalla de inicio".';
-    } else if(isFirefox){
-      msg.innerHTML = '📲 Para instalar: toca el menú ⋮ → "Instalar" o "Agregar a pantalla de inicio".';
-    } else {
-      msg.innerHTML = '📲 Para instalar: busca en el menú del navegador "Agregar a pantalla de inicio".';
-    }
-    bar.style.display = 'flex';
-  }
-
-  /* ── Modal iOS ── */
-  function mostrarModalIOS(){
-    if(isStandalone) return;
-    if(localStorage.getItem(IOS_SHOWN_KEY)) return;
-    document.getElementById('iosOverlay').classList.add('show');
-  }
-
-  document.getElementById('iosClose').addEventListener('click', () => {
-    document.getElementById('iosOverlay').classList.remove('show');
-    localStorage.setItem(IOS_SHOWN_KEY, '1');
-  });
-
-  // Al cargar: mostrar banner Android o modal iOS según corresponda
-  if(!isStandalone){
-    if(isIOS){
-      mostrarModalIOS();
-    }
-    // Android: el banner se dispara con beforeinstallprompt — no necesita llamada aquí
-  }
+  /* ── Si ya tiene sesión, ir directo a app.html ── */
+  const savedId = localStorage.getItem(STORAGE_KEY);
+  if(savedId) window.location.replace('./app.html');
 
   /* ── Helpers ── */
   function val(id){ return (document.getElementById(id).value||'').trim(); }
@@ -425,17 +326,16 @@
     return String(s??'').normalize('NFC')
       .replace(/\u00A0/g,' ').replace(/[\u200B-\u200F]/g,'').trim();
   }
-  function validarId(s)    { return s.length>0 && !/\s/.test(s); }
-  function validarEmail(e) { return e.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
-  function validarTel(t)   { return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
+  function show(id){ document.getElementById(id).style.display=''; }
+  function hide(id){ document.getElementById(id).style.display='none'; }
+
   function validarRut(rut){
-    const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
+    const r=rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
     const cuerpo=r.slice(0,-1), dv=r.slice(-1);
     let suma=0, mul=2;
     for(let i=cuerpo.length-1;i>=0;i--){
-      suma+=parseInt(cuerpo[i])*mul;
-      mul=mul===7?2:mul+1;
+      suma+=parseInt(cuerpo[i])*mul; mul=mul===7?2:mul+1;
     }
     const dvE=11-(suma%11);
     return dv===(dvE===11?'0':dvE===10?'K':String(dvE));
@@ -445,8 +345,89 @@
     if(r.length<2) return r;
     return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
   }
+  function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
+  function validarEmail(e){ return e.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+  function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
+  function validarId(s){ return s.length>0 && !/\s/.test(s); }
 
-  /* ── Validación en tiempo real ── */
+  /* ── Navegación entre pantallas ── */
+  document.getElementById('btnActivar').addEventListener('click', ()=>{
+    hide('screenOpciones'); show('screenActivar');
+  });
+  document.getElementById('btnCrear').addEventListener('click', ()=>{
+    hide('screenOpciones'); show('screenCrear');
+  });
+  document.getElementById('backFromActivar').addEventListener('click', ()=>{
+    hide('screenActivar'); show('screenOpciones');
+  });
+  document.getElementById('backFromCrear').addEventListener('click', ()=>{
+    hide('screenCrear'); show('screenOpciones');
+  });
+
+  /* ── Activar: RUT + teléfono ── */
+  const actRutInput = document.getElementById('actRut');
+  const actTelInput = document.getElementById('actTel');
+
+  actRutInput.addEventListener('input', function(){
+    const raw=this.value.replace(/[\.\-\s]/g,'');
+    if(raw.length>=2) this.value=formatearRut(raw);
+    const ok=validarRut(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-actRut').classList.toggle('show', this.value.length>0&&!ok);
+    document.getElementById('err-actGeneral').classList.remove('show');
+  });
+  actTelInput.addEventListener('input', function(){
+    this.value=this.value.replace(/\D/g,'');
+    const ok=validarTel(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-actTel').classList.toggle('show', this.value.length>0&&!ok);
+  });
+
+  document.getElementById('btnDoActivar').addEventListener('click', async function(){
+    const rutVal = val('actRut');
+    const telVal = val('actTel').replace(/\D/g,'');
+    const errGen = document.getElementById('err-actGeneral');
+    errGen.classList.remove('show');
+
+    if(!validarRut(rutVal)){
+      actRutInput.classList.add('invalid');
+      document.getElementById('err-actRut').classList.add('show'); return;
+    }
+    if(!validarTel(telVal)){
+      actTelInput.classList.add('invalid');
+      document.getElementById('err-actTel').classList.add('show'); return;
+    }
+
+    this.textContent='Verificando…'; this.disabled=true;
+
+    try{
+      const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      const all  = await res.json();
+      const rutNorm = normalizarRut(rutVal);
+
+      // Buscar por RUT + teléfono
+      const match = Object.entries(all).find(([id, d]) =>
+        normalizarRut(d.rut||'') === rutNorm &&
+        (d.telefono||'').replace(/\D/g,'') === telVal
+      );
+
+      if(match){
+        localStorage.setItem(STORAGE_KEY, match[0]);
+        window.location.replace('./app.html');
+      } else {
+        errGen.classList.add('show');
+        this.textContent='Activar'; this.disabled=false;
+      }
+    }catch(e){
+      errGen.textContent='Error al conectar. Intenta de nuevo.';
+      errGen.classList.add('show');
+      this.textContent='Activar'; this.disabled=false;
+    }
+  });
+
+  /* ── Crear cuenta: validación en tiempo real ── */
   const idInput     = document.getElementById('id');
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
@@ -486,56 +467,7 @@
     document.getElementById('err-tel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
-  /* ── Copiar link ── */
-  document.getElementById('linkBox').addEventListener('click', function(){
-    const text  = document.getElementById('linkText').textContent;
-    const label = document.getElementById('copyLabel');
-    const okEl  = document.getElementById('copyOk');
-    const doCopy = () => {
-      label.style.display='none'; okEl.style.display='block';
-      setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1600);
-    };
-    if(navigator.clipboard && navigator.clipboard.writeText){
-      navigator.clipboard.writeText(text).then(doCopy).catch(()=>{
-        const ta=document.createElement('textarea');
-        ta.value=text; ta.style.cssText='position:fixed;opacity:0';
-        document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta); doCopy();
-      });
-    } else {
-      const ta=document.createElement('textarea');
-      ta.value=text; ta.style.cssText='position:fixed;opacity:0';
-      document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta); doCopy();
-    }
-  });
-
-  /* ── Reset ── */
-  function resetForm(){
-    ['id','nombre','rut','numeroCuenta','correo','telefono'].forEach(id=>{
-      const el=document.getElementById(id);
-      el.value=''; el.classList.remove('valid','invalid');
-    });
-    ['tipoCuenta','banco'].forEach(id=>{ document.getElementById(id).value=''; });
-    ['err-id','err-rut','err-cuenta','err-correo','err-tel'].forEach(id=>{
-      document.getElementById(id).classList.remove('show');
-    });
-    document.getElementById('msg-err').innerHTML='';
-    document.getElementById('resultado').style.display='none';
-    document.getElementById('formCard').style.display='';
-    window.scrollTo({top:0,behavior:'smooth'});
-  }
-  document.getElementById('nuevo').addEventListener('click', resetForm);
-
-  /* ── Guard ── */
-  (function guard(){
-    if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
-      document.getElementById('msg-err').innerHTML='<div class="err">WORKER_URL no está configurado.</div>';
-      throw new Error('WORKER_URL inválido');
-    }
-  })();
-
-  /* ── Guardar ── */
+  /* ── Guardar cuenta nueva ── */
   document.getElementById('save').addEventListener('click', async () => {
     const msgErr=document.getElementById('msg-err');
     msgErr.innerHTML='';
@@ -559,11 +491,11 @@
       idInput.focus(); return;
     }
     if(!validarRut(payload.rut)){
-      msgErr.innerHTML='<div class="err">El RUT ingresado no es válido.</div>';
+      msgErr.innerHTML='<div class="err">El RUT no es válido.</div>';
       rutInput.focus(); return;
     }
     if(!/^\d+$/.test(payload.numeroCuenta)){
-      msgErr.innerHTML='<div class="err">El número de cuenta debe contener solo dígitos.</div>';
+      msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>';
       cuentaInput.focus(); return;
     }
     if(!validarEmail(payload.correo)){
@@ -571,7 +503,7 @@
       correoInput.focus(); return;
     }
     if(!validarTel(payload.telefono)){
-      msgErr.innerHTML='<div class="err">Ingresa un número de teléfono válido.</div>';
+      msgErr.innerHTML='<div class="err">Ingresa un teléfono válido.</div>';
       telInput.focus(); return;
     }
 
@@ -587,21 +519,15 @@
 
       if(!res.ok||!data.ok){
         const detail=data.error
-          ?('\nDetalle: '+data.error+(data.probable_cause?' — '+data.probable_cause:'')+(data.detail?'\n'+data.detail:''))
+          ?('\nDetalle: '+data.error+(data.probable_cause?' — '+data.probable_cause:''))
           :('\nHTTP '+res.status+'\n'+txt);
-        msgErr.innerHTML='<div class="err">Error guardando.'+detail+'</div>';
-        return;
+        msgErr.innerHTML='<div class="err">Error guardando.'+detail+'</div>'; return;
       }
 
-      const indexUrl=BASE_URL+'?id='+encodeURIComponent(payload.id);
-      const pwaUrl  =BASE_URL+'app.html?id='+encodeURIComponent(payload.id);
-
-      document.getElementById('resNombre').textContent=clean(payload.nombre);
-      document.getElementById('linkText').textContent =indexUrl;
-      document.getElementById('btnPWA').href          =pwaUrl;
-
-      document.getElementById('formCard').style.display ='none';
-      document.getElementById('resultado').style.display='block';
+      // Guardar sesión y mostrar confirmación
+      localStorage.setItem(STORAGE_KEY, payload.id);
+      document.getElementById('resNombre').textContent = clean(payload.nombre);
+      hide('screenCrear'); show('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
 
     }catch(e){
