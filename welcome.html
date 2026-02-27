@@ -4,7 +4,13 @@
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
 <meta name="theme-color" content="#ff7a18"/>
-<title>TuQR — Bienvenido</title>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="TuQR"/>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="apple-touch-icon" href="./LogoQ_transparent.png"/>
+<title>TuQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -93,7 +99,7 @@
   .safari-warning{
     font-size:12px; color:var(--muted); text-align:center;
     background:#fff8f0; border:1px solid rgba(255,122,24,.2);
-    border-radius:10px; padding:10px 14px; line-height:1.5;
+    border-radius:10px; padding:10px 14px; line-height:1.5; width:100%;
   }
   .safari-warning span{ color:var(--primary); font-weight:700; }
 </style>
@@ -118,7 +124,7 @@
   const card = document.getElementById('card');
   let deferredPrompt = null;
 
-  /* ── Si ya está instalada como PWA, ir directo ── */
+  /* Si ya está instalada como PWA, ir directo */
   if(isStandalone){
     window.location.replace(PWA_URL);
   }
@@ -129,7 +135,6 @@
     renderAndroid(true);
   });
 
-  /* ── iOS Safari ── */
   function renderIOS(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR en tu iPhone</div>
@@ -152,20 +157,18 @@
     `;
   }
 
-  /* ── iOS pero no Safari (Chrome, Firefox iOS) ── */
   function renderIOSNoSafari(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
       <div class="card-sub">En iPhone, TuQR solo se puede instalar desde Safari.</div>
       <div class="safari-warning">
-        Copia este link, ábrelo en <span>Safari</span> y sigue las instrucciones para instalar.<br><br>
+        Copia este link y ábrelo en <span>Safari</span> para instalar:<br><br>
         <span>tuqrapp.github.io/tuqr.github.io/welcome.html</span>
       </div>
       <a class="cta-outline" href="${PWA_URL}">Continuar sin instalar →</a>
     `;
   }
 
-  /* ── Android con prompt nativo ── */
   function renderAndroid(hasPrompt){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
@@ -207,7 +210,6 @@
     }
   }
 
-  /* ── Desktop ── */
   function renderDesktop(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
@@ -216,7 +218,6 @@
     `;
   }
 
-  /* ── Render inicial ── */
   if(isIOS && isSafari)        renderIOS();
   else if(isIOS && !isSafari)  renderIOSNoSafari();
   else if(/Android/.test(ua) || isSamsung || isFirefox) renderAndroid(false);
