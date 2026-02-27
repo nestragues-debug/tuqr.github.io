@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="TuQR"/>
 <link rel="manifest" href="./manifest.json"/>
-<link rel="apple-touch-icon" href="./TuQRLogo.png"/>
+<link rel="apple-touch-icon" href="./PWA/LogoQ_transparent.png"/>
 <title>TuQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,7 +115,6 @@
   .cta-outline:active{ transform:translateY(1px); }
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
 
-  /* Banner instalar PWA */
   #installBar{
     display:none; margin-bottom:14px;
     background:var(--card); border:1px solid rgba(255,122,24,.3);
@@ -133,7 +132,6 @@
   }
   .btn-install:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  /* Resultado */
   #resultado{ display:none; margin-top:0; }
 
   .ok-card{
@@ -185,13 +183,11 @@
     <img src="./TuQRLogo.png" alt="TuQR"/>
   </div>
 
-  <!-- Banner instalar PWA -->
   <div id="installBar">
     <p id="installMsg"></p>
     <button class="btn-install" id="btnInstall" style="display:none">Instalar app</button>
   </div>
 
-  <!-- Formulario -->
   <div class="card" id="formCard">
     <h1>Crear comercio</h1>
 
@@ -268,14 +264,12 @@
     <div class="help">Los datos se guardan en <b>data.json</b> vía Cloudflare Worker.</div>
   </div>
 
-  <!-- Resultado post-guardado -->
   <div id="resultado">
     <div class="ok-card">
       <div>
         <div class="ok-pill">✓ Comercio creado</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
-
       <div>
         <div style="font-size:12px;font-weight:700;color:var(--muted);margin-bottom:6px;">
           Link del pagador — toca para copiar
@@ -283,17 +277,11 @@
         <div class="link-box" id="linkBox">
           <div class="link-text" id="linkText"></div>
           <div class="link-label" id="copyLabel">Copiar</div>
-          <div class="copy-ok"  id="copyOk">✓ Copiado</div>
+          <div class="copy-ok" id="copyOk">✓ Copiado</div>
         </div>
       </div>
-
-      <a class="cta-outline" id="btnPWA" href="#" target="_blank">
-        Crear primer QR →
-      </a>
-
-      <button class="cta" id="nuevo" style="margin-top:0">
-        + Crear otro comercio
-      </button>
+      <a class="cta-outline" id="btnPWA" href="#" target="_blank">Crear primer QR →</a>
+      <button class="cta" id="nuevo" style="margin-top:0">+ Crear otro comercio</button>
     </div>
   </div>
 
@@ -303,18 +291,15 @@
   const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
   const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
 
-  /* ── Service Worker ── */
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  /* ── Banner instalar PWA ── */
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                     || window.navigator.standalone === true;
   let deferredPrompt = null;
-
   const ua        = navigator.userAgent || '';
-  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
   const isSamsung = /SamsungBrowser/.test(ua);
   const isFirefox = /Firefox/.test(ua);
 
@@ -329,7 +314,6 @@
     const bar = document.getElementById('installBar');
     const msg = document.getElementById('installMsg');
     const btn = document.getElementById('btnInstall');
-
     if(deferredPrompt){
       msg.innerHTML = '📲 Instala TuQR como app para acceder más rápido.';
       btn.style.display = '';
@@ -353,35 +337,32 @@
 
   if(!isStandalone) mostrarBanner();
 
-  /* ── Helpers ── */
   function val(id){ return (document.getElementById(id).value||'').trim(); }
   function clean(s){
     return String(s??'').normalize('NFC')
       .replace(/\u00A0/g,' ').replace(/[\u200B-\u200F]/g,'').trim();
   }
-
-  function validarId(s)    { return s.length > 0 && !/\s/.test(s); }
-  function validarEmail(e) { return e.length > 0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+  function validarId(s)    { return s.length>0 && !/\s/.test(s); }
+  function validarEmail(e) { return e.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
   function validarTel(t)   { return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
   function validarRut(rut){
     const r = rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
-    const cuerpo = r.slice(0,-1), dv = r.slice(-1);
-    let suma = 0, mul = 2;
-    for(let i = cuerpo.length-1; i >= 0; i--){
-      suma += parseInt(cuerpo[i]) * mul;
-      mul = mul === 7 ? 2 : mul+1;
+    const cuerpo=r.slice(0,-1), dv=r.slice(-1);
+    let suma=0, mul=2;
+    for(let i=cuerpo.length-1;i>=0;i--){
+      suma+=parseInt(cuerpo[i])*mul;
+      mul=mul===7?2:mul+1;
     }
-    const dvE = 11-(suma%11);
-    return dv === (dvE===11?'0':dvE===10?'K':String(dvE));
+    const dvE=11-(suma%11);
+    return dv===(dvE===11?'0':dvE===10?'K':String(dvE));
   }
   function formatearRut(rut){
-    const r = rut.replace(/[\.\-\s]/g,'');
-    if(r.length < 2) return r;
-    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.') + '-' + r.slice(-1);
+    const r=rut.replace(/[\.\-\s]/g,'');
+    if(r.length<2) return r;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
   }
 
-  /* ── Validación en tiempo real ── */
   const idInput     = document.getElementById('id');
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
@@ -389,99 +370,89 @@
   const telInput    = document.getElementById('telefono');
 
   idInput.addEventListener('input', function(){
-    const ok = validarId(this.value);
-    this.classList.toggle('valid',   this.value.length > 0 && ok);
-    this.classList.toggle('invalid', this.value.length > 0 && !ok);
-    document.getElementById('err-id').classList.toggle('show', this.value.length > 0 && !ok);
+    const ok=validarId(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-id').classList.toggle('show', this.value.length>0&&!ok);
   });
-
   rutInput.addEventListener('input', function(){
-    const raw = this.value.replace(/[\.\-\s]/g,'');
-    if(raw.length >= 2) this.value = formatearRut(raw);
-    const ok = validarRut(this.value);
-    this.classList.toggle('valid',   this.value.length > 0 && ok);
-    this.classList.toggle('invalid', this.value.length > 0 && !ok);
-    document.getElementById('err-rut').classList.toggle('show', this.value.length > 0 && !ok);
+    const raw=this.value.replace(/[\.\-\s]/g,'');
+    if(raw.length>=2) this.value=formatearRut(raw);
+    const ok=validarRut(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-rut').classList.toggle('show', this.value.length>0&&!ok);
   });
-
   cuentaInput.addEventListener('input', function(){
-    this.value = this.value.replace(/\D/g,'');
-    this.classList.toggle('valid', this.value.length > 0);
+    this.value=this.value.replace(/\D/g,'');
+    this.classList.toggle('valid', this.value.length>0);
     document.getElementById('err-cuenta').classList.remove('show');
   });
-
   correoInput.addEventListener('blur', function(){
-    const ok = validarEmail(this.value);
-    this.classList.toggle('valid',   this.value.length > 0 && ok);
-    this.classList.toggle('invalid', this.value.length > 0 && !ok);
-    document.getElementById('err-correo').classList.toggle('show', this.value.length > 0 && !ok);
+    const ok=validarEmail(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-correo').classList.toggle('show', this.value.length>0&&!ok);
   });
-
   telInput.addEventListener('input', function(){
-    this.value = this.value.replace(/\D/g,'');
-    const ok = validarTel(this.value);
-    this.classList.toggle('valid',   this.value.length > 0 && ok);
-    this.classList.toggle('invalid', this.value.length > 0 && !ok);
-    document.getElementById('err-tel').classList.toggle('show', this.value.length > 0 && !ok);
+    this.value=this.value.replace(/\D/g,'');
+    const ok=validarTel(this.value);
+    this.classList.toggle('valid',   this.value.length>0&&ok);
+    this.classList.toggle('invalid', this.value.length>0&&!ok);
+    document.getElementById('err-tel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
-  /* ── Copiar link ── */
   document.getElementById('linkBox').addEventListener('click', function(){
     const text  = document.getElementById('linkText').textContent;
     const label = document.getElementById('copyLabel');
     const okEl  = document.getElementById('copyOk');
     const doCopy = () => {
-      label.style.display = 'none'; okEl.style.display = 'block';
-      setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; }, 1600);
+      label.style.display='none'; okEl.style.display='block';
+      setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1600);
     };
     if(navigator.clipboard && navigator.clipboard.writeText){
       navigator.clipboard.writeText(text).then(doCopy).catch(()=>{
-        const ta = document.createElement('textarea');
-        ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+        const ta=document.createElement('textarea');
+        ta.value=text; ta.style.cssText='position:fixed;opacity:0';
         document.body.appendChild(ta); ta.select();
-        document.execCommand('copy'); document.body.removeChild(ta);
-        doCopy();
+        document.execCommand('copy'); document.body.removeChild(ta); doCopy();
       });
     } else {
-      const ta = document.createElement('textarea');
-      ta.value = text; ta.style.cssText = 'position:fixed;opacity:0';
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.style.cssText='position:fixed;opacity:0';
       document.body.appendChild(ta); ta.select();
-      document.execCommand('copy'); document.body.removeChild(ta);
-      doCopy();
+      document.execCommand('copy'); document.body.removeChild(ta); doCopy();
     }
   });
 
-  /* ── Reset ── */
   function resetForm(){
-    ['id','nombre','rut','numeroCuenta','correo','telefono'].forEach(id => {
-      const el = document.getElementById(id);
-      el.value = ''; el.classList.remove('valid','invalid');
+    ['id','nombre','rut','numeroCuenta','correo','telefono'].forEach(id=>{
+      const el=document.getElementById(id);
+      el.value=''; el.classList.remove('valid','invalid');
     });
-    ['tipoCuenta','banco'].forEach(id => { document.getElementById(id).value = ''; });
-    ['err-id','err-rut','err-cuenta','err-correo','err-tel'].forEach(id => {
+    ['tipoCuenta','banco'].forEach(id=>{ document.getElementById(id).value=''; });
+    ['err-id','err-rut','err-cuenta','err-correo','err-tel'].forEach(id=>{
       document.getElementById(id).classList.remove('show');
     });
-    document.getElementById('msg-err').innerHTML = '';
-    document.getElementById('resultado').style.display  = 'none';
-    document.getElementById('formCard').style.display   = '';
-    window.scrollTo({top:0, behavior:'smooth'});
+    document.getElementById('msg-err').innerHTML='';
+    document.getElementById('resultado').style.display='none';
+    document.getElementById('formCard').style.display='';
+    window.scrollTo({top:0,behavior:'smooth'});
   }
   document.getElementById('nuevo').addEventListener('click', resetForm);
 
-  /* ── Guard Worker URL ── */
   (function guard(){
     if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
-      document.getElementById('msg-err').innerHTML = '<div class="err">WORKER_URL no está configurado.</div>';
+      document.getElementById('msg-err').innerHTML='<div class="err">WORKER_URL no está configurado.</div>';
       throw new Error('WORKER_URL inválido');
     }
   })();
 
-  /* ── Guardar ── */
   document.getElementById('save').addEventListener('click', async () => {
-    const msgErr = document.getElementById('msg-err');
-    msgErr.innerHTML = '';
+    const msgErr=document.getElementById('msg-err');
+    msgErr.innerHTML='';
 
-    const payload = {
+    const payload={
       id:           clean(val('id')),
       nombre:       clean(val('nombre')),
       rut:          clean(val('rut')),
@@ -492,62 +463,61 @@
       telefono:     val('telefono').replace(/\D/g,'')
     };
 
-    if(!payload.id || !payload.nombre || !payload.rut || !payload.banco ||
-       !payload.tipoCuenta || !payload.numeroCuenta){
-      msgErr.innerHTML = '<div class="err">Faltan campos obligatorios.</div>'; return;
+    if(!payload.id||!payload.nombre||!payload.rut||!payload.banco||!payload.tipoCuenta||!payload.numeroCuenta){
+      msgErr.innerHTML='<div class="err">Faltan campos obligatorios.</div>'; return;
     }
     if(!validarId(payload.id)){
-      msgErr.innerHTML = '<div class="err">El usuario no puede contener espacios.</div>';
+      msgErr.innerHTML='<div class="err">El usuario no puede contener espacios.</div>';
       idInput.focus(); return;
     }
     if(!validarRut(payload.rut)){
-      msgErr.innerHTML = '<div class="err">El RUT ingresado no es válido.</div>';
+      msgErr.innerHTML='<div class="err">El RUT ingresado no es válido.</div>';
       rutInput.focus(); return;
     }
     if(!/^\d+$/.test(payload.numeroCuenta)){
-      msgErr.innerHTML = '<div class="err">El número de cuenta debe contener solo dígitos.</div>';
+      msgErr.innerHTML='<div class="err">El número de cuenta debe contener solo dígitos.</div>';
       cuentaInput.focus(); return;
     }
     if(!validarEmail(payload.correo)){
-      msgErr.innerHTML = '<div class="err">Ingresa un correo válido.</div>';
+      msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>';
       correoInput.focus(); return;
     }
     if(!validarTel(payload.telefono)){
-      msgErr.innerHTML = '<div class="err">Ingresa un número de teléfono válido.</div>';
+      msgErr.innerHTML='<div class="err">Ingresa un número de teléfono válido.</div>';
       telInput.focus(); return;
     }
 
     try{
-      const res = await fetch(WORKER_URL, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(payload)
+      const res=await fetch(WORKER_URL,{
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify(payload)
       });
-      const txt  = await res.text();
-      let data   = {};
-      try{ data = JSON.parse(txt); }catch{}
+      const txt=await res.text();
+      let data={};
+      try{ data=JSON.parse(txt); }catch{}
 
-      if(!res.ok || !data.ok){
-        const detail = data.error
-          ? ('\nDetalle: '+data.error+(data.probable_cause?' — '+data.probable_cause:'')+(data.detail?'\n'+data.detail:''))
-          : ('\nHTTP '+res.status+'\n'+txt);
-        msgErr.innerHTML = '<div class="err">Error guardando.'+detail+'</div>';
+      if(!res.ok||!data.ok){
+        const detail=data.error
+          ?('\nDetalle: '+data.error+(data.probable_cause?' — '+data.probable_cause:'')+(data.detail?'\n'+data.detail:''))
+          :('\nHTTP '+res.status+'\n'+txt);
+        msgErr.innerHTML='<div class="err">Error guardando.'+detail+'</div>';
         return;
       }
 
-      const indexUrl = BASE_URL + '?id=' + encodeURIComponent(payload.id);
-      const pwaUrl   = BASE_URL + 'app.html?id=' + encodeURIComponent(payload.id);
+      const indexUrl=BASE_URL+'?id='+encodeURIComponent(payload.id);
+      const pwaUrl  =BASE_URL+'app.html?id='+encodeURIComponent(payload.id);
 
-      document.getElementById('resNombre').textContent = clean(payload.nombre);
-      document.getElementById('linkText').textContent  = indexUrl;
-      document.getElementById('btnPWA').href           = pwaUrl;
+      document.getElementById('resNombre').textContent=clean(payload.nombre);
+      document.getElementById('linkText').textContent =indexUrl;
+      document.getElementById('btnPWA').href          =pwaUrl;
 
-      document.getElementById('formCard').style.display  = 'none';
-      document.getElementById('resultado').style.display = 'block';
-      window.scrollTo({top:0, behavior:'smooth'});
+      document.getElementById('formCard').style.display ='none';
+      document.getElementById('resultado').style.display='block';
+      window.scrollTo({top:0,behavior:'smooth'});
 
     }catch(e){
-      msgErr.innerHTML = '<div class="err">Fallo de red: '+e+'</div>';
+      msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>';
     }
   });
 </script>
