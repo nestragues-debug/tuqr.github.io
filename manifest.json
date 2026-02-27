@@ -1,0 +1,22 @@
+{
+  "name": "TuQR",
+  "short_name": "TuQR",
+  "description": "Muestra tu QR de transferencia",
+  "start_url": "./app.html",
+  "display": "standalone",
+  "background_color": "#f2f3f5",
+  "theme_color": "#ff7a18",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "./TuQRLogo.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "./TuQRLogo.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    }
+  ]
+}
