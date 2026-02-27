@@ -365,15 +365,10 @@
   } else {
     const savedId = localStorage.getItem(STORAGE_KEY);
     if(savedId && accion !== 'nueva_cuenta'){
-      // Ya logueado y no viene a crear → directo al QR
       window.location.replace('./app.html');
     } else if(accion === 'nueva_cuenta'){
-      // Viene desde app.html a crear nueva cuenta destino
       show('screenCrear');
       document.getElementById('screenCrearTitulo').textContent = 'Nueva cuenta destino';
-      document.getElementById('backFromCrear').addEventListener('click',()=>{
-        window.location.replace('./app.html');
-      }, { once: true });
     } else {
       show('screenOpciones');
     }
@@ -431,10 +426,12 @@
   document.getElementById('btnIrActivar').addEventListener('click',()=>{ hide('screenOpciones'); show('screenActivar'); });
   document.getElementById('backFromActivar').addEventListener('click',()=>{ hide('screenActivar'); show('screenOpciones'); });
   document.getElementById('backFromElegir').addEventListener('click',()=>{ hide('screenElegir'); show('screenActivar'); });
-  // backFromCrear se registra condicionalmente arriba para nueva_cuenta; si no, vuelve a opciones
-  if(accion !== 'nueva_cuenta'){
-    document.getElementById('backFromCrear').addEventListener('click',()=>{ hide('screenCrear'); show('screenOpciones'); });
-  }
+
+  // backFromCrear: si viene de app.html vuelve ahí, si no vuelve a opciones
+  document.getElementById('backFromCrear').addEventListener('click',()=>{
+    if(accion === 'nueva_cuenta') window.location.replace('./app.html');
+    else { hide('screenCrear'); show('screenOpciones'); }
+  });
 
   /* ── Identificar usuario → directo al QR ── */
   const actRutInput = document.getElementById('actRut');
@@ -475,11 +472,9 @@
       if(matches.length===0){
         errGen.classList.add('show'); this.textContent='Continuar'; this.disabled=false;
       } else if(matches.length===1){
-        // Una sola cuenta destino → directo al QR
         localStorage.setItem(STORAGE_KEY, matches[0][0]);
         window.location.replace('./app.html');
       } else {
-        // Múltiples cuentas destino → elegir
         const list=document.getElementById('cuentaDestinoList');
         list.innerHTML='';
         matches.forEach(([id,d])=>{
@@ -501,7 +496,7 @@
     }
   });
 
-  /* ── Crear usuario: validación ── */
+  /* ── Crear: validación ── */
   const idInput=document.getElementById('id'), rutInput=document.getElementById('rut');
   const cuentaInput=document.getElementById('numeroCuenta'), correoInput=document.getElementById('correo');
   const telInput=document.getElementById('telefono');
