@@ -342,7 +342,7 @@
       <div class="wait-box" id="waitBox">
         <div class="spinner"></div>
         <div class="wait-text">Activando tu cuenta…</div>
-        <div class="wait-sub" id="waitSub">Esto toma unos segundos</div>
+        <div class="wait-sub" id="waitSub">Puede tardar hasta un minuto</div>
       </div>
       <div id="msgQRError" style="display:none; flex-direction:column; gap:10px;">
         <div class="err-box">No pudimos confirmar la activación. Intenta abriendo tu QR manualmente.</div>
@@ -366,11 +366,10 @@
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  /* ── Detección standalone + parámetro from=welcome ── */
-  const isStandalone  = window.matchMedia('(display-mode:standalone)').matches
-                      || window.navigator.standalone === true;
-  const urlParams     = new URLSearchParams(location.search);
-  const fromWelcome   = urlParams.get('from') === 'welcome';
+  const isStandalone = window.matchMedia('(display-mode:standalone)').matches
+                     || window.navigator.standalone === true;
+  const urlParams   = new URLSearchParams(location.search);
+  const fromWelcome = urlParams.get('from') === 'welcome';
 
   if(!isStandalone && !fromWelcome){
     window.location.replace('./welcome.html');
@@ -420,7 +419,6 @@
   function iniciarPolling(id){
     pollCount = 0;
     clearInterval(pollTimer);
-    // Primer intento inmediato
     checkId(id);
     pollTimer = setInterval(()=>{ checkId(id); }, POLL_INTERVAL);
   }
@@ -437,12 +435,6 @@
         return;
       }
     }catch(e){}
-
-    const secs = pollCount * (POLL_INTERVAL/1000);
-    const subEl = document.getElementById('waitSub');
-    if(subEl) subEl.textContent = secs < 60
-      ? `${secs} seg...`
-      : `${Math.floor(secs/60)}m ${secs%60}s...`;
 
     if(pollCount >= POLL_MAX){
       clearInterval(pollTimer);
@@ -630,6 +622,20 @@
       telInput.focus(); return;
     }
 
+    /* ── Verificar que el usuario no exista ya ── */
+    try{
+      const chk = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      const all = await chk.json();
+      if(all[payload.id]){
+        msgErr.innerHTML='<div class="err">El usuario <strong>'+payload.id+'</strong> ya existe. Elige otro nombre de usuario.</div>';
+        idInput.focus(); return;
+      }
+    }catch(e){
+      msgErr.innerHTML='<div class="err">No se pudo verificar disponibilidad. Intenta de nuevo.</div>';
+      return;
+    }
+
+    /* ── Enviar al Worker ── */
     try{
       const res=await fetch(WORKER_URL,{
         method:'POST',
@@ -651,7 +657,7 @@
       document.getElementById('resNombre').textContent=clean(payload.nombre);
       document.getElementById('waitBox').style.display='flex';
       document.getElementById('msgQRError').style.display='none';
-      document.getElementById('waitSub').textContent='Esto toma unos segundos';
+      document.getElementById('waitSub').textContent='Puede tardar hasta un minuto';
       hide('screenCrear');
       show('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
@@ -670,7 +676,7 @@
   document.getElementById('btnReintentar').addEventListener('click',()=>{
     document.getElementById('waitBox').style.display='flex';
     document.getElementById('msgQRError').style.display='none';
-    document.getElementById('waitSub').textContent='Esto toma unos segundos';
+    document.getElementById('waitSub').textContent='Puede tardar hasta un minuto';
     const id=localStorage.getItem(STORAGE_KEY);
     if(id) iniciarPolling(id);
   });
