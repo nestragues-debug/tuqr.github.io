@@ -204,15 +204,15 @@
       <button class="btn-opcion primary" id="btnIrCrear">
         <div class="icon">✨</div>
         <div class="label">
-          <strong>Crear cuenta nueva</strong>
+          <strong>Crear usuario nuevo</strong>
           <span>Primera vez — registra tus datos</span>
         </div>
       </button>
       <button class="btn-opcion secondary" id="btnIrActivar">
         <div class="icon">🔑</div>
         <div class="label">
-          <strong>Ingresar / Modificar cuenta</strong>
-          <span>Ya tengo usuario — acceder o editar datos</span>
+          <strong>Ingresar usuario</strong>
+          <span>Ya tengo usuario — acceder o crear nueva Cuenta Destino</span>
         </div>
       </button>
     </div>
@@ -232,16 +232,16 @@
       <input id="actTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
     </div>
     <div class="field-err" id="err-actTel">Número inválido</div>
-    <div class="field-err" id="err-actGeneral">No encontramos una cuenta con esos datos.</div>
+    <div class="field-err" id="err-actGeneral">No encontramos un usuario con esos datos.</div>
     <button class="cta" id="btnDoActivar">Continuar</button>
     <a class="link-back" id="backFromActivar">← Volver</a>
     <a class="link-contacto" id="btnContactoActivar">Contacto</a>
   </div>
 
-  <!-- Pantalla: elegir usuario cuando hay más de uno -->
+  <!-- Pantalla: elegir Cuenta Destino cuando hay más de uno -->
   <div id="screenElegir" class="card" style="display:none">
     <h1>Elige tu usuario</h1>
-    <p class="sub">Encontramos más de una cuenta. ¿Cuál quieres usar?</p>
+    <p class="sub">Encontramos más de una Cuenta Destino. ¿Cuál quieres usar?</p>
     <div class="user-list" id="userList"></div>
     <a class="link-back" id="backFromElegir">← Volver</a>
   </div>
@@ -311,13 +311,13 @@
     <a class="link-back" id="backFromEditar">← Volver</a>
   </div>
 
-  <!-- Pantalla: crear cuenta -->
+  <!-- Pantalla: crear Cuenta Destino -->
   <div id="screenCrear" class="card" style="display:none">
-    <h1>Crear cuenta</h1>
-    <label for="id">Crea tu usuario</label>
-    <input id="id" placeholder="ej: JuanLopez"
+    <h1>Crear Cuenta Destino</h1>
+    <label for="id">Crea tu Cuenta Destino</label>
+    <input id="id" placeholder="ej: JuanLopezBChile"
            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
-    <div class="field-err" id="err-id">El usuario no puede contener espacios</div>
+    <div class="field-err" id="err-id">La Cuenta Destino no puede contener espacios</div>
     <div class="row">
       <div>
         <label for="nombre">Nombre</label>
@@ -385,12 +385,12 @@
   <div id="screenCreado" style="display:none">
     <div class="ok-card">
       <div>
-        <div class="ok-pill">✓ Cuenta creada</div>
+        <div class="ok-pill">✓ Cuenta Destino creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
       <div class="wait-box" id="waitBox">
         <div class="spinner"></div>
-        <div class="wait-text">Activando tu cuenta…</div>
+        <div class="wait-text">Activando tu usuario y tu primera Cuenta Destino…</div>
         <div class="wait-sub" id="waitSub">Puede tardar hasta un minuto</div>
       </div>
       <div id="msgQRError" style="display:none; flex-direction:column; gap:10px;">
@@ -425,7 +425,7 @@
     <button class="modal-close" id="btnCerrarModal">✕</button>
     <span class="modal-handle"></span>
     <div class="modal-title">Contacto</div>
-    <div class="modal-sub">Te responderemos al correo de tu cuenta.</div>
+    <div class="modal-sub">Te responderemos al correo de tu usuario.</div>
 
     <label for="cRut">RUT</label>
     <input id="cRut" placeholder="12.345.678-9" maxlength="12"/>
@@ -435,7 +435,7 @@
     <select id="cUsuario">
       <option value="">— Selecciona —</option>
     </select>
-    <div class="field-err" id="err-cUsuario">Selecciona un usuario</div>
+    <div class="field-err" id="err-cUsuario">Selecciona un Cuenta Destino</div>
 
     <label for="cTipo" style="margin-top:14px">Tipo de problema</label>
     <select id="cTipo">
@@ -796,7 +796,7 @@
     if(!payload.id||!payload.nombre||!payload.rut||!payload.banco||!payload.tipoCuenta||!payload.numeroCuenta){
       msgErr.innerHTML='<div class="err">Faltan campos obligatorios.</div>'; return;
     }
-    if(!validarId(payload.id)){ msgErr.innerHTML='<div class="err">El usuario no puede contener espacios.</div>'; idInput.focus(); return; }
+    if(!validarId(payload.id)){ msgErr.innerHTML='<div class="err">La Cuenta Destino no puede contener espacios.</div>'; idInput.focus(); return; }
     if(!validarRut(payload.rut)){ msgErr.innerHTML='<div class="err">El RUT no es válido.</div>'; rutInput.focus(); return; }
     if(!/^\d+$/.test(payload.numeroCuenta)){ msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; cuentaInput.focus(); return; }
     if(!validarEmail(payload.correo)){ msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>'; correoInput.focus(); return; }
@@ -806,7 +806,7 @@
       const chk=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       const all=await chk.json();
       if(all[payload.id]){
-        msgErr.innerHTML='<div class="err">El usuario <strong>'+payload.id+'</strong> ya existe. Elige otro nombre.</div>';
+        msgErr.innerHTML='<div class="err">La Cuenta Destino <strong>'+payload.id+'</strong> ya existe. Elige otro nombre.</div>';
         idInput.focus(); return;
       }
     }catch(e){
@@ -883,7 +883,7 @@
     if(el) el.addEventListener('click', abrirModalContacto);
   });
 
-  /* RUT en contacto → cargar usuarios */
+  /* RUT en contacto → cargar Cuentas Destino */
   const cRutInput=document.getElementById('cRut');
   cRutInput.addEventListener('input', async function(){
     const raw=this.value.replace(/[\.\-\s]/g,'');
