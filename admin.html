@@ -9,7 +9,7 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
 <meta name="apple-mobile-web-app-title" content="TuQR"/>
 <link rel="manifest" href="./manifest.json"/>
-<link rel="apple-touch-icon" href="./PWA/LogoQ_transparent.png"/>
+<link rel="apple-touch-icon" href="./LogoQ_transparent.png"/>
 <title>TuQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -115,6 +115,7 @@
   .cta-outline:active{ transform:translateY(1px); }
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
 
+  /* Banner Android */
   #installBar{
     display:none; margin-bottom:14px;
     background:var(--card); border:1px solid rgba(255,122,24,.3);
@@ -122,7 +123,6 @@
     box-shadow:var(--shadow); flex-direction:column; gap:8px;
   }
   #installBar p{ font-size:13px; font-weight:600; color:var(--text); line-height:1.5; }
-  #installBar p span{ color:var(--primary); font-weight:800; }
   .btn-install{
     padding:11px; width:100%; font-size:14px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
@@ -132,8 +132,47 @@
   }
   .btn-install:active{ transform:translateY(1px); filter:brightness(.98); }
 
-  #resultado{ display:none; margin-top:0; }
+  /* Modal iOS */
+  #iosOverlay{
+    display:none; position:fixed; inset:0; z-index:999;
+    background:rgba(0,0,0,.55); align-items:flex-end; justify-content:center;
+    padding:0 0 0 0;
+  }
+  #iosOverlay.show{ display:flex; }
+  .ios-sheet{
+    background:#fff; border-radius:24px 24px 0 0;
+    padding:28px 24px 40px; width:100%; max-width:480px;
+    display:flex; flex-direction:column; align-items:center; gap:18px;
+    box-shadow:0 -8px 32px rgba(0,0,0,.18);
+  }
+  .ios-sheet h2{
+    font-size:20px; font-weight:800; text-align:center; color:var(--text); margin:0;
+  }
+  .ios-steps{
+    width:100%; display:flex; flex-direction:column; gap:14px;
+  }
+  .ios-step{
+    display:flex; align-items:center; gap:14px;
+    background:#f7f7f7; border-radius:14px; padding:14px;
+  }
+  .ios-step-num{
+    width:32px; height:32px; border-radius:999px; flex-shrink:0;
+    background:var(--primary); color:#fff;
+    font-size:15px; font-weight:800;
+    display:flex; align-items:center; justify-content:center;
+  }
+  .ios-step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
+  .ios-step-text span{ color:var(--primary); font-weight:800; }
+  .ios-close{
+    margin-top:4px; padding:13px; width:100%;
+    font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid rgba(0,0,0,.10); border-radius:12px; cursor:pointer;
+    color:var(--muted); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+  }
 
+  /* Resultado */
+  #resultado{ display:none; margin-top:0; }
   .ok-card{
     background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius); padding:22px 20px 24px;
@@ -144,14 +183,12 @@
     content:""; position:absolute; top:0; left:0; right:0; height:8px;
     background:linear-gradient(90deg,rgba(0,200,120,.8),rgba(0,170,100,.9));
   }
-
   .ok-pill{
     display:inline-flex; align-items:center; gap:6px;
     padding:6px 14px; border-radius:999px; font-size:13px; font-weight:700;
     color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
   }
   .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
-
   .link-box{
     background:#f7f7f7; border:1px solid var(--border);
     border-radius:12px; padding:12px;
@@ -170,7 +207,6 @@
     border-radius:12px; font-size:14px; white-space:pre-wrap;
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
-
   .help{
     margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center;
   }
@@ -183,11 +219,13 @@
     <img src="./TuQRLogo.png" alt="TuQR"/>
   </div>
 
+  <!-- Banner instalar — Android -->
   <div id="installBar">
     <p id="installMsg"></p>
     <button class="btn-install" id="btnInstall" style="display:none">Instalar app</button>
   </div>
 
+  <!-- Formulario -->
   <div class="card" id="formCard">
     <h1>Crear comercio</h1>
 
@@ -264,6 +302,7 @@
     <div class="help">Los datos se guardan en <b>data.json</b> vía Cloudflare Worker.</div>
   </div>
 
+  <!-- Resultado post-guardado -->
   <div id="resultado">
     <div class="ok-card">
       <div>
@@ -287,33 +326,60 @@
 
 </div>
 
+<!-- Modal iOS -->
+<div id="iosOverlay">
+  <div class="ios-sheet">
+    <h2>Instala TuQR en tu iPhone</h2>
+    <div class="ios-steps">
+      <div class="ios-step">
+        <div class="ios-step-num">1</div>
+        <div class="ios-step-text">Toca el botón <span>Compartir ↑</span> en la barra de Safari</div>
+      </div>
+      <div class="ios-step">
+        <div class="ios-step-num">2</div>
+        <div class="ios-step-text">Baja y toca <span>"Agregar a pantalla de inicio"</span></div>
+      </div>
+      <div class="ios-step">
+        <div class="ios-step-num">3</div>
+        <div class="ios-step-text">Toca <span>"Agregar"</span> — listo, TuQR queda en tu pantalla</div>
+      </div>
+    </div>
+    <button class="ios-close" id="iosClose">Ya lo hice</button>
+  </div>
+</div>
+
 <script>
   const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
   const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
+  const IOS_SHOWN_KEY = 'tuqr_ios_shown';
 
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
+  /* ── Detectar dispositivo ── */
+  const ua          = navigator.userAgent || '';
+  const isIOS       = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const isSamsung   = /SamsungBrowser/.test(ua);
+  const isFirefox   = /Firefox/.test(ua);
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
-                    || window.navigator.standalone === true;
-  let deferredPrompt = null;
-  const ua        = navigator.userAgent || '';
-  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  const isSamsung = /SamsungBrowser/.test(ua);
-  const isFirefox = /Firefox/.test(ua);
+                     || window.navigator.standalone === true;
 
+  let deferredPrompt = null;
+
+  /* ── Banner Android ── */
   window.addEventListener('beforeinstallprompt', e => {
     e.preventDefault();
     deferredPrompt = e;
-    mostrarBanner();
+    mostrarBannerAndroid();
   });
 
-  function mostrarBanner(){
-    if(isStandalone) return;
+  function mostrarBannerAndroid(){
+    if(isStandalone || isIOS) return;
     const bar = document.getElementById('installBar');
     const msg = document.getElementById('installMsg');
     const btn = document.getElementById('btnInstall');
+
     if(deferredPrompt){
       msg.innerHTML = '📲 Instala TuQR como app para acceder más rápido.';
       btn.style.display = '';
@@ -323,20 +389,37 @@
         if(outcome === 'accepted') bar.style.display = 'none';
         deferredPrompt = null;
       };
-    } else if(isIOS){
-      msg.innerHTML = '📲 Para instalar: toca <span>Compartir ↑</span> y luego <span>"Agregar a pantalla de inicio"</span>.';
     } else if(isSamsung){
-      msg.innerHTML = '📲 Para instalar: toca el menú <span>☰</span> → <span>"Agregar página a"</span> → <span>"Pantalla de inicio"</span>.';
+      msg.innerHTML = '📲 Para instalar: toca el menú ☰ → "Agregar página a" → "Pantalla de inicio".';
     } else if(isFirefox){
-      msg.innerHTML = '📲 Para instalar: toca el menú <span>⋮</span> → <span>"Instalar"</span> o <span>"Agregar a pantalla de inicio"</span>.';
+      msg.innerHTML = '📲 Para instalar: toca el menú ⋮ → "Instalar" o "Agregar a pantalla de inicio".';
     } else {
-      msg.innerHTML = '📲 Para instalar: busca en el menú del navegador <span>"Agregar a pantalla de inicio"</span>.';
+      msg.innerHTML = '📲 Para instalar: busca en el menú del navegador "Agregar a pantalla de inicio".';
     }
     bar.style.display = 'flex';
   }
 
-  if(!isStandalone) mostrarBanner();
+  /* ── Modal iOS ── */
+  function mostrarModalIOS(){
+    if(isStandalone) return;
+    if(localStorage.getItem(IOS_SHOWN_KEY)) return;
+    document.getElementById('iosOverlay').classList.add('show');
+  }
 
+  document.getElementById('iosClose').addEventListener('click', () => {
+    document.getElementById('iosOverlay').classList.remove('show');
+    localStorage.setItem(IOS_SHOWN_KEY, '1');
+  });
+
+  // Al cargar: mostrar banner Android o modal iOS según corresponda
+  if(!isStandalone){
+    if(isIOS){
+      mostrarModalIOS();
+    }
+    // Android: el banner se dispara con beforeinstallprompt — no necesita llamada aquí
+  }
+
+  /* ── Helpers ── */
   function val(id){ return (document.getElementById(id).value||'').trim(); }
   function clean(s){
     return String(s??'').normalize('NFC')
@@ -363,6 +446,7 @@
     return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
   }
 
+  /* ── Validación en tiempo real ── */
   const idInput     = document.getElementById('id');
   const rutInput    = document.getElementById('rut');
   const cuentaInput = document.getElementById('numeroCuenta');
@@ -402,6 +486,7 @@
     document.getElementById('err-tel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
+  /* ── Copiar link ── */
   document.getElementById('linkBox').addEventListener('click', function(){
     const text  = document.getElementById('linkText').textContent;
     const label = document.getElementById('copyLabel');
@@ -425,6 +510,7 @@
     }
   });
 
+  /* ── Reset ── */
   function resetForm(){
     ['id','nombre','rut','numeroCuenta','correo','telefono'].forEach(id=>{
       const el=document.getElementById(id);
@@ -441,6 +527,7 @@
   }
   document.getElementById('nuevo').addEventListener('click', resetForm);
 
+  /* ── Guard ── */
   (function guard(){
     if(!/^https:\/\/.+\.workers\.dev(\/.*)?$/.test(WORKER_URL)){
       document.getElementById('msg-err').innerHTML='<div class="err">WORKER_URL no está configurado.</div>';
@@ -448,6 +535,7 @@
     }
   })();
 
+  /* ── Guardar ── */
   document.getElementById('save').addEventListener('click', async () => {
     const msgErr=document.getElementById('msg-err');
     msgErr.innerHTML='';
