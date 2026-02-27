@@ -19,7 +19,6 @@
 <style>
   :root{
     --primary: #ff7a18;
-    --accent:  #ffd400;
     --bg:      #f2f3f5;
     --card:    #ffffff;
     --text:    #1a1a1a;
@@ -41,7 +40,7 @@
     padding:24px 16px; gap:20px; min-height:100vh;
   }
   .logo img{
-    width:200px; height:auto; display:block;
+    width:180px; height:auto; display:block;
     filter:drop-shadow(0 6px 10px rgba(0,0,0,.10));
   }
   .card{
@@ -49,37 +48,60 @@
     background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius); padding:28px 24px 32px;
     box-shadow:var(--shadow); position:relative; overflow:hidden;
-    display:flex; flex-direction:column; align-items:center; gap:18px;
+    display:flex; flex-direction:column; gap:20px;
   }
   .card::before{
     content:""; position:absolute; top:0; left:0; right:0; height:8px;
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
-  .card-title{ font-size:22px; font-weight:800; text-align:center; margin-top:4px; }
-  .card-sub{ font-size:14px; color:var(--muted); text-align:center; line-height:1.5; }
 
-  .steps{ width:100%; display:flex; flex-direction:column; gap:10px; }
+  /* Sección */
+  .section-label{
+    font-size:11px; font-weight:800; letter-spacing:.08em;
+    text-transform:uppercase; color:var(--muted);
+    padding:0 2px;
+  }
+  .section-label.new{ color:var(--primary); }
+
+  /* Bloque destacado — usuario nuevo */
+  .block-new{
+    background:rgba(255,122,24,.06);
+    border:1.5px solid rgba(255,122,24,.2);
+    border-radius:14px; padding:18px 16px;
+    display:flex; flex-direction:column; gap:14px;
+  }
+  .block-title{
+    font-size:17px; font-weight:800; color:var(--text);
+  }
+
+  .steps{ display:flex; flex-direction:column; gap:10px; }
   .step{
-    display:flex; align-items:center; gap:14px;
-    background:#f7f7f7; border-radius:14px; padding:13px 14px;
+    display:flex; align-items:center; gap:12px;
+    background:#fff; border-radius:12px; padding:12px 14px;
+    border:1px solid var(--border);
   }
   .step-num{
-    width:28px; height:28px; border-radius:999px; flex-shrink:0;
+    width:26px; height:26px; border-radius:999px; flex-shrink:0;
     background:var(--primary); color:#fff;
-    font-size:13px; font-weight:800;
+    font-size:12px; font-weight:800;
     display:flex; align-items:center; justify-content:center;
   }
   .step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
   .step-text span{ color:var(--primary); font-weight:800; }
 
-  .divider{
-    width:100%; display:flex; align-items:center; gap:10px;
+  /* Bloque — ya instalada */
+  .block-existing{
+    background:#f7f7f7;
+    border:1.5px solid var(--border);
+    border-radius:14px; padding:18px 16px;
+    display:flex; flex-direction:column; gap:10px;
   }
-  .divider::before, .divider::after{
-    content:""; flex:1; height:1px; background:var(--border);
+  .existing-text{
+    font-size:15px; font-weight:700; color:var(--text); line-height:1.5;
   }
-  .divider span{ font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; }
+  .existing-text span{ color:var(--primary); }
 
+  /* Botón */
   .cta{
     width:100%; padding:14px; font-size:16px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
@@ -99,16 +121,9 @@
     text-decoration:none; display:block; text-align:center;
   }
   .cta-outline:active{ transform:translateY(1px); }
-  .cta-outline:hover{ background:rgba(255,122,24,.07); }
-
-  .info-box{
-    width:100%; font-size:13px; color:var(--muted); text-align:center;
-    background:#f7f7f7; border-radius:12px; padding:12px 14px; line-height:1.6;
-  }
-  .info-box span{ color:var(--primary); font-weight:700; }
 
   .safari-warning{
-    width:100%; font-size:13px; color:var(--muted); text-align:center;
+    font-size:13px; color:var(--muted); text-align:center;
     background:#fff8f0; border:1px solid rgba(255,122,24,.2);
     border-radius:10px; padding:12px 14px; line-height:1.6;
   }
@@ -149,27 +164,30 @@
   /* ── iOS Safari ── */
   function renderIOS(){
     card.innerHTML = `
-      <div class="card-title">Instala TuQR</div>
-
-      <div class="steps">
-        <div class="step">
-          <div class="step-num">1</div>
-          <div class="step-text">Toca <span>Compartir ↑</span> en Safari</div>
-        </div>
-        <div class="step">
-          <div class="step-num">2</div>
-          <div class="step-text">Busca en las opciones <span>"Agregar a inicio"</span></div>
-        </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-text">Toca <span>"Agregar"</span> para confirmar</div>
+      <div class="section-label new">¿No tienes TuQR instalado?</div>
+      <div class="block-new">
+        <div class="block-title">Instala TuQR en tu iPhone</div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num">1</div>
+            <div class="step-text">Toca <span>Compartir ↑</span> en Safari</div>
+          </div>
+          <div class="step">
+            <div class="step-num">2</div>
+            <div class="step-text">Busca en las opciones <span>"Agregar a inicio"</span></div>
+          </div>
+          <div class="step">
+            <div class="step-num">3</div>
+            <div class="step-text">Toca <span>"Agregar"</span> para confirmar</div>
+          </div>
         </div>
       </div>
 
-      <div class="divider"><span>¿ya tienes TuQR instalado?</span></div>
-
-      <div class="info-box">
-        Abre <span>TuQR</span> desde tu listado de aplicaciones o pantalla de inicio.
+      <div class="section-label">¿Ya tienes TuQR instalado?</div>
+      <div class="block-existing">
+        <div class="existing-text">
+          Abre <span>TuQR</span> desde tu listado de aplicaciones o pantalla de inicio.
+        </div>
       </div>
     `;
   }
@@ -177,40 +195,73 @@
   /* ── iOS no Safari ── */
   function renderIOSNoSafari(){
     card.innerHTML = `
-      <div class="card-title">Instala TuQR</div>
-      <div class="card-sub">En iPhone, TuQR solo se puede instalar desde Safari.</div>
-      <div class="safari-warning">
-        Abre este link en <span>Safari</span> para instalar TuQR:<br><br>
-        <span>tuqrapp.github.io/tuqr.github.io/welcome.html</span>
+      <div class="section-label new">Instala TuQR</div>
+      <div class="block-new">
+        <div class="block-title">Abre este link en Safari</div>
+        <div class="safari-warning">
+          TuQR solo se puede instalar desde <span>Safari</span>.<br><br>
+          Copia y abre en Safari:<br>
+          <span>tuqrapp.github.io/tuqr.github.io/welcome.html</span>
+        </div>
       </div>
-      <a class="cta-outline" href="${PWA_URL}">Continuar sin instalar →</a>
+
+      <div class="section-label">¿Ya tienes TuQR instalado?</div>
+      <div class="block-existing">
+        <div class="existing-text">
+          Abre <span>TuQR</span> desde tu listado de aplicaciones o pantalla de inicio.
+        </div>
+      </div>
     `;
   }
 
   /* ── Android ── */
   function renderAndroid(){
+    const hasPrompt = !!deferredPrompt;
     card.innerHTML = `
-      <div class="card-title">TuQR</div>
-      <div class="card-sub">Genera tu QR de cobro y muéstraselo a tus clientes.</div>
-      <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
-      <div class="info-box" id="msgListado" style="display:none">
-        Abre <span>TuQR</span> desde tu <span>listado de aplicaciones</span>.
+      <div class="section-label new">¿No tienes TuQR instalado?</div>
+      <div class="block-new">
+        <div class="block-title">Instala TuQR</div>
+        <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
+      </div>
+
+      <div class="section-label">¿Ya tienes TuQR instalado?</div>
+      <div class="block-existing">
+        <div class="existing-text" id="msgExisting">
+          Abre <span>TuQR</span> desde tu listado de aplicaciones.
+        </div>
+      </div>
+
+      <div id="msgInstalado" style="display:none">
+        <div class="block-existing">
+          <div class="existing-text">
+            ✓ TuQR instalado. Ábrelo desde tu <span>listado de aplicaciones</span>.
+          </div>
+        </div>
       </div>
     `;
 
     document.getElementById('btnInstall').addEventListener('click', async () => {
       const btn = document.getElementById('btnInstall');
-      const msg = document.getElementById('msgListado');
       if(deferredPrompt){
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         deferredPrompt = null;
         btn.style.display = 'none';
-        msg.style.display = '';
+        if(outcome === 'accepted'){
+          btn.closest('.block-new').innerHTML = `
+            <div class="existing-text" style="color:#0a7">
+              ✓ <span style="color:#0a7">TuQR instalado.</span> Ábrelo desde tu listado de aplicaciones.
+            </div>
+          `;
+        }
       } else {
-        // Ya instalada — no se puede abrir PWA desde JS, indicar al usuario
+        // Ya instalada
         btn.style.display = 'none';
-        msg.style.display = '';
+        btn.closest('.block-new').innerHTML = `
+          <div class="existing-text">
+            Abre <span>TuQR</span> desde tu listado de aplicaciones.
+          </div>
+        `;
       }
     });
   }
@@ -218,8 +269,11 @@
   /* ── Desktop ── */
   function renderDesktop(){
     card.innerHTML = `
-      <div class="card-title">TuQR</div>
-      <div class="card-sub">TuQR está diseñado para celulares. Ábrelo desde tu teléfono.</div>
+      <div class="section-label new">TuQR</div>
+      <div class="block-new">
+        <div class="block-title">Diseñado para celulares</div>
+        <div class="existing-text" style="color:var(--muted)">Ábrelo desde tu teléfono para instalarlo.</div>
+      </div>
       <a class="cta" href="${PWA_URL}">Abrir de todas formas →</a>
     `;
   }
