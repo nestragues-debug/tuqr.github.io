@@ -60,15 +60,15 @@
 
   .divider{
     width:100%; display:flex; align-items:center; gap:10px;
-    font-size:12px; font-weight:700; color:var(--muted);
   }
-  .divider::before,.divider::after{
+  .divider::before, .divider::after{
     content:""; flex:1; height:1px; background:var(--border);
   }
+  .divider span{ font-size:12px; font-weight:700; color:var(--muted); white-space:nowrap; }
 
   .steps{ width:100%; display:flex; flex-direction:column; gap:10px; }
   .step{
-    display:flex; align-items:flex-start; gap:14px;
+    display:flex; align-items:center; gap:14px;
     background:#f7f7f7; border-radius:14px; padding:13px 14px;
   }
   .step-num{
@@ -76,9 +76,8 @@
     background:var(--primary); color:#fff;
     font-size:13px; font-weight:800;
     display:flex; align-items:center; justify-content:center;
-    margin-top:1px;
   }
-  .step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.5; }
+  .step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
   .step-text span{ color:var(--primary); font-weight:800; }
 
   .cta{
@@ -103,15 +102,14 @@
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
 
   .info-box{
-    width:100%; font-size:13px; color:var(--muted); text-align:center;
-    background:#fff8f0; border:1px solid rgba(255,122,24,.2);
-    border-radius:10px; padding:12px 14px; line-height:1.6;
+    width:100%; font-size:12px; color:var(--muted); text-align:center;
+    background:#f7f7f7; border-radius:10px; padding:10px 14px; line-height:1.6;
   }
-  .info-box span{ color:var(--primary); font-weight:800; }
+  .info-box span{ color:var(--primary); font-weight:700; }
 
   .safari-warning{
     width:100%; font-size:13px; color:var(--muted); text-align:center;
-    background:#f7f7f7; border:1px solid var(--border);
+    background:#fff8f0; border:1px solid rgba(255,122,24,.2);
     border-radius:10px; padding:12px 14px; line-height:1.6;
   }
   .safari-warning span{ color:var(--primary); font-weight:700; }
@@ -138,6 +136,7 @@
   const card = document.getElementById('card');
   let deferredPrompt = null;
 
+  /* Si ya está en modo standalone redirigir directo */
   if(isStandalone){
     window.location.replace('./admin.html');
   }
@@ -148,29 +147,28 @@
     renderAndroid(true);
   });
 
-  /* ── iOS Safari: muestra botón abrir + instrucciones ── */
+  /* ── iOS Safari: muestra ambas opciones siempre ── */
   function renderIOS(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
-      <div class="card-sub">Genera tu QR de cobro y muéstraselo a tus clientes.</div>
 
       <a class="cta" href="${PWA_URL}">Abrir TuQR →</a>
 
-      <div class="divider">o instala la app</div>
+      <div class="divider"><span>o instala TuQR en tu iPhone</span></div>
 
       <div class="steps">
         <div class="step">
           <div class="step-num">1</div>
-          <div class="step-text">Toca <span>Compartir ↑</span> en Safari.</div>
+          <div class="step-text">Toca <span>Compartir ↑</span> en Safari</div>
         </div>
         <div class="step">
           <div class="step-num">2</div>
-          <div class="step-text">Busca en las opciones <span>"Agregar a inicio"</span>.</div>
+          <div class="step-text">Busca en las opciones <span>"Agregar a inicio"</span></div>
         </div>
-        <div class="step">
-          <div class="step-num">3</div>
-          <div class="step-text">Toca <span>"Agregar"</span> y TuQR quedará instalado con tus demás aplicaciones.</div>
-        </div>
+      </div>
+
+      <div class="info-box">
+        Una vez instalada, abre <span>TuQR</span> desde tu pantalla de inicio.
       </div>
     `;
   }
@@ -191,7 +189,7 @@
   /* ── Android / otros ── */
   function renderAndroid(hasPrompt){
     card.innerHTML = `
-      <div class="card-title">Instala TuQR</div>
+      <div class="card-title">TuQR</div>
       <div class="card-sub">Genera tu QR de cobro y muéstraselo a tus clientes.</div>
       ${hasPrompt ? `
         <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
@@ -200,15 +198,11 @@
         <div class="steps">
           <div class="step">
             <div class="step-num">1</div>
-            <div class="step-text">Toca el menú <span>${isSamsung?'☰':'⋮'}</span> de tu navegador.</div>
+            <div class="step-text">Toca el menú <span>${isSamsung?'☰':'⋮'}</span> de tu navegador</div>
           </div>
           <div class="step">
             <div class="step-num">2</div>
-            <div class="step-text">Busca en las opciones <span>"Agregar a pantalla de inicio"</span>.</div>
-          </div>
-          <div class="step">
-            <div class="step-num">3</div>
-            <div class="step-text">Toca <span>"Agregar"</span> y TuQR quedará instalado con tus demás aplicaciones.</div>
+            <div class="step-text">Elige <span>"Agregar a pantalla de inicio"</span></div>
           </div>
         </div>
         <a class="cta-outline" href="${PWA_URL}">Ya la instalé — Abrir TuQR →</a>
@@ -234,15 +228,16 @@
   function renderDesktop(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
-      <div class="card-sub">TuQR está diseñado para celulares. Ábrelo desde tu teléfono para instalarlo.</div>
+      <div class="card-sub">TuQR está diseñado para celulares. Ábrelo desde tu teléfono.</div>
       <a class="cta" href="${PWA_URL}">Abrir de todas formas →</a>
     `;
   }
 
-  if(isIOS && isSafari)        renderIOS();
-  else if(isIOS && !isSafari)  renderIOSNoSafari();
+  /* ── Render inicial ── */
+  if(isIOS && isSafari)                    renderIOS();
+  else if(isIOS && !isSafari)              renderIOSNoSafari();
   else if(isAndroid||isSamsung||isFirefox) renderAndroid(false);
-  else                         renderDesktop();
+  else                                     renderDesktop();
 </script>
 </body>
 </html>
