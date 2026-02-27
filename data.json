@@ -210,5 +210,14 @@
     "numeroCuenta": "545548",
     "correo": "nestragues@gmail.com",
     "telefono": "982897919"
+  },
+  "android": {
+    "banco": "Banco Estado",
+    "rut": "13.268.177-5",
+    "nombre": "And roid",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "22222",
+    "correo": "Hhh@fff.com",
+    "telefono": "999999999"
   }
 }
