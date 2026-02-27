@@ -3,7 +3,14 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
-<title>TuQR – Crear comercio</title>
+<meta name="theme-color" content="#ff7a18"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="TQR"/>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="apple-touch-icon" href="./TuQRLogo.png"/>
+<title>TQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -175,7 +182,7 @@
 <div class="wrap">
 
   <div class="brand">
-    <img src="./TuQRLogo.png" alt="TuQR"/>
+    <img src="./TuQRLogo.png" alt="TQR"/>
   </div>
 
   <!-- Banner instalar PWA -->
@@ -296,6 +303,11 @@
   const WORKER_URL = 'https://tuqr-worker.nestragues.workers.dev/';
   const BASE_URL   = 'https://tuqrapp.github.io/tuqr.github.io/';
 
+  /* ── Service Worker ── */
+  if('serviceWorker' in navigator){
+    navigator.serviceWorker.register('./sw.js').catch(()=>{});
+  }
+
   /* ── Banner instalar PWA ── */
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                     || window.navigator.standalone === true;
@@ -319,7 +331,7 @@
     const btn = document.getElementById('btnInstall');
 
     if(deferredPrompt){
-      msg.innerHTML = '📲 Instala TuQR como app para acceder más rápido.';
+      msg.innerHTML = '📲 Instala TQR como app para acceder más rápido.';
       btn.style.display = '';
       btn.onclick = async () => {
         deferredPrompt.prompt();
@@ -339,7 +351,6 @@
     bar.style.display = 'flex';
   }
 
-  // Mostrar banner al cargar (para iOS y otros que no disparan beforeinstallprompt)
   if(!isStandalone) mostrarBanner();
 
   /* ── Helpers ── */
@@ -481,7 +492,6 @@
       telefono:     val('telefono').replace(/\D/g,'')
     };
 
-    // Validaciones
     if(!payload.id || !payload.nombre || !payload.rut || !payload.banco ||
        !payload.tipoCuenta || !payload.numeroCuenta){
       msgErr.innerHTML = '<div class="err">Faltan campos obligatorios.</div>'; return;
@@ -525,7 +535,6 @@
         return;
       }
 
-      // Éxito
       const indexUrl = BASE_URL + '?id=' + encodeURIComponent(payload.id);
       const pwaUrl   = BASE_URL + 'app.html?id=' + encodeURIComponent(payload.id);
 
