@@ -297,13 +297,10 @@
   }
 
   /* ── Cerrar sesión ── */
-  document.getElementById('btnLogout').addEventListener('click', ()=>{
+document.getElementById('btnLogout').addEventListener('click', ()=>{
     if(confirm('¿Cerrar sesión?')){
       localStorage.removeItem(STORAGE_KEY);
-      document.getElementById('main').style.display='none';
-      document.getElementById('screenReactivar').style.display='flex';
-      document.getElementById('reactRut').value='';
-      document.getElementById('reactTel').value='';
+      window.location.replace('./admin.html');
     }
   });
 
