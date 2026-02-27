@@ -372,10 +372,12 @@
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  const isStandalone = window.matchMedia('(display-mode:standalone)').matches
+const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                      || window.navigator.standalone === true;
+  const params = new URLSearchParams(location.search);
+  const fromWelcome = params.get('from') === 'welcome';
 
-  if(!isStandalone){
+  if(!isStandalone && !fromWelcome){
     window.location.replace('./welcome.html');
   } else {
     const savedId = localStorage.getItem(STORAGE_KEY);
