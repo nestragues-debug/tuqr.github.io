@@ -205,7 +205,7 @@
 
   <!-- Pantalla: identificarse -->
   <div id="screenActivar" class="card" style="display:none">
-    <h1>Ingresar / Modificar usuario</h1>
+    <h1>Ingresar</h1>
     <p class="sub">Ingresa tu RUT y teléfono para identificarte.</p>
     <label for="actRut">RUT</label>
     <input id="actRut" placeholder="12.345.678-9" maxlength="12"/>
@@ -225,14 +225,14 @@
   <!-- Pantalla: elegir cuenta destino cuando hay más de una -->
   <div id="screenElegir" class="card" style="display:none">
     <h1>Elige tu cuenta destino</h1>
-    <p class="sub">Encontramos más de una cuenta destino con esos datos. ¿Cuál quieres usar?</p>
+    <p class="sub">Encontramos más de una cuenta destino. ¿Cuál quieres usar?</p>
     <div class="cuenta-destino-list" id="cuentaDestinoList"></div>
     <a class="link-back" id="backFromElegir">← Volver</a>
   </div>
 
   <!-- Pantalla: crear usuario -->
   <div id="screenCrear" class="card" style="display:none">
-    <h1>Crear usuario</h1>
+    <h1 id="screenCrearTitulo">Crear usuario</h1>
     <label for="id">Nombre de tu cuenta destino</label>
     <input id="id" placeholder="ej: JuanBCI"
            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
@@ -358,13 +358,25 @@
                      || window.navigator.standalone === true;
   const urlParams    = new URLSearchParams(location.search);
   const fromWelcome  = urlParams.get('from') === 'welcome';
+  const accion       = urlParams.get('accion');
 
   if(!isStandalone && !fromWelcome){
     window.location.replace('./welcome.html');
   } else {
     const savedId = localStorage.getItem(STORAGE_KEY);
-    if(savedId){ window.location.replace('./app.html'); }
-    else { show('screenOpciones'); }
+    if(savedId && accion !== 'nueva_cuenta'){
+      // Ya logueado y no viene a crear → directo al QR
+      window.location.replace('./app.html');
+    } else if(accion === 'nueva_cuenta'){
+      // Viene desde app.html a crear nueva cuenta destino
+      show('screenCrear');
+      document.getElementById('screenCrearTitulo').textContent = 'Nueva cuenta destino';
+      document.getElementById('backFromCrear').addEventListener('click',()=>{
+        window.location.replace('./app.html');
+      }, { once: true });
+    } else {
+      show('screenOpciones');
+    }
   }
 
   function val(id){ return (document.getElementById(id).value||'').trim(); }
@@ -419,9 +431,12 @@
   document.getElementById('btnIrActivar').addEventListener('click',()=>{ hide('screenOpciones'); show('screenActivar'); });
   document.getElementById('backFromActivar').addEventListener('click',()=>{ hide('screenActivar'); show('screenOpciones'); });
   document.getElementById('backFromElegir').addEventListener('click',()=>{ hide('screenElegir'); show('screenActivar'); });
-  document.getElementById('backFromCrear').addEventListener('click',()=>{ hide('screenCrear'); show('screenOpciones'); });
+  // backFromCrear se registra condicionalmente arriba para nueva_cuenta; si no, vuelve a opciones
+  if(accion !== 'nueva_cuenta'){
+    document.getElementById('backFromCrear').addEventListener('click',()=>{ hide('screenCrear'); show('screenOpciones'); });
+  }
 
-  /* ── Identificar usuario ── */
+  /* ── Identificar usuario → directo al QR ── */
   const actRutInput = document.getElementById('actRut');
   const actTelInput = document.getElementById('actTel');
 
@@ -460,9 +475,11 @@
       if(matches.length===0){
         errGen.classList.add('show'); this.textContent='Continuar'; this.disabled=false;
       } else if(matches.length===1){
+        // Una sola cuenta destino → directo al QR
         localStorage.setItem(STORAGE_KEY, matches[0][0]);
         window.location.replace('./app.html');
       } else {
+        // Múltiples cuentas destino → elegir
         const list=document.getElementById('cuentaDestinoList');
         list.innerHTML='';
         matches.forEach(([id,d])=>{
@@ -522,7 +539,7 @@
     document.getElementById('err-tel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
-  /* ── Guardar usuario nuevo ── */
+  /* ── Guardar ── */
   document.getElementById('save').addEventListener('click', async () => {
     const msgErr=document.getElementById('msg-err');
     msgErr.innerHTML='';
@@ -560,7 +577,6 @@
       document.getElementById('resNombre').textContent=clean(payload.nombre);
       document.getElementById('waitBox').style.display='flex';
       document.getElementById('msgQRError').style.display='none';
-      document.getElementById('waitSub').textContent='Puede tardar hasta un minuto';
       hide('screenCrear'); show('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
       iniciarPolling(payload.id);
@@ -571,7 +587,6 @@
   document.getElementById('btnReintentar').addEventListener('click',()=>{
     document.getElementById('waitBox').style.display='flex';
     document.getElementById('msgQRError').style.display='none';
-    document.getElementById('waitSub').textContent='Puede tardar hasta un minuto';
     const id=localStorage.getItem(STORAGE_KEY);
     if(id) iniciarPolling(id);
   });
