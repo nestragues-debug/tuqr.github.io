@@ -1,7 +1,7 @@
 {
   "name": "TuQR",
   "short_name": "TuQR",
-  "description": "Muestra tu QR de transferencia",
+  "description": "Genera tu QR de cobro",
   "start_url": "./admin.html",
   "display": "standalone",
   "background_color": "#f2f3f5",
