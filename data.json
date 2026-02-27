@@ -192,5 +192,14 @@
     "numeroCuenta": "588555",
     "correo": "nestragues@gmail.com",
     "telefono": "982897919"
+  },
+  "segundos": {
+    "banco": "Banco Itaú",
+    "rut": "13.268.177-5",
+    "nombre": "Juan Xx",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "54545484",
+    "correo": "nestragues@gmail.com",
+    "telefono": "982897919"
   }
 }
