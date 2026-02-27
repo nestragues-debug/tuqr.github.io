@@ -3,6 +3,9 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate"/>
+<meta http-equiv="Pragma" content="no-cache"/>
+<meta http-equiv="Expires" content="0"/>
 <meta name="theme-color" content="#ff7a18"/>
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
@@ -54,26 +57,19 @@
     content:""; position:absolute; top:0; left:0; right:0; height:8px;
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
-
-  /* Sección */
   .section-label{
     font-size:11px; font-weight:800; letter-spacing:.08em;
     text-transform:uppercase; color:var(--muted);
     padding:0 2px;
   }
   .section-label.new{ color:var(--primary); }
-
-  /* Bloque destacado — usuario nuevo */
   .block-new{
     background:rgba(255,122,24,.06);
     border:1.5px solid rgba(255,122,24,.2);
     border-radius:14px; padding:18px 16px;
     display:flex; flex-direction:column; gap:14px;
   }
-  .block-title{
-    font-size:17px; font-weight:800; color:var(--text);
-  }
-
+  .block-title{ font-size:17px; font-weight:800; color:var(--text); }
   .steps{ display:flex; flex-direction:column; gap:10px; }
   .step{
     display:flex; align-items:center; gap:12px;
@@ -88,20 +84,14 @@
   }
   .step-text{ font-size:14px; font-weight:600; color:var(--text); line-height:1.4; }
   .step-text span{ color:var(--primary); font-weight:800; }
-
-  /* Bloque — ya instalada */
   .block-existing{
     background:#f7f7f7;
     border:1.5px solid var(--border);
     border-radius:14px; padding:18px 16px;
     display:flex; flex-direction:column; gap:10px;
   }
-  .existing-text{
-    font-size:15px; font-weight:700; color:var(--text); line-height:1.5;
-  }
+  .existing-text{ font-size:15px; font-weight:700; color:var(--text); line-height:1.5; }
   .existing-text span{ color:var(--primary); }
-
-  /* Botón */
   .cta{
     width:100%; padding:14px; font-size:16px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
@@ -111,7 +101,6 @@
     text-decoration:none; display:block; text-align:center;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-
   .cta-outline{
     width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
     border:2px solid var(--primary); border-radius:12px; cursor:pointer;
@@ -121,7 +110,6 @@
     text-decoration:none; display:block; text-align:center;
   }
   .cta-outline:active{ transform:translateY(1px); }
-
   .safari-warning{
     font-size:13px; color:var(--muted); text-align:center;
     background:#fff8f0; border:1px solid rgba(255,122,24,.2);
@@ -161,7 +149,6 @@
     renderAndroid();
   });
 
-  /* ── iOS Safari ── */
   function renderIOS(){
     card.innerHTML = `
       <div class="section-label new">¿No tienes TuQR instalado?</div>
@@ -192,7 +179,6 @@
     `;
   }
 
-  /* ── iOS no Safari ── */
   function renderIOSNoSafari(){
     card.innerHTML = `
       <div class="section-label new">Instala TuQR</div>
@@ -214,50 +200,37 @@
     `;
   }
 
-  /* ── Android ── */
   function renderAndroid(){
-    const hasPrompt = !!deferredPrompt;
     card.innerHTML = `
       <div class="section-label new">¿No tienes TuQR instalado?</div>
-      <div class="block-new">
+      <div class="block-new" id="blockNew">
         <div class="block-title">Instala TuQR</div>
         <button class="cta" id="btnInstall">📲 Instalar TuQR</button>
       </div>
 
       <div class="section-label">¿Ya tienes TuQR instalado?</div>
       <div class="block-existing">
-        <div class="existing-text" id="msgExisting">
+        <div class="existing-text">
           Abre <span>TuQR</span> desde tu listado de aplicaciones.
-        </div>
-      </div>
-
-      <div id="msgInstalado" style="display:none">
-        <div class="block-existing">
-          <div class="existing-text">
-            ✓ TuQR instalado. Ábrelo desde tu <span>listado de aplicaciones</span>.
-          </div>
         </div>
       </div>
     `;
 
     document.getElementById('btnInstall').addEventListener('click', async () => {
-      const btn = document.getElementById('btnInstall');
+      const blockNew = document.getElementById('blockNew');
       if(deferredPrompt){
         deferredPrompt.prompt();
         const { outcome } = await deferredPrompt.userChoice;
         deferredPrompt = null;
-        btn.style.display = 'none';
         if(outcome === 'accepted'){
-          btn.closest('.block-new').innerHTML = `
+          blockNew.innerHTML = `
             <div class="existing-text" style="color:#0a7">
-              ✓ <span style="color:#0a7">TuQR instalado.</span> Ábrelo desde tu listado de aplicaciones.
+              ✓ TuQR instalado. Ábrelo desde tu <span style="color:#0a7">listado de aplicaciones</span>.
             </div>
           `;
         }
       } else {
-        // Ya instalada
-        btn.style.display = 'none';
-        btn.closest('.block-new').innerHTML = `
+        blockNew.innerHTML = `
           <div class="existing-text">
             Abre <span>TuQR</span> desde tu listado de aplicaciones.
           </div>
@@ -266,7 +239,6 @@
     });
   }
 
-  /* ── Desktop ── */
   function renderDesktop(){
     card.innerHTML = `
       <div class="section-label new">TuQR</div>
@@ -278,7 +250,6 @@
     `;
   }
 
-  /* ── Render inicial ── */
   if(isIOS && isSafari)                    renderIOS();
   else if(isIOS && !isSafari)              renderIOSNoSafari();
   else if(isAndroid||isSamsung||isFirefox) renderAndroid();
