@@ -96,10 +96,17 @@
   .cta-outline:active{ transform:translateY(1px); }
   .cta-outline:hover{ background:rgba(255,122,24,.07); }
 
-  .safari-warning{
-    font-size:12px; color:var(--muted); text-align:center;
+  .info-box{
+    width:100%; font-size:13px; color:var(--muted); text-align:center;
     background:#fff8f0; border:1px solid rgba(255,122,24,.2);
-    border-radius:10px; padding:10px 14px; line-height:1.5; width:100%;
+    border-radius:10px; padding:12px 14px; line-height:1.6;
+  }
+  .info-box span{ color:var(--primary); font-weight:800; }
+
+  .safari-warning{
+    width:100%; font-size:13px; color:var(--muted); text-align:center;
+    background:#f7f7f7; border:1px solid var(--border);
+    border-radius:10px; padding:12px 14px; line-height:1.6;
   }
   .safari-warning span{ color:var(--primary); font-weight:700; }
 </style>
@@ -113,20 +120,21 @@
 <div class="card" id="card"></div>
 
 <script>
-  const PWA_URL  = './admin.html';
-  const ua       = navigator.userAgent || '';
-  const isIOS    = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
-  const isSafari = isIOS && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua);
+  const PWA_URL = './admin.html?from=welcome';
+  const ua        = navigator.userAgent || '';
+  const isIOS     = /iPad|iPhone|iPod/.test(ua) || (navigator.platform==='MacIntel' && navigator.maxTouchPoints>1);
+  const isSafari  = isIOS && /Safari/.test(ua) && !/CriOS|FxiOS|OPiOS/.test(ua);
   const isSamsung = /SamsungBrowser/.test(ua);
   const isFirefox = /Firefox/.test(ua) && !/Seamonkey/.test(ua);
+  const isAndroid = /Android/.test(ua);
   const isStandalone = window.matchMedia('(display-mode:standalone)').matches
                      || window.navigator.standalone === true;
   const card = document.getElementById('card');
   let deferredPrompt = null;
 
-  /* Si ya está instalada como PWA, ir directo */
+  /* Si ya está en modo standalone redirigir directo */
   if(isStandalone){
-    window.location.replace(PWA_URL);
+    window.location.replace('./admin.html');
   }
 
   window.addEventListener('beforeinstallprompt', e => {
@@ -135,6 +143,7 @@
     renderAndroid(true);
   });
 
+  /* ── iOS Safari ── */
   function renderIOS(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR en tu iPhone</div>
@@ -150,25 +159,29 @@
         </div>
         <div class="step">
           <div class="step-num">3</div>
-          <div class="step-text">Toca <span>"Agregar"</span> — listo, TuQR queda en tu pantalla</div>
+          <div class="step-text">Toca <span>"Agregar"</span> y abre <span>TuQR</span> desde tu pantalla de inicio</div>
         </div>
       </div>
-      <a class="cta-outline" href="${PWA_URL}">Ya la instalé — Abrir TuQR →</a>
+      <div class="info-box">
+        Una vez instalada, abre <span>TuQR</span> desde tu pantalla de inicio.<br>No desde Safari.
+      </div>
     `;
   }
 
+  /* ── iOS pero no Safari ── */
   function renderIOSNoSafari(){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
       <div class="card-sub">En iPhone, TuQR solo se puede instalar desde Safari.</div>
       <div class="safari-warning">
-        Copia este link y ábrelo en <span>Safari</span> para instalar:<br><br>
+        Abre este link en <span>Safari</span> para poder instalar TuQR:<br><br>
         <span>tuqrapp.github.io/tuqr.github.io/welcome.html</span>
       </div>
       <a class="cta-outline" href="${PWA_URL}">Continuar sin instalar →</a>
     `;
   }
 
+  /* ── Android / otros ── */
   function renderAndroid(hasPrompt){
     card.innerHTML = `
       <div class="card-title">Instala TuQR</div>
@@ -203,13 +216,14 @@
           card.innerHTML = `
             <div class="card-title">✓ ¡Instalado!</div>
             <div class="card-sub">TuQR fue instalado. Ábrelo desde tu pantalla de inicio.</div>
-            <a class="cta" href="${PWA_URL}">Abrir TuQR →</a>
+            <div class="info-box">Busca el ícono de <span>TuQR</span> en tu pantalla de inicio y ábrelo desde ahí.</div>
           `;
         }
       });
     }
   }
 
+  /* ── Desktop ── */
   function renderDesktop(){
     card.innerHTML = `
       <div class="card-title">TuQR</div>
@@ -218,9 +232,10 @@
     `;
   }
 
+  /* ── Render inicial ── */
   if(isIOS && isSafari)        renderIOS();
   else if(isIOS && !isSafari)  renderIOSNoSafari();
-  else if(/Android/.test(ua) || isSamsung || isFirefox) renderAndroid(false);
+  else if(isAndroid||isSamsung||isFirefox) renderAndroid(false);
   else                         renderDesktop();
 </script>
 </body>
