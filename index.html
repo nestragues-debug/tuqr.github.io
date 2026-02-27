@@ -122,9 +122,10 @@
 
       <div id="fields" class="fields" style="display:none;">
         <button id="copyNombre" class="field-btn" disabled>Nombre</button>
-        <button id="copyRut"    class="field-btn" disabled>Rut</button>
+        <button id="copyRut"    class="field-btn" disabled>RUT</button>
         <button id="copyBanco"  class="field-btn" disabled>Banco</button>
-        <button id="copyNumero" class="field-btn" disabled>Nº de cuenta</button>
+        <button id="copyTipo"   class="field-btn" disabled>Tipo de cuenta</button>
+        <button id="copyNumero" class="field-btn" disabled>N° de cuenta</button>
         <button id="copyCorreo" class="field-btn" disabled>Correo</button>
       </div>
 
@@ -147,6 +148,7 @@ const fieldsWrap= document.getElementById('fields');
 const btnNombre = document.getElementById('copyNombre');
 const btnRut    = document.getElementById('copyRut');
 const btnBanco  = document.getElementById('copyBanco');
+const btnTipo   = document.getElementById('copyTipo');
 const btnNumero = document.getElementById('copyNumero');
 const btnCorreo = document.getElementById('copyCorreo');
 
@@ -172,10 +174,10 @@ function buildText(d){
 
   const lines = [
     `Nombre: ${nombre}`,
-    `Rut: ${rut}`,
+    `RUT: ${rut}`,
     `Banco: ${banco}`,
     `Tipo de cuenta: ${tipo}`,
-    `Número de cuenta: ${numero}`
+    `N° de cuenta: ${numero}`
   ];
   if (correo) lines.push(`Correo: ${correo}`);
 
@@ -281,6 +283,7 @@ async function init(){
       [btnNombre, () => cachedFields.nombre],
       [btnRut,    () => cachedFields.rut],
       [btnBanco,  () => cachedFields.banco],
+      [btnTipo,   () => cachedFields.tipo],
       [btnNumero, () => cachedFields.numero],
       [btnCorreo, () => cachedFields.correo],
     ].forEach(([el, getVal]) => {
