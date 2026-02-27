@@ -228,5 +228,14 @@
     "numeroCuenta": "12131",
     "correo": "nestragues@gmail.com",
     "telefono": "999999999"
+  },
+  "Nueva!!": {
+    "banco": "Banco Falabella",
+    "rut": "24.001.985-K",
+    "nombre": "matilde blanco leiva",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "68876",
+    "correo": "nestragues@gmail.com",
+    "telefono": "999999999"
   }
 }
