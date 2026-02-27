@@ -7,10 +7,10 @@
 <meta name="mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-capable" content="yes"/>
 <meta name="apple-mobile-web-app-status-bar-style" content="default"/>
-<meta name="apple-mobile-web-app-title" content="TQR"/>
+<meta name="apple-mobile-web-app-title" content="TuQR"/>
 <link rel="manifest" href="./manifest.json"/>
-<link rel="apple-touch-icon" href="./TuQRLogo.png"/>
-<title>TQR</title>
+<link rel="apple-touch-icon" href="./PWA/LogoQ_transparent.png"/>
+<title>TuQR</title>
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -92,7 +92,6 @@
     font-size:12px; color:var(--muted); text-align:center; line-height:1.4;
   }
 
-  /* Setup primer uso */
   #setup{
     width:100%; max-width:360px;
     display:none; flex-direction:column; align-items:center; gap:16px;
@@ -126,10 +125,9 @@
 </head>
 <body>
 
-<!-- Vista principal: QR -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
   <div class="brand">
-    <img src="./TuQRLogo.png" alt="TQR"/>
+    <img src="./TuQRLogo.png" alt="TuQR"/>
   </div>
   <div class="card">
     <div class="comercio-nombre" id="nombreEl">Cargando…</div>
@@ -141,13 +139,12 @@
   </div>
 </div>
 
-<!-- Primer uso: activación -->
 <div id="setup">
   <div class="brand">
-    <img src="./TuQRLogo.png" alt="TQR"/>
+    <img src="./TuQRLogo.png" alt="TuQR"/>
   </div>
   <div class="card">
-    <div class="setup-title">Activa tu TQR</div>
+    <div class="setup-title">Activa tu TuQR</div>
     <div class="setup-sub">Ingresa el usuario que te asignaron al crear tu cuenta.</div>
     <div style="width:100%">
       <input id="setupId" placeholder="Tu usuario (ej: JuanLopez)"
@@ -165,12 +162,10 @@
   const DATA_URL    = BASE_URL + 'data.json';
   const STORAGE_KEY = 'tuqr_id';
 
-  /* ── Service Worker ── */
   if('serviceWorker' in navigator){
     navigator.serviceWorker.register('./sw.js').catch(()=>{});
   }
 
-  /* ── Helpers ── */
   function clean(s){
     return String(s??'').normalize('NFC')
       .replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim();
@@ -194,16 +189,14 @@
 
   async function mostrarApp(id){
     try{
-      const res = await fetch(DATA_URL + '?ts=' + Date.now(), { cache:'no-store' });
+      const res = await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       if(!res.ok) throw new Error('fetch');
       const all = await res.json();
       const d   = all[id];
       if(!d) return false;
-
       document.getElementById('nombreEl').textContent = clean(d.nombre);
-      document.title = 'TQR — ' + clean(d.nombre);
-      generarQR(BASE_URL + '?id=' + encodeURIComponent(id));
-
+      document.title = 'TuQR — ' + clean(d.nombre);
+      generarQR(BASE_URL+'?id='+encodeURIComponent(id));
       document.getElementById('main').style.display = 'flex';
       return true;
     }catch(e){
@@ -211,31 +204,24 @@
     }
   }
 
-  /* ── Init ── */
   async function init(){
     const params  = new URLSearchParams(location.search);
-    const urlId   = (params.get('id') || '').trim();
+    const urlId   = (params.get('id')||'').trim();
     const savedId = localStorage.getItem(STORAGE_KEY);
     const id      = urlId || savedId;
-
     if(id){
       const ok = await mostrarApp(id);
-      if(ok){
-        localStorage.setItem(STORAGE_KEY, id);
-        return;
-      }
+      if(ok){ localStorage.setItem(STORAGE_KEY, id); return; }
     }
-    // Sin id válido → pantalla de activación
     document.getElementById('setup').style.display = 'flex';
   }
 
-  /* ── Activación primer uso ── */
   const setupInput = document.getElementById('setupId');
 
   setupInput.addEventListener('input', function(){
-    const ok = this.value.length === 0 || !/\s/.test(this.value);
-    this.classList.toggle('invalid', !ok && this.value.length > 0);
-    document.getElementById('err-setup').classList.toggle('show', !ok && this.value.length > 0);
+    const ok = this.value.length===0 || !/\s/.test(this.value);
+    this.classList.toggle('invalid', !ok && this.value.length>0);
+    document.getElementById('err-setup').classList.toggle('show', !ok && this.value.length>0);
     document.getElementById('err-notfound').classList.remove('show');
   });
 
@@ -248,7 +234,6 @@
     }
     this.textContent = 'Verificando…';
     this.disabled    = true;
-
     const ok = await mostrarApp(id);
     if(ok){
       localStorage.setItem(STORAGE_KEY, id);
