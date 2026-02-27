@@ -1,7 +1,8 @@
-const CACHE = 'tuqr-v1';
+const CACHE = 'tuqr-v2';
 const PRECACHE = [
   './admin.html',
   './app.html',
+  './welcome.html',
   './TuQRLogo.png',
   './LogoQ_transparent.png',
   'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
