@@ -101,6 +101,16 @@
   .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
   .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
 
+  /* Botón cerrar sesión */
+  .btn-logout{
+    width:100%; padding:11px; font-size:13px; font-weight:700; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.10); border-radius:12px; cursor:pointer;
+    color:var(--muted); background:transparent;
+    -webkit-tap-highlight-color:transparent;
+    transition:border-color .12s, color .12s;
+  }
+  .btn-logout:active{ border-color:#e00; color:#c00; }
+
   /* Reactivar sesión */
   #screenReactivar{
     width:100%; max-width:360px;
@@ -110,10 +120,7 @@
   .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
   .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
 
-  .r-label{
-    font-weight:700; font-size:13px; color:var(--muted);
-    margin-bottom:5px; display:block;
-  }
+  .r-label{ font-weight:700; font-size:13px; color:var(--muted); margin-bottom:5px; display:block; }
   .r-input{
     width:100%; padding:12px; font-size:15px; font-family:inherit;
     border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
@@ -135,6 +142,31 @@
 
   .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; margin-top:4px; }
   .field-err.show{ display:block; }
+
+  /* Lista de usuarios para elegir */
+  #screenElegir{
+    width:100%; max-width:360px;
+    display:none; flex-direction:column; align-items:center; gap:16px;
+  }
+  #screenElegir .card{ gap:14px; width:100%; }
+  .user-list{ display:flex; flex-direction:column; gap:10px; width:100%; }
+  .user-item{
+    padding:14px 16px; border-radius:14px; cursor:pointer;
+    border:2px solid var(--border); background:#fff;
+    display:flex; flex-direction:column; gap:2px;
+    -webkit-tap-highlight-color:transparent;
+    transition:border-color .12s, background .12s;
+  }
+  .user-item:active{ background:#f7f7f7; }
+  .user-item:hover{ border-color:var(--primary); background:rgba(255,122,24,.04); }
+  .user-item-nombre{ font-size:15px; font-weight:800; color:var(--text); }
+  .user-item-id{ font-size:12px; font-weight:600; color:var(--muted); }
+
+  .link-back{
+    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;
+    text-align:center; display:block; margin-top:4px;
+  }
+  .link-back:active{ color:var(--primary); }
 
   .cta{
     width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
@@ -161,6 +193,7 @@
       <div class="link-label" id="copyLabel">Copiar link</div>
       <div class="copy-ok" id="copyOk">✓ Copiado</div>
     </div>
+    <button class="btn-logout" id="btnLogout">Cerrar sesión</button>
   </div>
 </div>
 
@@ -168,15 +201,13 @@
 <div id="screenReactivar">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
-    <div class="react-title">Vuelve a activar TuQR</div>
-    <div class="react-sub">Ingresa tu RUT y teléfono para recuperar tu cuenta.</div>
-
+    <div class="react-title">Activa TuQR</div>
+    <div class="react-sub">Ingresa tu RUT y teléfono para acceder a tu cuenta.</div>
     <div style="width:100%">
       <label class="r-label">RUT</label>
       <input class="r-input" id="reactRut" placeholder="12.345.678-9" maxlength="12"/>
       <div class="field-err" id="err-reactRut">RUT inválido</div>
     </div>
-
     <div style="width:100%">
       <label class="r-label">Teléfono</label>
       <div class="phone-wrap">
@@ -185,9 +216,19 @@
       </div>
       <div class="field-err" id="err-reactTel">Número inválido</div>
     </div>
-
     <div class="field-err" id="err-reactGeneral">No encontramos una cuenta con esos datos.</div>
     <button class="cta" id="btnReactivar">Activar</button>
+  </div>
+</div>
+
+<!-- Elegir usuario cuando hay más de uno -->
+<div id="screenElegir">
+  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
+  <div class="card">
+    <div class="react-title">Elige tu usuario</div>
+    <div class="react-sub">Encontramos más de una cuenta con esos datos. ¿Cuál quieres activar?</div>
+    <div class="user-list" id="userList"></div>
+    <a class="link-back" id="backFromElegir">← Volver</a>
   </div>
 </div>
 
@@ -249,9 +290,22 @@
       generarQR(url);
       document.getElementById('linkText').textContent=url;
       document.getElementById('main').style.display='flex';
+      document.getElementById('screenReactivar').style.display='none';
+      document.getElementById('screenElegir').style.display='none';
       return true;
     }catch(e){ return false; }
   }
+
+  /* ── Cerrar sesión ── */
+  document.getElementById('btnLogout').addEventListener('click', ()=>{
+    if(confirm('¿Cerrar sesión?')){
+      localStorage.removeItem(STORAGE_KEY);
+      document.getElementById('main').style.display='none';
+      document.getElementById('screenReactivar').style.display='flex';
+      document.getElementById('reactRut').value='';
+      document.getElementById('reactTel').value='';
+    }
+  });
 
   /* ── Copiar link ── */
   document.getElementById('linkBox').addEventListener('click', function(){
@@ -309,6 +363,11 @@
     document.getElementById('err-reactTel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
+  document.getElementById('backFromElegir').addEventListener('click',()=>{
+    document.getElementById('screenElegir').style.display='none';
+    document.getElementById('screenReactivar').style.display='flex';
+  });
+
   document.getElementById('btnReactivar').addEventListener('click', async function(){
     const rutVal=reactRutInput.value.trim();
     const telVal=reactTelInput.value.replace(/\D/g,'');
@@ -330,16 +389,38 @@
       const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       const all=await res.json();
       const rutNorm=normalizarRut(rutVal);
-      const match=Object.entries(all).find(([id,d])=>
+
+      const matches=Object.entries(all).filter(([id,d])=>
         normalizarRut(d.rut||'')===rutNorm &&
         (d.telefono||'').replace(/\D/g,'')===telVal
       );
-      if(match){
-        localStorage.setItem(STORAGE_KEY,match[0]);
-        await mostrarApp(match[0]);
-        document.getElementById('screenReactivar').style.display='none';
-      } else {
+
+      if(matches.length===0){
         errGen.classList.add('show');
+        this.textContent='Activar'; this.disabled=false;
+      } else if(matches.length===1){
+        localStorage.setItem(STORAGE_KEY,matches[0][0]);
+        await mostrarApp(matches[0][0]);
+        this.textContent='Activar'; this.disabled=false;
+      } else {
+        // Más de un usuario → mostrar lista
+        const list=document.getElementById('userList');
+        list.innerHTML='';
+        matches.forEach(([id,d])=>{
+          const item=document.createElement('div');
+          item.className='user-item';
+          item.innerHTML=`
+            <div class="user-item-nombre">${clean(d.nombre)}</div>
+            <div class="user-item-id">@${id} · ${clean(d.banco)}</div>
+          `;
+          item.addEventListener('click', async ()=>{
+            localStorage.setItem(STORAGE_KEY,id);
+            await mostrarApp(id);
+          });
+          list.appendChild(item);
+        });
+        document.getElementById('screenReactivar').style.display='none';
+        document.getElementById('screenElegir').style.display='flex';
         this.textContent='Activar'; this.disabled=false;
       }
     }catch(e){
