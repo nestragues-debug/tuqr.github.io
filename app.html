@@ -101,32 +101,40 @@
   .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
   .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
 
-  /* Pantalla reactivar (si pierde sesión) */
+  /* Reactivar sesión */
   #screenReactivar{
     width:100%; max-width:360px;
     display:none; flex-direction:column; align-items:center; gap:16px;
   }
-  #screenReactivar .card{ gap:14px; }
-  #screenReactivar input{
+  #screenReactivar .card{ gap:14px; width:100%; }
+  .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
+  .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
+
+  .r-label{
+    font-weight:700; font-size:13px; color:var(--muted);
+    margin-bottom:5px; display:block;
+  }
+  .r-input{
     width:100%; padding:12px; font-size:15px; font-family:inherit;
     border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
     outline:none; background:#fff;
     transition:border-color .15s, box-shadow .15s;
+    -webkit-appearance:none;
   }
-  #screenReactivar input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
-  #screenReactivar input.invalid{ border-color:#e00; background:#fff8f8; }
-  #screenReactivar input.valid{ border-color:#0a7; background:#f5fbf8; }
-  .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
-  .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
-  .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; }
-  .field-err.show{ display:block; }
+  .r-input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
+  .r-input.invalid{ border-color:#e00; background:#fff8f8; }
+  .r-input.valid{ border-color:#0a7; background:#f5fbf8; }
+
   .phone-wrap{ display:flex; gap:8px; width:100%; }
   .phone-prefix{
     width:72px; flex-shrink:0; padding:11px 10px; font-size:14px; font-family:inherit;
     border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
     background:#f7f7f7; color:var(--muted); text-align:center; outline:none;
   }
-  .phone-wrap input{ flex:1; }
+  .phone-wrap .r-input{ flex:1; }
+
+  .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; margin-top:4px; }
+  .field-err.show{ display:block; }
 
   .cta{
     width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
@@ -140,7 +148,7 @@
 </head>
 <body>
 
-<!-- Vista principal: QR -->
+<!-- Vista QR -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
@@ -156,7 +164,7 @@
   </div>
 </div>
 
-<!-- Reactivar sesión con RUT + teléfono -->
+<!-- Reactivar sesión -->
 <div id="screenReactivar">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
@@ -164,21 +172,21 @@
     <div class="react-sub">Ingresa tu RUT y teléfono para recuperar tu cuenta.</div>
 
     <div style="width:100%">
-      <label style="font-weight:700;font-size:13px;color:var(--muted);margin-bottom:5px;display:block">RUT</label>
-      <input id="reactRut" placeholder="12.345.678-9" maxlength="12"/>
+      <label class="r-label">RUT</label>
+      <input class="r-input" id="reactRut" placeholder="12.345.678-9" maxlength="12"/>
       <div class="field-err" id="err-reactRut">RUT inválido</div>
     </div>
 
     <div style="width:100%">
-      <label style="font-weight:700;font-size:13px;color:var(--muted);margin-bottom:5px;display:block">Teléfono</label>
+      <label class="r-label">Teléfono</label>
       <div class="phone-wrap">
         <input class="phone-prefix" value="+56" readonly/>
-        <input id="reactTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
+        <input class="r-input" id="reactTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
       </div>
       <div class="field-err" id="err-reactTel">Número inválido</div>
     </div>
 
-    <div id="err-reactGeneral" class="field-err">No encontramos una cuenta con esos datos.</div>
+    <div class="field-err" id="err-reactGeneral">No encontramos una cuenta con esos datos.</div>
     <button class="cta" id="btnReactivar">Activar</button>
   </div>
 </div>
@@ -275,14 +283,12 @@
     if(savedId){
       const ok=await mostrarApp(savedId);
       if(ok) return;
-      // Sesión guardada pero no encontrado en data.json — limpiar y pedir reactivación
       localStorage.removeItem(STORAGE_KEY);
     }
-    // Sin sesión — mostrar pantalla de reactivación
     document.getElementById('screenReactivar').style.display='flex';
   }
 
-  /* ── Reactivar con RUT + teléfono ── */
+  /* ── Reactivar ── */
   const reactRutInput=document.getElementById('reactRut');
   const reactTelInput=document.getElementById('reactTel');
 
