@@ -70,5 +70,14 @@
     "numeroCuenta": "545854640",
     "correo": "angelina@nn.cl",
     "telefono": "982897919"
+  },
+  "23182071K_BancoFalabella_5845846648": {
+    "banco": "Banco Falabella",
+    "rut": "23.182.071-k",
+    "nombre": "Magdalena Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "5845846648",
+    "correo": "nestragues@gmail.com",
+    "telefono": "982897919"
   }
 }
