@@ -52,5 +52,14 @@
     "numeroCuenta": "2218815401",
     "correo": "nicolas.estragues@klap.cl",
     "telefono": "982897919"
+  },
+  "AngeBCI": {
+    "banco": "Banco Santander",
+    "rut": "15.720.297-9",
+    "nombre": "Angelina Gherardelli",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "2810854604",
+    "correo": "angelina@nn.cl",
+    "telefono": "982897919"
   }
 }
