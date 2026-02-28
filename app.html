@@ -34,14 +34,14 @@
   .card{
     width:100%; max-width:360px; background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius); padding:24px 20px 28px; box-shadow:var(--shadow);
-    position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:18px;
+    position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:16px;
   }
   .card::before{
     content:""; position:absolute; top:0; left:0; right:0; height:8px;
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
   .comercio-nombre{ font-size:18px; font-weight:800; text-align:center; margin-top:4px; }
-  .banco-nombre{ font-size:13px; font-weight:600; color:var(--muted); text-align:center; margin-top:-10px; }
+  .banco-nombre{ font-size:13px; font-weight:600; color:var(--muted); text-align:center; margin-top:-8px; }
   .qr-box{
     background:#fff; border-radius:16px; padding:16px;
     box-shadow:0 4px 16px rgba(0,0,0,.07); display:flex; align-items:center; justify-content:center;
@@ -50,7 +50,7 @@
   .badge{
     display:flex; align-items:center; gap:6px; font-weight:700; font-size:12px;
     color:rgba(26,26,26,.85); background:rgba(255,212,0,.18); border:1px solid rgba(255,212,0,.32);
-    padding:6px 12px; border-radius:999px; margin-top:8px;
+    padding:6px 12px; border-radius:999px;
   }
   .badge .dot{
     width:8px; height:8px; border-radius:999px; background:var(--accent);
@@ -60,14 +60,31 @@
     0%,100%{ box-shadow:0 0 0 3px rgba(255,212,0,.2); }
     50%{ box-shadow:0 0 0 6px rgba(255,212,0,.05); }
   }
-  .link-box{
-    width:100%; background:#f7f7f7; border:1px solid var(--border); border-radius:12px;
-    padding:10px 12px; display:flex; align-items:center; gap:10px; cursor:pointer;
+
+  /* Recuadro de datos copiables en vista QR */
+  .datos-mini{
+    width:100%; background:#f7f7f7; border:1px solid rgba(0,0,0,.10);
+    border-radius:12px; padding:10px 12px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; transition:background .1s;
+    display:flex; flex-direction:column; gap:6px;
   }
-  .link-box:active{ background:#efefef; }
-  .link-text{ flex:1; font-size:11px; font-weight:600; color:var(--muted); word-break:break-all; line-height:1.4; }
-  .link-label{ font-size:11px; font-weight:700; color:var(--primary); white-space:nowrap; }
-  .copy-ok{ font-size:11px; font-weight:700; color:#0a7; display:none; white-space:nowrap; }
+  .datos-mini:active{ background:#efefef; }
+  .datos-mini-pre{
+    white-space:pre-wrap; word-break:break-word;
+    font-size:10px; line-height:1.5; font-family:inherit;
+    color:var(--muted); margin:0;
+    user-select:all; -webkit-user-select:all;
+  }
+  .datos-mini-footer{
+    display:flex; align-items:center; justify-content:flex-end; gap:6px;
+  }
+  .datos-mini-label{
+    font-size:10px; font-weight:700; color:var(--primary);
+  }
+  .datos-mini-ok{
+    font-size:10px; font-weight:700; color:#0a7; display:none;
+  }
+
   .btn-cambiar{
     width:100%; padding:13px; font-size:14px; font-weight:800; font-family:inherit;
     border:2px solid var(--primary); border-radius:12px; cursor:pointer;
@@ -88,18 +105,14 @@
     font-size:13px; font-weight:700; color:var(--primary); cursor:pointer;
     text-decoration:underline; background:none; border:none; font-family:inherit;
   }
-  #screenElegirCuenta{
+
+  /* Pantallas secundarias */
+  #screenElegirCuenta, #screenReactivar, #screenElegirReact{
     width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
   }
-  #screenElegirCuenta .card{ gap:14px; width:100%; align-items:stretch; }
-  #screenReactivar{
-    width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
+  #screenElegirCuenta .card, #screenReactivar .card, #screenElegirReact .card{
+    gap:14px; width:100%; align-items:stretch;
   }
-  #screenReactivar .card{ gap:14px; width:100%; }
-  #screenElegirReact{
-    width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
-  }
-  #screenElegirReact .card{ gap:14px; width:100%; }
   .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
   .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
   .r-label{ font-weight:700; font-size:13px; color:var(--muted); margin-bottom:5px; display:block; }
@@ -127,7 +140,6 @@
     -webkit-tap-highlight-color:transparent; transition:border-color .12s, background .12s;
   }
   .cuenta-destino-item:active{ background:#f7f7f7; }
-  .cuenta-destino-item:hover{ border-color:var(--primary); background:rgba(255,122,24,.04); }
   .cuenta-destino-item.activa{ border-color:var(--primary); background:rgba(255,122,24,.04); }
   .cuenta-destino-nombre{ font-size:15px; font-weight:800; color:var(--text); }
   .cuenta-destino-id{ font-size:12px; font-weight:600; color:var(--muted); }
@@ -144,6 +156,8 @@
     transition:transform .06s ease, filter .06s ease;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
+
+  /* Modal */
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
     z-index:1000; align-items:flex-end; justify-content:center;
@@ -153,6 +167,7 @@
     background:#fff; border-radius:24px 24px 0 0; padding:28px 20px 40px;
     width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
     box-shadow:0 -8px 32px rgba(0,0,0,.15); animation:slideUp .25s ease;
+    position:relative;
   }
   @keyframes slideUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
   .modal-handle{ width:40px; height:4px; border-radius:999px; background:#ddd; margin:0 auto 20px; display:block; }
@@ -173,7 +188,7 @@
   input.valid{ border-color:#0a7; background:#f5fbf8; }
   textarea{ resize:vertical; min-height:100px; }
   .char-count{ font-size:11px; color:var(--muted); text-align:right; margin-top:3px; }
-  .err{
+  .err-msg{
     margin-top:12px; font-weight:800; padding:10px 12px; border-radius:12px; font-size:14px;
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
@@ -181,19 +196,24 @@
 </head>
 <body>
 
-<!-- Vista QR -->
+<!-- Vista QR principal -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="comercio-nombre" id="nombreEl">Cargando…</div>
     <div class="banco-nombre" id="bancoEl"></div>
     <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
-    <div class="badge"><span class="dot"></span> Envía este link para habilitar este QR en otro celular</div>
-    <div class="link-box" id="linkBox">
-      <div class="link-text" id="linkText"></div>
-      <div class="link-label" id="copyLabel">Compartir link</div>
-      <div class="copy-ok" id="copyOk">✓ Copiado</div>
+    <div class="badge"><span class="dot"></span> QR activo</div>
+
+    <!-- Recuadro copiable — fuente pequeña, solo referencia -->
+    <div class="datos-mini" id="datosMini" onclick="copiarDatosMini()">
+      <pre class="datos-mini-pre" id="datosPreEl"></pre>
+      <div class="datos-mini-footer">
+        <span class="datos-mini-label" id="datosMiniLabel">Tocar para copiar</span>
+        <span class="datos-mini-ok"   id="datosMiniOk">✓ Copiado</span>
+      </div>
     </div>
+
     <button class="btn-cambiar" id="btnCambiarCuenta">⇄ Cambiar cuenta destino</button>
     <button class="btn-nueva-cuenta" id="btnNuevaCuenta">✨ Crear nueva cuenta destino</button>
     <button class="link-contacto" id="btnContactoApp">Contacto</button>
@@ -233,7 +253,9 @@
     </div>
     <div class="field-err" id="err-reactGeneral">No encontramos un usuario con esos datos.</div>
     <button class="cta" id="btnReactivar">Activar</button>
-    <button class="link-contacto" id="btnContactoReact" style="margin-top:14px">Contacto</button>
+    <a style="font-size:13px;font-weight:700;color:var(--muted);text-align:center;margin-top:8px;cursor:pointer;display:block;"
+       onclick="window.location.replace('./admin.html?from=welcome')">← Crear nuevo usuario</a>
+    <button class="link-contacto" id="btnContactoReact" style="margin-top:6px">Contacto</button>
   </div>
 </div>
 
@@ -250,7 +272,7 @@
 
 <!-- Modal Contacto -->
 <div class="modal-overlay" id="modalContacto">
-  <div class="modal-box" style="position:relative">
+  <div class="modal-box">
     <button class="modal-close" id="btnCerrarModal">✕</button>
     <span class="modal-handle"></span>
     <div class="modal-title">Contacto</div>
@@ -285,12 +307,12 @@
   const BASE_URL    = 'https://tuqrapp.github.io/tuqr.github.io/';
   const DATA_URL    = BASE_URL + 'data.json';
   const STORAGE_KEY = 'tuqr_id';
-  const SHARE_URL   = BASE_URL + 'welcome.html';
 
   if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 
   function clean(s){
-    return String(s??'').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim();
+    return String(s??'').normalize('NFC')
+      .replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim();
   }
   function validarRut(rut){
     const r=rut.replace(/[\.\-\s]/g,'').toUpperCase();
@@ -309,10 +331,15 @@
   function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
   function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
 
+  function formatRutDisplay(raw){
+    const r=raw.replace(/[\.\-\s]/g,'');
+    if(r.length<2) return r;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
+  }
+
   function generarQR(url){
     const canvas=document.getElementById('qrCanvas');
-    const isTablet=window.innerWidth>=768;
-    const size=isTablet ? 300 : Math.min(360, window.innerWidth-80);
+    const size=Math.min(300,window.innerWidth-100);
     canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
     const tmp=document.createElement('div');
     new QRCode(tmp,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
@@ -322,8 +349,67 @@
     },100);
   }
 
-  let allData = {};
-  let usuarioActivo = null;
+  function copyText(text){
+    const payload=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+    if(navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+      return navigator.clipboard.writeText(payload).then(()=>true).catch(()=>{
+        if(window.ClipboardItem){
+          return navigator.clipboard.write([
+            new ClipboardItem({'text/plain':Promise.resolve(new Blob([payload],{type:'text/plain'}))})
+          ]).then(()=>true).catch(()=>legacyCopy(payload));
+        }
+        return legacyCopy(payload);
+      });
+    }
+    return Promise.resolve(legacyCopy(payload));
+  }
+
+  function legacyCopy(text){
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;background:transparent;opacity:0;pointer-events:none;z-index:-1';
+      document.body.appendChild(ta); ta.focus({preventScroll:true}); ta.select(); ta.setSelectionRange(0,ta.value.length);
+      const ok=document.execCommand('copy'); document.body.removeChild(ta);
+      return ok;
+    }catch(_){ return false; }
+  }
+
+  let allData={};
+  let usuarioActivo=null;
+  let cachedDatosText='';
+  let miniOkTimer=null;
+
+  function buildDatosText(d){
+    const nombre=clean(d.nombre);
+    const rutDisplay=formatRutDisplay(clean(d.rut));
+    const banco=clean(d.banco);
+    const tipo=clean(d.tipoCuenta);
+    const numero=clean(d.numeroCuenta);
+    const correo=d.correo?clean(d.correo):'';
+    const lines=[
+      `Nombre: ${nombre}`,
+      `RUT: ${rutDisplay}`,
+      `Banco: ${banco}`,
+      `Tipo de cuenta: ${tipo}`,
+      `N° de cuenta: ${numero}`
+    ];
+    if(correo) lines.push(`Correo: ${correo}`);
+    return lines.join('\n');
+  }
+
+  function copiarDatosMini(){
+    if(!cachedDatosText) return;
+    copyText(cachedDatosText).then(ok=>{
+      if(ok){
+        const label=document.getElementById('datosMiniLabel');
+        const okEl=document.getElementById('datosMiniOk');
+        label.style.display='none'; okEl.style.display='block';
+        if(miniOkTimer) clearTimeout(miniOkTimer);
+        miniOkTimer=setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1800);
+      }
+    });
+  }
 
   async function cargarData(){
     try{
@@ -338,13 +424,14 @@
       await cargarData();
       const d=allData[id];
       if(!d) return false;
-      usuarioActivo={ rut: normalizarRut(d.rut||''), tel: (d.telefono||'').replace(/\D/g,'') };
+      usuarioActivo={rut:normalizarRut(d.rut||''), tel:(d.telefono||'').replace(/\D/g,'')};
       const qrUrl=BASE_URL+'?id='+encodeURIComponent(id);
       document.getElementById('nombreEl').textContent=clean(d.nombre);
       document.getElementById('bancoEl').textContent=clean(d.banco)+' · '+clean(d.tipoCuenta);
       document.title='TuQR — '+clean(d.nombre);
       generarQR(qrUrl);
-      document.getElementById('linkText').textContent=SHARE_URL;
+      cachedDatosText=buildDatosText(d);
+      document.getElementById('datosPreEl').textContent=cachedDatosText;
       document.getElementById('main').style.display='flex';
       document.getElementById('screenReactivar').style.display='none';
       document.getElementById('screenElegirReact').style.display='none';
@@ -361,7 +448,7 @@
     lista.innerHTML='';
     if(usuarioActivo){
       Object.entries(allData)
-        .filter(([id,d])=> normalizarRut(d.rut||'')===usuarioActivo.rut && (d.telefono||'').replace(/\D/g,'')===usuarioActivo.tel)
+        .filter(([id,d])=>normalizarRut(d.rut||'')===usuarioActivo.rut&&(d.telefono||'').replace(/\D/g,'')===usuarioActivo.tel)
         .forEach(([id,d])=>{
           const item=document.createElement('div');
           const esActiva=id===savedId;
@@ -371,10 +458,7 @@
             <div class="cuenta-destino-id">${clean(d.banco)} · ${clean(d.tipoCuenta)}</div>
             ${esActiva?'<div class="cuenta-destino-badge">✓ Activa ahora</div>':''}
           `;
-          item.addEventListener('click',()=>{
-            localStorage.setItem(STORAGE_KEY, id);
-            mostrarApp(id);
-          });
+          item.addEventListener('click',()=>{ localStorage.setItem(STORAGE_KEY,id); mostrarApp(id); });
           lista.appendChild(item);
         });
     }
@@ -382,38 +466,15 @@
     document.getElementById('screenElegirCuenta').style.display='flex';
   }
 
-  document.getElementById('btnCambiarCuenta').addEventListener('click', mostrarElegirCuenta);
+  document.getElementById('btnCambiarCuenta').addEventListener('click',mostrarElegirCuenta);
   document.getElementById('backFromElegirCuenta').addEventListener('click',()=>{
     document.getElementById('screenElegirCuenta').style.display='none';
     document.getElementById('main').style.display='flex';
   });
 
-  function irACrearCuentaDestino(){
-    window.location.replace('./admin.html?accion=nueva_cuenta');
-  }
-  document.getElementById('btnNuevaCuenta').addEventListener('click', irACrearCuentaDestino);
-  document.getElementById('btnNuevaCuentaDesdeListado').addEventListener('click', irACrearCuentaDestino);
-
-  /* ── Copiar link ── */
-  document.getElementById('linkBox').addEventListener('click', function(){
-    const label=document.getElementById('copyLabel');
-    const okEl=document.getElementById('copyOk');
-    const doCopy=()=>{
-      label.style.display='none'; okEl.style.display='block';
-      setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1600);
-    };
-    if(navigator.clipboard&&navigator.clipboard.writeText){
-      navigator.clipboard.writeText(SHARE_URL).then(doCopy).catch(()=>{
-        const ta=document.createElement('textarea');
-        ta.value=SHARE_URL; ta.style.cssText='position:fixed;opacity:0';
-        document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); doCopy();
-      });
-    } else {
-      const ta=document.createElement('textarea');
-      ta.value=SHARE_URL; ta.style.cssText='position:fixed;opacity:0';
-      document.body.appendChild(ta); ta.select(); document.execCommand('copy'); document.body.removeChild(ta); doCopy();
-    }
-  });
+  function irACrearCuentaDestino(){ window.location.replace('./admin.html?accion=nueva_cuenta'); }
+  document.getElementById('btnNuevaCuenta').addEventListener('click',irACrearCuentaDestino);
+  document.getElementById('btnNuevaCuentaDesdeListado').addEventListener('click',irACrearCuentaDestino);
 
   /* ── Init ── */
   async function init(){
@@ -430,21 +491,21 @@
   const reactRutInput=document.getElementById('reactRut');
   const reactTelInput=document.getElementById('reactTel');
 
-  reactRutInput.addEventListener('input', function(){
+  reactRutInput.addEventListener('input',function(){
     const raw=this.value.replace(/[\.\-\s]/g,'');
     if(raw.length>=2) this.value=formatearRut(raw);
     const ok=validarRut(this.value);
-    this.classList.toggle('valid', this.value.length>0&&ok);
-    this.classList.toggle('invalid', this.value.length>0&&!ok);
-    document.getElementById('err-reactRut').classList.toggle('show', this.value.length>0&&!ok);
+    this.classList.toggle('valid',this.value.length>0&&ok);
+    this.classList.toggle('invalid',this.value.length>0&&!ok);
+    document.getElementById('err-reactRut').classList.toggle('show',this.value.length>0&&!ok);
     document.getElementById('err-reactGeneral').classList.remove('show');
   });
-  reactTelInput.addEventListener('input', function(){
+  reactTelInput.addEventListener('input',function(){
     this.value=this.value.replace(/\D/g,'');
     const ok=validarTel(this.value);
-    this.classList.toggle('valid', this.value.length>0&&ok);
-    this.classList.toggle('invalid', this.value.length>0&&!ok);
-    document.getElementById('err-reactTel').classList.toggle('show', this.value.length>0&&!ok);
+    this.classList.toggle('valid',this.value.length>0&&ok);
+    this.classList.toggle('invalid',this.value.length>0&&!ok);
+    document.getElementById('err-reactTel').classList.toggle('show',this.value.length>0&&!ok);
   });
 
   document.getElementById('backFromElegirReact').addEventListener('click',()=>{
@@ -452,19 +513,19 @@
     document.getElementById('screenReactivar').style.display='flex';
   });
 
-  document.getElementById('btnReactivar').addEventListener('click', async function(){
+  document.getElementById('btnReactivar').addEventListener('click',async function(){
     const rutVal=reactRutInput.value.trim();
     const telVal=reactTelInput.value.replace(/\D/g,'');
     const errGen=document.getElementById('err-reactGeneral');
     errGen.classList.remove('show');
-    if(!validarRut(rutVal)){ reactRutInput.classList.add('invalid'); document.getElementById('err-reactRut').classList.add('show'); return; }
-    if(!validarTel(telVal)){ reactTelInput.classList.add('invalid'); document.getElementById('err-reactTel').classList.add('show'); return; }
+    if(!validarRut(rutVal)){reactRutInput.classList.add('invalid');document.getElementById('err-reactRut').classList.add('show');return;}
+    if(!validarTel(telVal)){reactTelInput.classList.add('invalid');document.getElementById('err-reactTel').classList.add('show');return;}
     this.textContent='Verificando…'; this.disabled=true;
     try{
       await cargarData();
       const rutNorm=normalizarRut(rutVal);
       const matches=Object.entries(allData).filter(([id,d])=>
-        normalizarRut(d.rut||'')===rutNorm && (d.telefono||'').replace(/\D/g,'')===telVal
+        normalizarRut(d.rut||'')===rutNorm&&(d.telefono||'').replace(/\D/g,'')===telVal
       );
       if(matches.length===0){
         errGen.classList.add('show'); this.textContent='Activar'; this.disabled=false;
@@ -479,7 +540,7 @@
           const item=document.createElement('div');
           item.className='cuenta-destino-item';
           item.innerHTML=`<div class="cuenta-destino-nombre">${clean(d.nombre)}</div><div class="cuenta-destino-id">${clean(d.banco)} · ${clean(d.tipoCuenta)}</div>`;
-          item.addEventListener('click', async()=>{
+          item.addEventListener('click',async()=>{
             localStorage.setItem(STORAGE_KEY,id);
             await mostrarApp(id);
             document.getElementById('screenElegirReact').style.display='none';
@@ -505,14 +566,14 @@
     document.getElementById('cTipo').value='';
     document.getElementById('btnEnviarContacto').textContent='Enviar';
     document.getElementById('btnEnviarContacto').disabled=false;
-    ['err-cRut','err-cCuentaDestino','err-cTipo','err-cMensaje'].forEach(id=>{ document.getElementById(id).classList.remove('show'); });
+    ['err-cRut','err-cCuentaDestino','err-cTipo','err-cMensaje'].forEach(id=>{document.getElementById(id).classList.remove('show');});
     const savedId=localStorage.getItem(STORAGE_KEY);
     await cargarData();
     const cRutEl=document.getElementById('cRut');
     const cCuentaDestinoEl=document.getElementById('cCuentaDestino');
     cCuentaDestinoEl.innerHTML='<option value="">— Selecciona —</option>';
     cRutEl.value=''; cRutEl.classList.remove('valid','invalid');
-    if(savedId && allData[savedId]){
+    if(savedId&&allData[savedId]){
       const d=allData[savedId];
       cRutEl.value=d.rut||''; cRutEl.classList.add('valid');
       const rutNorm=normalizarRut(d.rut||'');
@@ -528,21 +589,21 @@
   }
 
   function cerrarModal(){ document.getElementById('modalContacto').classList.remove('open'); }
-  document.getElementById('btnCerrarModal').addEventListener('click', cerrarModal);
-  document.getElementById('modalContacto').addEventListener('click', function(e){ if(e.target===this) cerrarModal(); });
+  document.getElementById('btnCerrarModal').addEventListener('click',cerrarModal);
+  document.getElementById('modalContacto').addEventListener('click',function(e){ if(e.target===this) cerrarModal(); });
 
   ['btnContactoApp','btnContactoReact'].forEach(id=>{
     const el=document.getElementById(id);
-    if(el) el.addEventListener('click', abrirModalContacto);
+    if(el) el.addEventListener('click',abrirModalContacto);
   });
 
-  document.getElementById('cRut').addEventListener('input', async function(){
+  document.getElementById('cRut').addEventListener('input',async function(){
     const raw=this.value.replace(/[\.\-\s]/g,'');
     if(raw.length>=2) this.value=formatearRut(raw);
     const ok=validarRut(this.value);
-    this.classList.toggle('valid', this.value.length>0&&ok);
-    this.classList.toggle('invalid', this.value.length>0&&!ok);
-    document.getElementById('err-cRut').classList.toggle('show', this.value.length>0&&!ok);
+    this.classList.toggle('valid',this.value.length>0&&ok);
+    this.classList.toggle('invalid',this.value.length>0&&!ok);
+    document.getElementById('err-cRut').classList.toggle('show',this.value.length>0&&!ok);
     const sel=document.getElementById('cCuentaDestino');
     sel.innerHTML='<option value="">— Selecciona —</option>';
     if(ok){
@@ -558,9 +619,9 @@
     }
   });
 
-  document.getElementById('cMensaje').addEventListener('input', function(){ document.getElementById('charCount').textContent=this.value.length; });
+  document.getElementById('cMensaje').addEventListener('input',function(){ document.getElementById('charCount').textContent=this.value.length; });
 
-  document.getElementById('btnEnviarContacto').addEventListener('click', async function(){
+  document.getElementById('btnEnviarContacto').addEventListener('click',async function(){
     const msgErr=document.getElementById('msg-contacto-err');
     msgErr.innerHTML='';
     let ok=true;
@@ -568,10 +629,10 @@
     const cuentaDestino=document.getElementById('cCuentaDestino').value;
     const tipo=document.getElementById('cTipo').value;
     const mensaje=document.getElementById('cMensaje').value.trim();
-    if(!validarRut(rut)){ document.getElementById('err-cRut').classList.add('show'); ok=false; }
-    if(!cuentaDestino){ document.getElementById('err-cCuentaDestino').classList.add('show'); ok=false; }
-    if(!tipo){ document.getElementById('err-cTipo').classList.add('show'); ok=false; }
-    if(mensaje.length<10){ document.getElementById('err-cMensaje').classList.add('show'); ok=false; }
+    if(!validarRut(rut)){document.getElementById('err-cRut').classList.add('show');ok=false;}
+    if(!cuentaDestino){document.getElementById('err-cCuentaDestino').classList.add('show');ok=false;}
+    if(!tipo){document.getElementById('err-cTipo').classList.add('show');ok=false;}
+    if(mensaje.length<10){document.getElementById('err-cMensaje').classList.add('show');ok=false;}
     if(!ok) return;
     this.textContent='Enviando…'; this.disabled=true;
     const userData=allData[cuentaDestino]||{};
@@ -584,7 +645,7 @@
       msgErr.innerHTML='<div style="color:#0a7;font-weight:700;margin-top:10px;">✓ Mensaje enviado. Te responderemos pronto.</div>';
       this.textContent='Enviado ✓';
     }catch(e){
-      msgErr.innerHTML='<div class="err">Error al enviar. Intenta de nuevo.</div>';
+      msgErr.innerHTML='<div class="err-msg">Error al enviar. Intenta de nuevo.</div>';
       this.textContent='Enviar'; this.disabled=false;
     }
   });
