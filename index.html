@@ -81,7 +81,10 @@
     }
     .ok{ color:#0a7; background: rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18); }
     .err{ color:#b00; background: rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); }
-    .or-copy{ margin:10px 0 6px; text-align:center; font-size:12px; color: rgba(26,26,26,.6); font-weight:600; }
+    .or-copy{
+      margin:10px 0 6px; text-align:center; font-size:12px;
+      color: rgba(26,26,26,.6); font-weight:600;
+    }
     .fields{
       margin-top:8px; border-top:1px dashed rgba(0,0,0,.12); padding-top:12px;
       display:grid; gap:10px; grid-template-columns:1fr 1fr;
@@ -122,10 +125,8 @@
       <div id="fields" class="fields" style="display:none;">
         <button id="copyNombre" class="field-btn" disabled>Nombre</button>
         <button id="copyRut"    class="field-btn" disabled>RUT <span class="rut-note">(sin puntos)</span></button>
-        <button id="copyBanco"  class="field-btn" disabled>Banco</button>
-        <button id="copyTipo"   class="field-btn" disabled>Tipo de cuenta</button>
         <button id="copyNumero" class="field-btn" disabled>N° de cuenta</button>
-        <button id="copyCorreo" class="field-btn" disabled style="display:none;">Correo</button>
+        <button id="copyCorreo" class="field-btn" disabled>Correo</button>
       </div>
     </div>
   </div>
@@ -317,15 +318,8 @@ async function init(){
 
     setupBtn('copyNombre', () => cachedFields.nombre);
     setupBtn('copyRut',    () => cachedFields.rutCopy);
-    setupBtn('copyBanco',  () => cachedFields.banco);
-    setupBtn('copyTipo',   () => cachedFields.tipo);
     setupBtn('copyNumero', () => cachedFields.numero);
-
-    if(fields.correo){
-      const correoBtn = document.getElementById('copyCorreo');
-      if(correoBtn) correoBtn.style.display = '';
-      setupBtn('copyCorreo', () => cachedFields.correo);
-    }
+    setupBtn('copyCorreo', () => cachedFields.correo);
 
     try{
       gtag('event','payer_page_view',{
