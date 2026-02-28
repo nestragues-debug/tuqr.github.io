@@ -375,12 +375,9 @@
   } else if(accion === 'nueva_cuenta'){
     show('screenCrear');
     document.getElementById('screenCrearTitulo').textContent = 'Nueva cuenta destino';
-} else {
-  show('screenOpciones');
-  // Asegura que siempre se muestren ambas opciones (Ingresar y Crear)
-  document.getElementById('btnIrCrear').style.display = '';
-  document.getElementById('btnIrActivar').style.display = '';
-}
+  } else {
+    show('screenOpciones');
+  }
 
   function val(id){ return (document.getElementById(id).value||'').trim(); }
   function clean(s){
