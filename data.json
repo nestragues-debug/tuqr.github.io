@@ -61,5 +61,14 @@
     "numeroCuenta": "2810854604",
     "correo": "angelina@nn.cl",
     "telefono": "982897919"
+  },
+  "oytamsd": {
+    "banco": "Banco Itaú",
+    "rut": "15.720.297-9",
+    "nombre": "Angelina Gherardelli",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "545854640",
+    "correo": "angelina@nn.cl",
+    "telefono": "982897919"
   }
 }
