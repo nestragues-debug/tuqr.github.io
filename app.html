@@ -26,28 +26,24 @@
     height:100%; font-family:"Poppins",system-ui,sans-serif;
     background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased;
   }
-  body{
-    display:flex; flex-direction:column; align-items:center;
-    padding:20px 16px; gap:16px; overscroll-behavior:none; min-height:100vh;
-  }
-  .topbar{
-    width:100%; max-width:360px; display:flex; align-items:center; justify-content:flex-start;
-    padding:4px 0;
-  }
+  body{ display:flex; flex-direction:column; align-items:center; padding:20px 16px; gap:16px; overscroll-behavior:none; min-height:100vh; }
+
+  /* Topbar / Hamburger */
+  .topbar{ width:100%; max-width:360px; display:flex; align-items:center; padding:4px 0; }
   .hamburger{
-    background:var(--primary); border:none; cursor:pointer;
-    padding:10px 12px; border-radius:12px; display:flex; flex-direction:column; gap:5px;
-    box-shadow:0 3px 10px rgba(255,122,24,.35);
+    background:var(--primary); border:none; cursor:pointer; padding:10px 12px; border-radius:12px;
+    display:flex; flex-direction:column; gap:5px; box-shadow:0 3px 10px rgba(255,122,24,.35);
     -webkit-tap-highlight-color:transparent; transition:filter .1s, transform .06s;
   }
   .hamburger span{ display:block; width:22px; height:2.5px; border-radius:2px; background:#fff; }
   .hamburger:active{ transform:scale(.95); filter:brightness(.92); }
+
+  /* Drawer */
   .drawer-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
   .drawer-overlay.open{ display:block; }
   .drawer{
     position:fixed; top:0; left:-260px; bottom:0; width:240px; background:#fff; z-index:201;
-    box-shadow:4px 0 28px rgba(0,0,0,.18); transition:left .22s cubic-bezier(.4,0,.2,1);
-    display:flex; flex-direction:column;
+    box-shadow:4px 0 28px rgba(0,0,0,.18); transition:left .22s cubic-bezier(.4,0,.2,1); display:flex; flex-direction:column;
   }
   .drawer.open{ left:0; }
   .drawer-header{ padding:32px 20px 22px; background:linear-gradient(135deg,var(--primary),var(--accent)); }
@@ -63,192 +59,141 @@
   .drawer-item .di-icon{ font-size:20px; width:30px; text-align:center; }
   .drawer-sep{ border:none; border-top:1px solid rgba(0,0,0,.08); margin:8px 14px; }
   .drawer-item.danger{ color:#c00; }
+
+  /* Brand / Card */
   .brand img{ width:160px; height:auto; display:block; filter:drop-shadow(0 4px 8px rgba(0,0,0,.10)); }
   .card{
     width:100%; max-width:360px; background:var(--card); border:1px solid var(--border);
     border-radius:var(--radius); padding:24px 20px 28px; box-shadow:var(--shadow);
     position:relative; overflow:hidden; display:flex; flex-direction:column; align-items:center; gap:16px;
   }
-  .card::before{
-    content:""; position:absolute; top:0; left:0; right:0; height:8px;
-    background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
-  }
+  .card::before{ content:""; position:absolute; top:0; left:0; right:0; height:8px; background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95)); }
+
+  /* QR */
   .qr-header{ text-align:center; width:100%; margin-top:4px; }
   .qr-header-banco{ font-size:17px; font-weight:800; color:var(--text); }
   .qr-header-detalle{ font-size:13px; font-weight:800; color:var(--muted); margin-top:2px; }
-  .qr-box{
-    background:#fff; border-radius:16px; padding:16px;
-    box-shadow:0 4px 16px rgba(0,0,0,.07); display:flex; align-items:center; justify-content:center;
-  }
+  .qr-box{ background:#fff; border-radius:16px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.07); display:flex; align-items:center; justify-content:center; }
   .qr-box canvas{ border-radius:8px; display:block; }
-  .datos-mini{
-    width:100%; background:#f7f7f7; border:1px solid rgba(0,0,0,.10); border-radius:12px;
-    padding:10px 12px; cursor:pointer; -webkit-tap-highlight-color:transparent;
-    transition:background .1s; display:flex; flex-direction:column; gap:5px;
-  }
+
+  /* Datos mini */
+  .datos-mini{ width:100%; background:#f7f7f7; border:1px solid rgba(0,0,0,.10); border-radius:12px; padding:10px 12px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .1s; display:flex; flex-direction:column; gap:5px; }
   .datos-mini:active{ background:#efefef; }
-  .datos-mini pre{
-    white-space:pre-wrap; word-break:break-word; font-size:10px; line-height:1.5;
-    font-family:inherit; color:var(--muted); margin:0; user-select:all; -webkit-user-select:all;
-  }
+  .datos-mini pre{ white-space:pre-wrap; word-break:break-word; font-size:10px; line-height:1.5; font-family:inherit; color:var(--muted); margin:0; user-select:all; -webkit-user-select:all; }
   .datos-mini-footer{ display:flex; align-items:center; justify-content:space-between; }
   .datos-mini-hint{ font-size:10px; color:#aaa; }
   .datos-mini-label{ font-size:10px; font-weight:700; color:var(--primary); }
   .datos-mini-ok{ font-size:10px; font-weight:700; color:#0a7; display:none; }
-  #screenGestion, #screenElegirReact, #screenEspera{
-    width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
+
+  /* Botón volver QR */
+  .btn-volver-qr{
+    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;
+    background:none; border:none; font-family:inherit; padding:4px 0;
+    -webkit-tap-highlight-color:transparent; width:100%; text-align:center;
   }
+  .btn-volver-qr:active{ color:var(--primary); }
+
+  /* Pantallas */
+  #screenGestion, #screenElegirReact, #screenEspera{ width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px; }
   #screenGestion .card, #screenElegirReact .card{ gap:14px; width:100%; align-items:stretch; }
   .react-title{ font-size:18px; font-weight:800; margin-top:4px; text-align:center; }
   .react-sub{ font-size:13px; color:var(--muted); text-align:center; line-height:1.4; }
+
+  /* Lista cuentas destino */
   .cuenta-destino-list{ display:flex; flex-direction:column; gap:10px; width:100%; }
   .cuenta-destino-item{
-    padding:14px 16px; border-radius:14px; cursor:pointer;
-    border:2px solid var(--border); background:#fff; display:flex; flex-direction:column; gap:3px;
+    padding:14px 16px; border-radius:14px;
+    border:2px solid var(--border); background:#fff; display:flex; flex-direction:column; gap:4px;
     -webkit-tap-highlight-color:transparent; transition:border-color .12s, background .12s;
   }
-  .cuenta-destino-item:active{ background:#f7f7f7; }
-  .cuenta-destino-item.activa{ border-color:var(--primary); background:rgba(255,122,24,.04); cursor:default; }
-  .cdi-banco{ font-size:15px; font-weight:800; color:var(--text); }
-  .cdi-tipo{ font-size:12px; font-weight:600; color:var(--muted); }
-  .cdi-numero{ font-size:13px; font-weight:700; color:var(--text); }
+  .cuenta-destino-item.activa{ border-color:var(--primary); background:rgba(255,122,24,.04); }
+  .cuenta-destino-item.no-activa{ cursor:pointer; }
+  .cuenta-destino-item.no-activa:active{ background:#f7f7f7; }
+  /* Línea 1: banco · tipo abreviado */
+  .cdi-l1{ font-size:14px; font-weight:800; color:var(--text); }
+  /* Línea 2: número */
+  .cdi-l2{ font-size:13px; font-weight:600; color:var(--muted); }
   .cdi-badge{ font-size:11px; font-weight:700; color:var(--primary); margin-top:2px; }
-  .cdi-actions{ display:flex; gap:8px; margin-top:10px; }
+  /* Acciones: botón único "···" + Seleccionar */
+  .cdi-actions{ display:flex; gap:8px; margin-top:8px; }
   .cdi-btn{
-    flex:1; padding:8px 0; font-size:12px; font-weight:800; font-family:inherit;
-    border-radius:10px; cursor:pointer; -webkit-tap-highlight-color:transparent; border:1.5px solid transparent;
+    padding:8px 14px; font-size:12px; font-weight:800; font-family:inherit;
+    border-radius:10px; cursor:pointer; -webkit-tap-highlight-color:transparent;
+    border:1.5px solid var(--border); background:#fff; color:var(--text); transition:background .1s;
   }
-  .cdi-btn-edit{ border-color:var(--primary); color:var(--primary); background:#fff; }
-  .cdi-btn-edit:active{ background:rgba(255,122,24,.07); }
-  .cdi-btn-del{ border-color:#c00; color:#c00; background:#fff; }
-  .cdi-btn-del:active{ background:rgba(190,0,0,.07); }
+  .cdi-btn:active{ background:#f2f2f2; }
+  .cdi-btn-sel{ border-color:var(--primary); color:var(--primary); flex:1; }
+  .cdi-btn-sel:active{ background:rgba(255,122,24,.07); }
+  .cdi-btn-opt{ min-width:42px; }
+
+  /* Formulario nueva cuenta */
   .r-label{ font-weight:700; font-size:13px; color:var(--muted); margin-bottom:5px; display:block; }
-  .r-input{
-    width:100%; padding:12px; font-size:15px; font-family:inherit;
-    border:1.5px solid rgba(0,0,0,.12); border-radius:12px; outline:none; background:#fff;
-    transition:border-color .15s, box-shadow .15s; -webkit-appearance:none;
-  }
+  .r-input{ width:100%; padding:12px; font-size:15px; font-family:inherit; border:1.5px solid rgba(0,0,0,.12); border-radius:12px; outline:none; background:#fff; transition:border-color .15s, box-shadow .15s; -webkit-appearance:none; }
   .r-input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
   .r-input.valid{ border-color:#0a7; background:#f5fbf8; }
-  .r-select{
-    width:100%; padding:12px; font-size:14px; font-family:inherit;
-    border:1.5px solid rgba(0,0,0,.12); border-radius:12px; outline:none; background:#fff;
-    -webkit-appearance:none; appearance:none; transition:border-color .15s, box-shadow .15s;
-  }
+  .r-select{ width:100%; padding:12px; font-size:14px; font-family:inherit; border:1.5px solid rgba(0,0,0,.12); border-radius:12px; outline:none; background:#fff; -webkit-appearance:none; appearance:none; transition:border-color .15s, box-shadow .15s; }
   .r-select:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
   .r-row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; width:100%; }
   .r-phone-wrap{ display:flex; gap:8px; }
-  .r-phone-prefix{
-    width:52px; flex-shrink:0; padding:12px 8px; font-size:13px; font-family:inherit;
-    border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
-    background:#f7f7f7; color:var(--muted); text-align:center; outline:none;
-  }
+  .r-phone-prefix{ width:52px; flex-shrink:0; padding:12px 8px; font-size:13px; font-family:inherit; border:1.5px solid rgba(0,0,0,.12); border-radius:12px; background:#f7f7f7; color:var(--muted); text-align:center; outline:none; }
   .r-phone-wrap .r-input{ flex:1; min-width:0; }
   .field-err{ color:#c00; font-size:12px; font-weight:600; display:none; margin-top:4px; }
   .field-err.show{ display:block; }
   .divider{ border:none; border-top:1px dashed rgba(0,0,0,.10); width:100%; }
-  .link-back{
-    font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;
-    text-align:center; display:block; background:none; border:none; font-family:inherit;
-  }
+  .link-back{ font-size:13px; font-weight:700; color:var(--muted); cursor:pointer; text-align:center; display:block; background:none; border:none; font-family:inherit; }
   .link-back:active{ color:var(--primary); }
-  .cta{
-    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
-    box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent;
-    transition:transform .06s, filter .06s;
-  }
+  .cta{ width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit; border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary); box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent; transition:transform .06s, filter .06s; }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
-  .cta-outline{
-    width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
-    border:2px solid var(--primary); border-radius:12px; cursor:pointer;
-    color:var(--primary); background:#fff; -webkit-tap-highlight-color:transparent;
-  }
+  .cta-outline{ width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit; border:2px solid var(--primary); border-radius:12px; cursor:pointer; color:var(--primary); background:#fff; -webkit-tap-highlight-color:transparent; }
   .cta-outline:active{ background:rgba(255,122,24,.06); }
-  .err-inline{
-    font-weight:800; padding:10px 12px; border-radius:12px; font-size:13px;
-    color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
-  }
-  .ok-card{
-    width:100%; max-width:360px; background:var(--card); border:1px solid var(--border);
-    border-radius:var(--radius); padding:24px 20px 28px; box-shadow:var(--shadow);
-    position:relative; overflow:hidden; display:flex; flex-direction:column; gap:14px;
-  }
-  .ok-card::before{
-    content:""; position:absolute; top:0; left:0; right:0; height:8px;
-    background:linear-gradient(90deg,rgba(0,200,120,.8),rgba(0,170,100,.9));
-  }
-  .ok-pill{
-    display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px;
-    font-size:13px; font-weight:700; color:#0a7;
-    background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
-  }
+  .err-inline{ font-weight:800; padding:10px 12px; border-radius:12px; font-size:13px; color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); }
+
+  /* Espera */
+  .ok-card{ width:100%; max-width:360px; background:var(--card); border:1px solid var(--border); border-radius:var(--radius); padding:24px 20px 28px; box-shadow:var(--shadow); position:relative; overflow:hidden; display:flex; flex-direction:column; gap:14px; }
+  .ok-card::before{ content:""; position:absolute; top:0; left:0; right:0; height:8px; background:linear-gradient(90deg,rgba(0,200,120,.8),rgba(0,170,100,.9)); }
+  .ok-pill{ display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px; font-size:13px; font-weight:700; color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18); }
   .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
-  .wait-box{
-    display:flex; flex-direction:column; align-items:center; gap:12px;
-    background:#f7f7f7; border-radius:14px; padding:20px 16px; text-align:center;
-  }
-  .spinner{
-    width:36px; height:36px; border-radius:50%;
-    border:4px solid rgba(255,122,24,.15); border-top-color:var(--primary);
-    animation:spin .9s linear infinite;
-  }
+  .wait-box{ display:flex; flex-direction:column; align-items:center; gap:12px; background:#f7f7f7; border-radius:14px; padding:20px 16px; text-align:center; }
+  .spinner{ width:36px; height:36px; border-radius:50%; border:4px solid rgba(255,122,24,.15); border-top-color:var(--primary); animation:spin .9s linear infinite; }
   @keyframes spin{ to{ transform:rotate(360deg); } }
   .wait-text{ font-size:14px; font-weight:700; line-height:1.4; }
   .wait-sub{ font-size:12px; color:var(--muted); }
-  .err-box{
-    font-size:13px; color:#b00; font-weight:600; text-align:center;
-    background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); border-radius:12px; padding:12px;
-  }
-  .cta-ir{
-    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
-    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
-    box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent; display:block; text-align:center;
-  }
+  .err-box{ font-size:13px; color:#b00; font-weight:600; text-align:center; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); border-radius:12px; padding:12px; }
+  .cta-ir{ padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit; border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary); box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent; display:block; text-align:center; }
   .cta-ir.secondary{ background:#f0f0f0; color:var(--text); box-shadow:none; margin-top:10px; }
-  .modal-overlay{
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
-    z-index:300; align-items:flex-end; justify-content:center;
-  }
+
+  /* Modal */
+  .modal-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:300; align-items:flex-end; justify-content:center; }
   .modal-overlay.open{ display:flex; }
-  .modal-box{
-    background:#fff; border-radius:24px 24px 0 0; padding:28px 20px 40px;
-    width:100%; max-width:480px; max-height:90vh; overflow-y:auto;
-    box-shadow:0 -8px 32px rgba(0,0,0,.15); animation:slideUp .25s ease; position:relative;
-  }
+  .modal-box{ background:#fff; border-radius:24px 24px 0 0; padding:28px 20px 40px; width:100%; max-width:480px; max-height:90vh; overflow-y:auto; box-shadow:0 -8px 32px rgba(0,0,0,.15); animation:slideUp .25s ease; position:relative; }
   @keyframes slideUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
   .modal-handle{ width:40px; height:4px; border-radius:999px; background:#ddd; margin:0 auto 20px; display:block; }
   .modal-title{ font-size:20px; font-weight:800; margin-bottom:4px; }
   .modal-sub{ font-size:13px; color:var(--muted); margin-bottom:16px; line-height:1.4; }
-  .modal-close{
-    position:absolute; top:16px; right:20px; font-size:22px; cursor:pointer;
-    color:var(--muted); background:none; border:none; font-family:inherit;
-  }
+  .modal-close{ position:absolute; top:16px; right:20px; font-size:22px; cursor:pointer; color:var(--muted); background:none; border:none; font-family:inherit; }
   label{ font-weight:700; font-size:13px; color:var(--muted); margin-top:14px; display:block; margin-bottom:5px; }
-  input, select, textarea{
-    width:100%; padding:11px 12px; font-size:14px; font-family:inherit;
-    border:1.5px solid rgba(0,0,0,.12); border-radius:12px; background:#fff; color:var(--text);
-    outline:none; transition:border-color .15s, box-shadow .15s; -webkit-appearance:none; appearance:none;
-  }
+  input, select, textarea{ width:100%; padding:11px 12px; font-size:14px; font-family:inherit; border:1.5px solid rgba(0,0,0,.12); border-radius:12px; background:#fff; color:var(--text); outline:none; transition:border-color .15s, box-shadow .15s; -webkit-appearance:none; appearance:none; }
   input:focus, select:focus, textarea:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
   input.invalid{ border-color:#e00; background:#fff8f8; }
   input.valid{ border-color:#0a7; background:#f5fbf8; }
   textarea{ resize:vertical; min-height:100px; }
   .char-count{ font-size:11px; color:var(--muted); text-align:right; margin-top:3px; }
+  .modal-divider{ border:none; border-top:1px dashed rgba(0,0,0,.12); margin:20px 0 4px; }
+  .btn-modal-danger{ width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit; border:2px solid #c00; border-radius:12px; cursor:pointer; color:#c00; background:#fff; margin-top:8px; -webkit-tap-highlight-color:transparent; }
+  .btn-modal-danger:active{ background:rgba(190,0,0,.07); }
+  .modal-warn{ font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
 </style>
 </head>
 <body>
 
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
-<!-- Drawer Vista QR: Mis Cuentas Destino + Mi Usuario + Cambiar de usuario + Contacto -->
+<!-- Drawer: Mis Cuentas + Mi Usuario + Cambiar de usuario + Contacto -->
 <nav class="drawer" id="drawer">
-  <div class="drawer-header">
-    <img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/>
-  </div>
+  <div class="drawer-header"><img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="drawer-body">
     <button class="drawer-item" id="menuMisCuentas">
-      <span class="di-icon">⊞</span> Mis Cuentas Destino
+      <span class="di-icon">⊞</span> Mis Cuentas
     </button>
     <button class="drawer-item" id="menuMiUsuario">
       <span class="di-icon">👤</span> Mi Usuario
@@ -267,9 +212,7 @@
 <!-- ══ Vista QR ══ -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
   <div class="topbar">
-    <button class="hamburger" id="btnHamburger" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" id="btnHamburger" aria-label="Menú"><span></span><span></span><span></span></button>
   </div>
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
@@ -283,61 +226,49 @@
       <div class="datos-mini-footer">
         <span class="datos-mini-hint">Toca para copiar datos</span>
         <span class="datos-mini-label" id="datosMiniLabel">Copiar</span>
-        <span class="datos-mini-ok"   id="datosMiniOk">✓ Copiado</span>
+        <span class="datos-mini-ok" id="datosMiniOk">✓ Copiado</span>
       </div>
     </div>
   </div>
+  <button class="btn-volver-qr" id="btnVolverMisCuentas">← Mis Cuentas</button>
 </div>
 
-<!-- ══ Gestión cuentas destino ══ -->
+<!-- ══ Gestión cuentas ══ -->
 <div id="screenGestion">
   <div class="topbar">
-    <button class="hamburger" id="btnHamburgerGestion" aria-label="Menú">
-      <span></span><span></span><span></span>
-    </button>
+    <button class="hamburger" id="btnHamburgerGestion" aria-label="Menú"><span></span><span></span><span></span></button>
   </div>
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
-    <div class="react-title">Mis cuentas destino</div>
-    <div class="react-sub">Selecciona una o agrega una nueva.</div>
-
+    <div class="react-title">Mis Cuentas</div>
+    <div class="react-sub">Toca una cuenta para activarla o usa ··· para editar.</div>
     <div class="cuenta-destino-list" id="listaCuentasDestino"></div>
-
     <hr class="divider"/>
-    <button class="cta-outline" id="btnMostrarFormNueva">+ Agregar cuenta destino</button>
+    <button class="cta-outline" id="btnMostrarFormNueva">+ Agregar cuenta</button>
 
-    <!-- Form nueva cuenta destino:
-         L1: Nombre / L2: RUT-Teléfono / L3: Correo / L4: Banco-Tipo / L5: Número -->
+    <!-- Form nueva cuenta: L1 Nombre / L2 RUT+Tel / L3 Correo / L4 Banco+Tipo / L5 Número -->
     <div id="formNuevaCuenta" style="display:none; flex-direction:column; gap:12px; width:100%;">
-
-      <!-- L1: Nombre (solo lectura, viene del usuario) -->
       <div>
         <label class="r-label">Nombre</label>
-        <input class="r-input" id="newNombre" readonly style="background:#f7f7f7; color:var(--muted);"/>
+        <input class="r-input" id="newNombre" readonly style="background:#f7f7f7;color:var(--muted)"/>
       </div>
-
-      <!-- L2: RUT + Teléfono (solo lectura) -->
       <div class="r-row">
         <div>
           <label class="r-label">RUT</label>
-          <input class="r-input" id="newRut" readonly style="background:#f7f7f7; color:var(--muted);"/>
+          <input class="r-input" id="newRut" readonly style="background:#f7f7f7;color:var(--muted)"/>
         </div>
         <div>
           <label class="r-label">Teléfono</label>
           <div class="r-phone-wrap">
             <input class="r-phone-prefix" value="+56" readonly/>
-            <input class="r-input" id="newTelDisplay" readonly style="background:#f7f7f7; color:var(--muted);"/>
+            <input class="r-input" id="newTelDisplay" readonly style="background:#f7f7f7;color:var(--muted)"/>
           </div>
         </div>
       </div>
-
-      <!-- L3: Correo (solo lectura) -->
       <div>
         <label class="r-label">Correo</label>
-        <input class="r-input" id="newCorreo" readonly style="background:#f7f7f7; color:var(--muted);"/>
+        <input class="r-input" id="newCorreo" readonly style="background:#f7f7f7;color:var(--muted)"/>
       </div>
-
-      <!-- L4: Banco + Tipo -->
       <div class="r-row">
         <div>
           <label class="r-label">Banco</label>
@@ -360,19 +291,14 @@
           </select>
         </div>
       </div>
-
-      <!-- L5: Número -->
       <div>
         <label class="r-label">N° de cuenta</label>
         <input class="r-input" id="newNumero" placeholder="Solo números" inputmode="numeric"/>
         <div class="field-err" id="err-newNumero">Solo números</div>
       </div>
-
       <div id="msg-nueva-err"></div>
-      <button class="cta" id="btnGuardarNueva">Guardar cuenta destino</button>
+      <button class="cta" id="btnGuardarNueva">Guardar cuenta</button>
     </div>
-
-    <button class="link-back" id="backFromGestion">← Volver al QR</button>
   </div>
 </div>
 
@@ -380,13 +306,10 @@
 <div id="screenEspera">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="ok-card">
-    <div>
-      <div class="ok-pill">✓ Cuenta destino creada</div>
-      <div class="ok-nombre" id="esperaNombre"></div>
-    </div>
+    <div><div class="ok-pill">✓ Cuenta creada</div><div class="ok-nombre" id="esperaNombre"></div></div>
     <div class="wait-box" id="esperaWaitBox">
       <div class="spinner"></div>
-      <div class="wait-text">Activando tu cuenta destino…</div>
+      <div class="wait-text">Activando tu cuenta…</div>
       <div class="wait-sub">Puede tardar hasta un minuto</div>
     </div>
     <div id="esperaError" style="display:none; flex-direction:column; gap:10px;">
@@ -397,11 +320,11 @@
   </div>
 </div>
 
-<!-- ══ Elegir cuenta (múltiples al reactivar) ══ -->
+<!-- ══ Elegir cuenta ══ -->
 <div id="screenElegirReact">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
-    <div class="react-title">Elige tu cuenta destino</div>
+    <div class="react-title">Elige tu cuenta</div>
     <div class="react-sub">Encontramos más de una. ¿Cuál quieres activar?</div>
     <div class="cuenta-destino-list" id="listaCuentasReact"></div>
     <button class="link-back" id="backFromElegirReact">← Volver</button>
@@ -438,13 +361,12 @@
   </div>
 </div>
 
-
-<!-- ══ Modal editar cuenta destino ══ -->
+<!-- ══ Modal editar/eliminar cuenta ══ -->
 <div class="modal-overlay" id="modalEditarCuenta">
   <div class="modal-box">
     <button class="modal-close" id="btnCerrarEditarCuenta">✕</button>
     <span class="modal-handle"></span>
-    <div class="modal-title">Editar cuenta destino</div>
+    <div class="modal-title">Editar cuenta</div>
     <div class="modal-sub" id="editarCuentaSub"></div>
     <label for="editCuentaBanco">Banco</label>
     <select id="editCuentaBanco">
@@ -463,21 +385,24 @@
       <option value="Cuenta RUT">Cuenta RUT</option>
     </select>
     <label for="editCuentaNumero">N° de cuenta</label>
-    <input id="editCuentaNumero" placeholder="Solo números" inputmode="numeric" style="margin-top:0"/>
+    <input id="editCuentaNumero" placeholder="Solo números" inputmode="numeric"/>
     <div class="field-err" id="err-editCuentaNumero">Solo números</div>
-    <button class="cta" id="btnGuardarEditarCuenta">Guardar cambios</button>
+    <button class="cta" id="btnGuardarEditarCuenta" style="margin-top:20px">Guardar cambios</button>
     <div id="msg-editar-cuenta-err"></div>
+    <hr class="modal-divider"/>
+    <button class="btn-modal-danger" id="btnEliminarDesdeEditar">Eliminar esta cuenta</button>
+    <div class="modal-warn">Esta acción no se puede deshacer.</div>
   </div>
 </div>
 
-<!-- ══ Modal confirmar eliminación cuenta destino ══ -->
-<div class="modal-overlay" id="modalEliminarCuenta">
+<!-- ══ Modal confirmar eliminar cuenta ══ -->
+<div class="modal-overlay" id="modalConfirmarEliminar">
   <div class="modal-box">
     <span class="modal-handle"></span>
-    <div class="modal-title" style="color:#c00">¿Eliminar cuenta destino?</div>
-    <div class="modal-desc" id="modalEliminarCuentaDesc" style="font-size:13px;color:var(--muted);line-height:1.5"></div>
-    <button class="cta" id="btnConfirmarEliminarCuenta" style="background:#c00;box-shadow:none;margin-top:16px">Sí, eliminar</button>
-    <button class="cta" id="btnCancelarEliminarCuenta" style="background:#f0f0f0;color:var(--text);box-shadow:none;margin-top:10px">Cancelar</button>
+    <div class="modal-title" style="color:#c00">¿Eliminar cuenta?</div>
+    <div id="modalConfirmarEliminarDesc" style="font-size:13px;color:var(--muted);line-height:1.5;margin-top:8px;"></div>
+    <button class="cta" id="btnConfirmarEliminar" style="background:#c00;box-shadow:none;margin-top:20px">Sí, eliminar</button>
+    <button class="cta" id="btnCancelarEliminar" style="background:#f0f0f0;color:var(--text);box-shadow:none;margin-top:10px">Cancelar</button>
   </div>
 </div>
 
@@ -492,15 +417,13 @@
 
   if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 
-  function clean(s){
-    return String(s??'').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim();
-  }
+  function clean(s){ return String(s??'').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F\uFEFF]/g,'').trim(); }
   function validarRut(rut){
     const r=rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
-    const cuerpo=r.slice(0,-1), dv=r.slice(-1);
-    let suma=0, mul=2;
-    for(let i=cuerpo.length-1;i>=0;i--){ suma+=parseInt(cuerpo[i])*mul; mul=mul===7?2:mul+1; }
+    const cuerpo=r.slice(0,-1),dv=r.slice(-1);
+    let suma=0,mul=2;
+    for(let i=cuerpo.length-1;i>=0;i--){suma+=parseInt(cuerpo[i])*mul;mul=mul===7?2:mul+1;}
     const dvE=11-(suma%11);
     return dv===(dvE===11?'0':dvE===10?'K':String(dvE));
   }
@@ -510,9 +433,18 @@
     return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
   }
   function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
+  function formatRutDisplay(raw){
+    const r=String(raw||'').replace(/[\.\-\s]/g,'');
+    if(r.length<2) return r;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
+  }
   function validarTel(t){ return /^9\d{8}$/.test(t.replace(/\s/g,'')); }
-  function generarIdCuenta(rut, banco, numeroCuenta){
-    return normalizarRut(rut)+'_'+banco.replace(/\s+/g,'')+'_'+numeroCuenta;
+  function generarIdCuenta(rut,banco,num){ return normalizarRut(rut)+'_'+banco.replace(/\s+/g,'')+'_'+num; }
+
+  // Abreviación tipo de cuenta para listado
+  function abrevTipo(t){
+    const m={'Cuenta Corriente':'Cta Cte','Cuenta Vista':'Cta Vista','Cuenta RUT':'Cta RUT'};
+    return m[t]||t;
   }
 
   function generarQR(url){
@@ -523,7 +455,7 @@
     new QRCode(tmp,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
     setTimeout(()=>{
       const src=tmp.querySelector('canvas');
-      if(src){ canvas.width=src.width; canvas.height=src.height; canvas.getContext('2d').drawImage(src,0,0); }
+      if(src){canvas.width=src.width;canvas.height=src.height;canvas.getContext('2d').drawImage(src,0,0);}
     },100);
   }
 
@@ -531,8 +463,7 @@
     const p=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
     if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function'){
       return navigator.clipboard.writeText(p).then(()=>true).catch(()=>{
-        if(window.ClipboardItem)
-          return navigator.clipboard.write([new ClipboardItem({'text/plain':new Blob([p],{type:'text/plain'})})]).then(()=>true).catch(()=>legacyCopy(p));
+        if(window.ClipboardItem) return navigator.clipboard.write([new ClipboardItem({'text/plain':new Blob([p],{type:'text/plain'})})]).then(()=>true).catch(()=>legacyCopy(p));
         return legacyCopy(p);
       });
     }
@@ -541,25 +472,17 @@
   function legacyCopy(text){
     try{
       const ta=document.createElement('textarea');
-      ta.value=text; ta.setAttribute('readonly','');
+      ta.value=text;ta.setAttribute('readonly','');
       ta.style.cssText='position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;background:transparent;opacity:0;pointer-events:none;z-index:-1';
-      document.body.appendChild(ta); ta.focus({preventScroll:true}); ta.select(); ta.setSelectionRange(0,ta.value.length);
-      const ok=document.execCommand('copy'); document.body.removeChild(ta); return ok;
-    }catch(_){ return false; }
+      document.body.appendChild(ta);ta.focus({preventScroll:true});ta.select();ta.setSelectionRange(0,ta.value.length);
+      const ok=document.execCommand('copy');document.body.removeChild(ta);return ok;
+    }catch(_){return false;}
   }
 
-  function formatRutDisplay(raw){
-    const r=String(raw||'').replace(/[\.\-\s]/g,'');
-    if(r.length<2) return r;
-    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
-  }
   function buildDatosText(d){
     const lines=[
-      `Nombre: ${clean(d.nombre)}`,
-      `RUT: ${formatRutDisplay(clean(d.rut))}`,
-      `Banco: ${clean(d.banco)}`,
-      `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
-      `N° de cuenta: ${clean(d.numeroCuenta)}`
+      `Nombre: ${clean(d.nombre)}`,`RUT: ${formatRutDisplay(clean(d.rut))}`,
+      `Banco: ${clean(d.banco)}`,`Tipo de cuenta: ${clean(d.tipoCuenta)}`,`N° de cuenta: ${clean(d.numeroCuenta)}`
     ];
     if(d.correo) lines.push(`Correo: ${clean(d.correo)}`);
     return lines.join('\n');
@@ -571,39 +494,32 @@
     if(!cachedDatosText) return;
     copyText(cachedDatosText).then(ok=>{
       if(ok){
-        const l=document.getElementById('datosMiniLabel'), o=document.getElementById('datosMiniOk');
-        l.style.display='none'; o.style.display='block';
+        const l=document.getElementById('datosMiniLabel'),o=document.getElementById('datosMiniOk');
+        l.style.display='none';o.style.display='block';
         if(miniOkTimer) clearTimeout(miniOkTimer);
-        miniOkTimer=setTimeout(()=>{ l.style.display=''; o.style.display='none'; },1800);
+        miniOkTimer=setTimeout(()=>{l.style.display='';o.style.display='none';},1800);
       }
     });
   }
 
   async function cargarData(){
-    try{
-      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
-      allData=await res.json();
-    }catch(e){ allData={}; }
+    try{ const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'}); allData=await res.json(); }
+    catch(e){ allData={}; }
     return allData;
   }
 
   function ocultarTodo(){
-    ['main','screenGestion','screenElegirReact','screenEspera']
-      .forEach(id=>{ document.getElementById(id).style.display='none'; });
+    ['main','screenGestion','screenElegirReact','screenEspera'].forEach(id=>{ document.getElementById(id).style.display='none'; });
   }
 
   async function mostrarApp(id){
     try{
       await cargarData();
-      const d=allData[id];
-      if(!d) return false;
+      const d=allData[id]; if(!d) return false;
       usuarioActivo={
-        rut:          normalizarRut(d.rut||''),
-        tel:          (d.telefono||'').replace(/\D/g,''),
-        nombre:       clean(d.nombre),
-        rut_display:  formatRutDisplay(clean(d.rut)),
-        telefono_raw: (d.telefono||'').replace(/\D/g,''),
-        correo:       clean(d.correo||'')
+        rut:normalizarRut(d.rut||''), tel:(d.telefono||'').replace(/\D/g,''),
+        nombre:clean(d.nombre), rut_display:formatRutDisplay(clean(d.rut)),
+        telefono_raw:(d.telefono||'').replace(/\D/g,''), correo:clean(d.correo||'')
       };
       generarQR(BASE_URL+'?id='+encodeURIComponent(id));
       document.title='TuQR — '+clean(d.nombre);
@@ -616,34 +532,28 @@
       ocultarTodo();
       document.getElementById('main').style.display='flex';
       return true;
-    }catch(e){ return false; }
+    }catch(e){return false;}
   }
 
   // ── Drawer ────────────────────────────────────────────────────────────────
-  function abrirDrawer(){
-    document.getElementById('drawer').classList.add('open');
-    document.getElementById('drawerOverlay').classList.add('open');
-  }
-  function cerrarDrawer(){
-    document.getElementById('drawer').classList.remove('open');
-    document.getElementById('drawerOverlay').classList.remove('open');
-  }
+  function abrirDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
+  function cerrarDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
 
-  document.getElementById('btnHamburger').addEventListener('click', abrirDrawer);
-  document.getElementById('btnHamburgerGestion').addEventListener('click', abrirDrawer);
-  document.getElementById('drawerOverlay').addEventListener('click', cerrarDrawer);
-
+  document.getElementById('btnHamburger').addEventListener('click',abrirDrawer);
+  document.getElementById('btnHamburgerGestion').addEventListener('click',abrirDrawer);
+  document.getElementById('drawerOverlay').addEventListener('click',cerrarDrawer);
   document.getElementById('menuMisCuentas').addEventListener('click',()=>{ cerrarDrawer(); mostrarGestion(); });
   document.getElementById('menuMiUsuario').addEventListener('click',()=>{ cerrarDrawer(); window.location.href='./mi-usuario.html'; });
   document.getElementById('menuCambiarUsuario').addEventListener('click',()=>{
-    cerrarDrawer();
-    localStorage.removeItem(STORAGE_KEY);
-    usuarioActivo=null; cachedDatosText='';
+    cerrarDrawer(); localStorage.removeItem(STORAGE_KEY); usuarioActivo=null; cachedDatosText='';
     window.location.replace('./admin.html?accion=cambiar');
   });
   document.getElementById('menuContacto').addEventListener('click',()=>{ cerrarDrawer(); abrirModalContacto(); });
 
-  // ── Gestión ───────────────────────────────────────────────────────────────
+  // Flecha volver desde QR → Mis Cuentas
+  document.getElementById('btnVolverMisCuentas').addEventListener('click',()=>{ mostrarGestion(); });
+
+  // ── Gestión cuentas ───────────────────────────────────────────────────────
   async function mostrarGestion(){
     await cargarData();
     const savedId=localStorage.getItem(STORAGE_KEY);
@@ -653,41 +563,38 @@
       Object.entries(allData)
         .filter(([id,d])=>normalizarRut(d.rut||'')===usuarioActivo.rut&&(d.telefono||'').replace(/\D/g,'')===usuarioActivo.tel)
         .forEach(([id,d])=>{
-          const item=document.createElement('div');
           const esActiva=id===savedId;
-          item.className='cuenta-destino-item'+(esActiva?' activa':'');
+          const item=document.createElement('div');
+          item.className='cuenta-destino-item'+(esActiva?' activa':' no-activa');
           item.innerHTML=`
-            <div class="cdi-banco">${clean(d.banco)}</div>
-            <div class="cdi-tipo">${clean(d.tipoCuenta)}</div>
-            <div class="cdi-numero">N° ${clean(d.numeroCuenta)}</div>
+            <div class="cdi-l1">${clean(d.banco)} · ${abrevTipo(clean(d.tipoCuenta))}</div>
+            <div class="cdi-l2">N° ${clean(d.numeroCuenta)}</div>
             ${esActiva?'<div class="cdi-badge">✓ Activa ahora</div>':''}
             <div class="cdi-actions">
-              <button class="cdi-btn cdi-btn-edit" data-id="${id}">✏️ Editar</button>
-              <button class="cdi-btn cdi-btn-del" data-id="${id}">🗑 Eliminar</button>
+              ${!esActiva?`<button class="cdi-btn cdi-btn-sel" data-id="${id}">Seleccionar</button>`:''}
+              <button class="cdi-btn cdi-btn-opt" data-id="${id}">···</button>
             </div>
           `;
-          if(!esActiva){
-            item.addEventListener('click',(e)=>{
-              if(e.target.closest('.cdi-btn')) return; // no activar al tocar botón
-              localStorage.setItem(STORAGE_KEY,id); mostrarApp(id);
-            });
+          // Pinchar cuenta activa → volver al QR
+          if(esActiva){
+            item.style.cursor='pointer';
+            item.addEventListener('click',(e)=>{ if(e.target.closest('.cdi-btn')) return; ocultarTodo(); document.getElementById('main').style.display='flex'; });
+          } else {
+            item.querySelector('.cdi-btn-sel').addEventListener('click',(e)=>{ e.stopPropagation(); localStorage.setItem(STORAGE_KEY,id); mostrarApp(id); });
           }
-          item.querySelector('.cdi-btn-edit').addEventListener('click',(e)=>{ e.stopPropagation(); abrirEditarCuenta(id); });
-          item.querySelector('.cdi-btn-del').addEventListener('click',(e)=>{ e.stopPropagation(); abrirEliminarCuenta(id); });
+          item.querySelector('.cdi-btn-opt').addEventListener('click',(e)=>{ e.stopPropagation(); abrirEditarCuenta(id); });
           lista.appendChild(item);
         });
     }
-    // Resetear formulario
+    // Reset form
     document.getElementById('formNuevaCuenta').style.display='none';
     document.getElementById('btnMostrarFormNueva').style.display='';
     document.getElementById('newNumero').value=''; document.getElementById('newNumero').classList.remove('valid','invalid');
     document.getElementById('newTipo').value=''; document.getElementById('newBanco').value='';
     document.getElementById('msg-nueva-err').innerHTML='';
     document.getElementById('err-newNumero').classList.remove('show');
-    // Rellenar campos de solo lectura con datos del usuario activo
     if(usuarioActivo){
-      const savedId2=localStorage.getItem(STORAGE_KEY);
-      const du=allData[savedId2]||{};
+      const du=allData[savedId]||{};
       document.getElementById('newNombre').value=clean(du.nombre||'');
       document.getElementById('newRut').value=formatRutDisplay(clean(du.rut||''));
       document.getElementById('newTelDisplay').value=usuarioActivo.telefono_raw;
@@ -701,7 +608,6 @@
     document.getElementById('formNuevaCuenta').style.display='flex';
     document.getElementById('btnMostrarFormNueva').style.display='none';
   });
-  document.getElementById('backFromGestion').addEventListener('click',()=>{ ocultarTodo(); document.getElementById('main').style.display='flex'; });
 
   // ── Guardar nueva cuenta ──────────────────────────────────────────────────
   const newNumeroInput=document.getElementById('newNumero');
@@ -720,78 +626,58 @@
       const all=await res.json();
       if(all[id]){ clearInterval(pollTimer); allData=all; await mostrarApp(id); return; }
     }catch(e){}
-    if(pollCount>=24){
-      clearInterval(pollTimer);
-      document.getElementById('esperaWaitBox').style.display='none';
-      document.getElementById('esperaError').style.display='flex';
-    }
+    if(pollCount>=24){ clearInterval(pollTimer); document.getElementById('esperaWaitBox').style.display='none'; document.getElementById('esperaError').style.display='flex'; }
   }
 
   document.getElementById('btnGuardarNueva').addEventListener('click',async function(){
-    const msgErr=document.getElementById('msg-nueva-err');
-    msgErr.innerHTML='';
+    const msgErr=document.getElementById('msg-nueva-err'); msgErr.innerHTML='';
     const tipoVal=document.getElementById('newTipo').value;
     const numeroVal=newNumeroInput.value.trim();
     const bancoVal=document.getElementById('newBanco').value;
     if(!tipoVal||!numeroVal||!bancoVal){ msgErr.innerHTML='<div class="err-inline">Completa todos los campos.</div>'; return; }
-    if(!/^\d+$/.test(numeroVal)){ msgErr.innerHTML='<div class="err-inline">El número de cuenta debe ser solo dígitos.</div>'; newNumeroInput.focus(); return; }
-    if(!usuarioActivo){ msgErr.innerHTML='<div class="err-inline">Sesión expirada. Recarga la página.</div>'; return; }
-
+    if(!/^\d+$/.test(numeroVal)){ msgErr.innerHTML='<div class="err-inline">El número debe ser solo dígitos.</div>'; return; }
+    if(!usuarioActivo){ msgErr.innerHTML='<div class="err-inline">Sesión expirada. Recarga.</div>'; return; }
     await cargarData();
     const savedId=localStorage.getItem(STORAGE_KEY);
-    const datosUsuario=allData[savedId]||{};
-    const autoId=generarIdCuenta(datosUsuario.rut||'', bancoVal, numeroVal);
-    if(allData[autoId]){ msgErr.innerHTML='<div class="err-inline">Ya tienes una cuenta en ese banco con ese número.</div>'; return; }
-
+    const du=allData[savedId]||{};
+    const autoId=generarIdCuenta(du.rut||'',bancoVal,numeroVal);
+    if(allData[autoId]){ msgErr.innerHTML='<div class="err-inline">Ya existe esa cuenta.</div>'; return; }
     this.textContent='Guardando…'; this.disabled=true;
-    const payload={
-      id:autoId, nombre:clean(datosUsuario.nombre||''), rut:clean(datosUsuario.rut||''),
-      banco:bancoVal, tipoCuenta:tipoVal, numeroCuenta:numeroVal,
-      correo:clean(datosUsuario.correo||''), telefono:usuarioActivo.telefono_raw
-    };
+    const payload={ id:autoId, nombre:clean(du.nombre||''), rut:clean(du.rut||''), banco:bancoVal, tipoCuenta:tipoVal, numeroCuenta:numeroVal, correo:clean(du.correo||''), telefono:usuarioActivo.telefono_raw };
     try{
       const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const txt=await res.text(); let data={};
-      try{ data=JSON.parse(txt); }catch{}
-      if(!res.ok||!data.ok){
-        msgErr.innerHTML='<div class="err-inline">Error al guardar.'+(data.error?' — '+data.error:' HTTP '+res.status)+'</div>';
-        this.textContent='Guardar cuenta destino'; this.disabled=false; return;
-      }
+      try{data=JSON.parse(txt);}catch{}
+      if(!res.ok||!data.ok){ msgErr.innerHTML='<div class="err-inline">Error al guardar.</div>'; this.textContent='Guardar cuenta'; this.disabled=false; return; }
+      allData[autoId]=payload; // actualizar memoria inmediatamente
       localStorage.setItem(STORAGE_KEY,autoId);
-      document.getElementById('esperaNombre').textContent=clean(datosUsuario.nombre||'');
+      document.getElementById('esperaNombre').textContent=clean(du.nombre||'');
       document.getElementById('esperaWaitBox').style.display='flex';
       document.getElementById('esperaError').style.display='none';
-      ocultarTodo();
-      document.getElementById('screenEspera').style.display='flex';
+      ocultarTodo(); document.getElementById('screenEspera').style.display='flex';
       window.scrollTo({top:0,behavior:'smooth'});
       iniciarPolling(autoId);
-      this.textContent='Guardar cuenta destino'; this.disabled=false;
-    }catch(e){
-      msgErr.innerHTML='<div class="err-inline">Error de red: '+e+'</div>';
-      this.textContent='Guardar cuenta destino'; this.disabled=false;
-    }
+      this.textContent='Guardar cuenta'; this.disabled=false;
+    }catch(e){ msgErr.innerHTML='<div class="err-inline">Error de red.</div>'; this.textContent='Guardar cuenta'; this.disabled=false; }
   });
 
   document.getElementById('btnEsperaIrApp').addEventListener('click',()=>{ const id=localStorage.getItem(STORAGE_KEY); if(id) mostrarApp(id); });
   document.getElementById('btnEsperaReintentar').addEventListener('click',()=>{
-    document.getElementById('esperaWaitBox').style.display='flex';
-    document.getElementById('esperaError').style.display='none';
+    document.getElementById('esperaWaitBox').style.display='flex'; document.getElementById('esperaError').style.display='none';
     const id=localStorage.getItem(STORAGE_KEY); if(id) iniciarPolling(id);
   });
-
   document.getElementById('backFromElegirReact').addEventListener('click',()=>{ window.location.replace('./admin.html?accion=cambiar'); });
 
-
-  // ── Editar cuenta destino ─────────────────────────────────────────────────
-  let editandoCuentaId = null;
+  // ── Editar cuenta (modal con Editar + Eliminar) ───────────────────────────
+  let editandoCuentaId=null;
 
   function abrirEditarCuenta(id){
-    editandoCuentaId = id;
-    const d = allData[id] || {};
-    document.getElementById('editarCuentaSub').textContent = clean(d.banco||'')+' · N° '+clean(d.numeroCuenta||'');
-    document.getElementById('editCuentaBanco').value  = clean(d.banco||'');
-    document.getElementById('editCuentaTipo').value   = clean(d.tipoCuenta||'');
-    document.getElementById('editCuentaNumero').value = clean(d.numeroCuenta||'');
+    editandoCuentaId=id;
+    const d=allData[id]||{};
+    document.getElementById('editarCuentaSub').textContent=clean(d.banco||'')+' · N°'+clean(d.numeroCuenta||'');
+    document.getElementById('editCuentaBanco').value=clean(d.banco||'');
+    document.getElementById('editCuentaTipo').value=clean(d.tipoCuenta||'');
+    document.getElementById('editCuentaNumero').value=clean(d.numeroCuenta||'');
     document.getElementById('editCuentaNumero').classList.remove('valid','invalid');
     document.getElementById('err-editCuentaNumero').classList.remove('show');
     document.getElementById('msg-editar-cuenta-err').innerHTML='';
@@ -800,12 +686,9 @@
     document.getElementById('modalEditarCuenta').classList.add('open');
   }
 
-  document.getElementById('btnCerrarEditarCuenta').addEventListener('click',()=>{
-    document.getElementById('modalEditarCuenta').classList.remove('open');
-  });
-  document.getElementById('modalEditarCuenta').addEventListener('click',function(e){
-    if(e.target===this) this.classList.remove('open');
-  });
+  document.getElementById('btnCerrarEditarCuenta').addEventListener('click',()=>{ document.getElementById('modalEditarCuenta').classList.remove('open'); });
+  document.getElementById('modalEditarCuenta').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+
   document.getElementById('editCuentaNumero').addEventListener('input',function(){
     this.value=this.value.replace(/\D/g,'');
     this.classList.toggle('valid',this.value.length>0);
@@ -813,85 +696,58 @@
   });
 
   document.getElementById('btnGuardarEditarCuenta').addEventListener('click',async function(){
-    const msgErr=document.getElementById('msg-editar-cuenta-err');
-    msgErr.innerHTML='';
-    const banco   = document.getElementById('editCuentaBanco').value;
-    const tipo    = document.getElementById('editCuentaTipo').value;
-    const numero  = document.getElementById('editCuentaNumero').value.trim();
+    const msgErr=document.getElementById('msg-editar-cuenta-err'); msgErr.innerHTML='';
+    const banco=document.getElementById('editCuentaBanco').value;
+    const tipo=document.getElementById('editCuentaTipo').value;
+    const numero=document.getElementById('editCuentaNumero').value.trim();
     if(!banco||!tipo||!numero){ msgErr.innerHTML='<div class="err-inline">Completa todos los campos.</div>'; return; }
     if(!/^\d+$/.test(numero)){ msgErr.innerHTML='<div class="err-inline">El número debe ser solo dígitos.</div>'; return; }
-
-    const savedId2=localStorage.getItem(STORAGE_KEY);
     const d=allData[editandoCuentaId]||{};
     this.textContent='Guardando…'; this.disabled=true;
-
-    const payload={
-      id:editandoCuentaId,
-      nombre:clean(d.nombre||''), rut:clean(d.rut||''),
-      banco, tipoCuenta:tipo, numeroCuenta:numero,
-      correo:clean(d.correo||''), telefono:(d.telefono||'').replace(/\D/g,'')
-    };
-
+    const payload={ id:editandoCuentaId, nombre:clean(d.nombre||''), rut:clean(d.rut||''), banco, tipoCuenta:tipo, numeroCuenta:numero, correo:clean(d.correo||''), telefono:(d.telefono||'').replace(/\D/g,'') };
     try{
       const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
       const data=await res.json();
       if(!res.ok||!data.ok){ msgErr.innerHTML='<div class="err-inline">Error al guardar.</div>'; this.textContent='Guardar cambios'; this.disabled=false; return; }
-      // Actualizar cache local
-      allData[editandoCuentaId]={...d, banco, tipoCuenta:tipo, numeroCuenta:numero};
+      // Actualizar memoria inmediatamente
+      allData[editandoCuentaId]={...d,banco,tipoCuenta:tipo,numeroCuenta:numero};
       document.getElementById('modalEditarCuenta').classList.remove('open');
-      // Si era la cuenta activa, refrescar QR
-      if(editandoCuentaId===savedId2) await mostrarApp(editandoCuentaId);
+      const savedId=localStorage.getItem(STORAGE_KEY);
+      if(editandoCuentaId===savedId) await mostrarApp(editandoCuentaId);
       else mostrarGestion();
-    }catch(e){
-      msgErr.innerHTML='<div class="err-inline">Error de red.</div>';
-      this.textContent='Guardar cambios'; this.disabled=false;
-    }
+    }catch(e){ msgErr.innerHTML='<div class="err-inline">Error de red.</div>'; this.textContent='Guardar cambios'; this.disabled=false; }
   });
 
-  // ── Eliminar cuenta destino ───────────────────────────────────────────────
-  let eliminandoCuentaId = null;
-
-  function abrirEliminarCuenta(id){
-    eliminandoCuentaId = id;
-    const d = allData[id] || {};
-    document.getElementById('modalEliminarCuentaDesc').innerHTML =
-      `¿Eliminar <strong>${clean(d.banco||'')} · ${clean(d.tipoCuenta||'')} · N°${clean(d.numeroCuenta||'')}</strong>?<br>Esta acción no se puede deshacer.`;
-    document.getElementById('btnConfirmarEliminarCuenta').textContent='Sí, eliminar';
-    document.getElementById('btnConfirmarEliminarCuenta').disabled=false;
-    document.getElementById('modalEliminarCuenta').classList.add('open');
-  }
-
-  document.getElementById('btnCancelarEliminarCuenta').addEventListener('click',()=>{
-    document.getElementById('modalEliminarCuenta').classList.remove('open');
-  });
-  document.getElementById('modalEliminarCuenta').addEventListener('click',function(e){
-    if(e.target===this) this.classList.remove('open');
+  // Eliminar desde el modal de edición
+  document.getElementById('btnEliminarDesdeEditar').addEventListener('click',()=>{
+    const d=allData[editandoCuentaId]||{};
+    document.getElementById('modalConfirmarEliminarDesc').innerHTML=
+      `<strong>${clean(d.banco||'')} · ${abrevTipo(clean(d.tipoCuenta||''))} · N°${clean(d.numeroCuenta||'')}</strong><br>Esta acción no se puede deshacer.`;
+    document.getElementById('modalEditarCuenta').classList.remove('open');
+    document.getElementById('modalConfirmarEliminar').classList.add('open');
   });
 
-  document.getElementById('btnConfirmarEliminarCuenta').addEventListener('click',async function(){
+  document.getElementById('btnCancelarEliminar').addEventListener('click',()=>{ document.getElementById('modalConfirmarEliminar').classList.remove('open'); });
+  document.getElementById('modalConfirmarEliminar').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+
+  document.getElementById('btnConfirmarEliminar').addEventListener('click',async function(){
     this.textContent='Eliminando…'; this.disabled=true;
     try{
-      const res=await fetch(WORKER_URL,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:eliminandoCuentaId})});
+      const res=await fetch(WORKER_URL,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:editandoCuentaId})});
       if(!res.ok) throw new Error();
-      // Si era la activa, cambiar a otra del mismo RUT o ir a admin
-      const savedId3=localStorage.getItem(STORAGE_KEY);
-      delete allData[eliminandoCuentaId];
-      document.getElementById('modalEliminarCuenta').classList.remove('open');
-      if(eliminandoCuentaId===savedId3){
-        // Buscar otra cuenta del mismo usuario
+      delete allData[editandoCuentaId];
+      document.getElementById('modalConfirmarEliminar').classList.remove('open');
+      const savedId=localStorage.getItem(STORAGE_KEY);
+      if(editandoCuentaId===savedId){
         const rutNorm=normalizarRut(usuarioActivo?.rut||'');
         const otra=Object.keys(allData).find(id=>normalizarRut(allData[id]?.rut||'')===rutNorm);
         if(otra){ localStorage.setItem(STORAGE_KEY,otra); await mostrarApp(otra); }
         else{ localStorage.removeItem(STORAGE_KEY); window.location.replace('./admin.html?accion=cambiar'); }
-      } else {
-        mostrarGestion();
-      }
-    }catch(e){
-      this.textContent='Sí, eliminar'; this.disabled=false;
-      document.getElementById('modalEliminarCuenta').classList.remove('open');
-    }
+      } else { mostrarGestion(); }
+    }catch(e){ this.textContent='Sí, eliminar'; this.disabled=false; document.getElementById('modalConfirmarEliminar').classList.remove('open'); }
   });
 
+  // ── Init ──────────────────────────────────────────────────────────────────
   async function init(){
     const savedId=localStorage.getItem(STORAGE_KEY);
     if(savedId){ const ok=await mostrarApp(savedId); if(ok) return; localStorage.removeItem(STORAGE_KEY); }
@@ -901,26 +757,21 @@
   // ── Modal Contacto ────────────────────────────────────────────────────────
   async function abrirModalContacto(){
     document.getElementById('modalContacto').classList.add('open');
-    document.getElementById('cMensaje').value='';
-    document.getElementById('charCount').textContent='0';
-    document.getElementById('msg-contacto-err').innerHTML='';
-    document.getElementById('cTipo').value='';
-    document.getElementById('btnEnviarContacto').textContent='Enviar';
-    document.getElementById('btnEnviarContacto').disabled=false;
+    document.getElementById('cMensaje').value=''; document.getElementById('charCount').textContent='0';
+    document.getElementById('msg-contacto-err').innerHTML=''; document.getElementById('cTipo').value='';
+    document.getElementById('btnEnviarContacto').textContent='Enviar'; document.getElementById('btnEnviarContacto').disabled=false;
     ['err-cRut','err-cCuentaDestino','err-cTipo','err-cMensaje'].forEach(i=>document.getElementById(i).classList.remove('show'));
     const savedId=localStorage.getItem(STORAGE_KEY);
     await cargarData();
-    const cRutEl=document.getElementById('cRut');
-    const cCEl=document.getElementById('cCuentaDestino');
-    cCEl.innerHTML='<option value="">— Selecciona —</option>';
-    cRutEl.value=''; cRutEl.classList.remove('valid','invalid');
+    const cRutEl=document.getElementById('cRut'), cCEl=document.getElementById('cCuentaDestino');
+    cCEl.innerHTML='<option value="">— Selecciona —</option>'; cRutEl.value=''; cRutEl.classList.remove('valid','invalid');
     if(savedId&&allData[savedId]){
       const d=allData[savedId]; cRutEl.value=d.rut||''; cRutEl.classList.add('valid');
       const rutNorm=normalizarRut(d.rut||'');
       Object.entries(allData).forEach(([id,u])=>{
         if(normalizarRut(u.rut||'')===rutNorm){
           const opt=document.createElement('option');
-          opt.value=id; opt.textContent=`${clean(u.banco)} · ${clean(u.tipoCuenta)} · N°${clean(u.numeroCuenta)}`;
+          opt.value=id; opt.textContent=`${clean(u.banco)} · ${abrevTipo(clean(u.tipoCuenta))} · N°${clean(u.numeroCuenta)}`;
           if(id===savedId) opt.selected=true;
           cCEl.appendChild(opt);
         }
@@ -932,34 +783,18 @@
   document.getElementById('modalContacto').addEventListener('click',function(e){ if(e.target===this) cerrarModal(); });
 
   document.getElementById('cRut').addEventListener('input',async function(){
-    const raw=this.value.replace(/[\.\-\s]/g,'');
-    if(raw.length>=2) this.value=formatearRut(raw);
+    const raw=this.value.replace(/[\.\-\s]/g,''); if(raw.length>=2) this.value=formatearRut(raw);
     const ok=validarRut(this.value);
-    this.classList.toggle('valid',this.value.length>0&&ok);
-    this.classList.toggle('invalid',this.value.length>0&&!ok);
+    this.classList.toggle('valid',this.value.length>0&&ok); this.classList.toggle('invalid',this.value.length>0&&!ok);
     document.getElementById('err-cRut').classList.toggle('show',this.value.length>0&&!ok);
-    const sel=document.getElementById('cCuentaDestino');
-    sel.innerHTML='<option value="">— Selecciona —</option>';
-    if(ok){
-      await cargarData();
-      const rutNorm=normalizarRut(this.value);
-      Object.entries(allData).forEach(([id,d])=>{
-        if(normalizarRut(d.rut||'')===rutNorm){
-          const opt=document.createElement('option');
-          opt.value=id; opt.textContent=`${clean(d.banco)} · ${clean(d.tipoCuenta)} · N°${clean(d.numeroCuenta)}`;
-          sel.appendChild(opt);
-        }
-      });
-    }
+    const sel=document.getElementById('cCuentaDestino'); sel.innerHTML='<option value="">— Selecciona —</option>';
+    if(ok){ await cargarData(); const rutNorm=normalizarRut(this.value); Object.entries(allData).forEach(([id,d])=>{ if(normalizarRut(d.rut||'')===rutNorm){ const opt=document.createElement('option'); opt.value=id; opt.textContent=`${clean(d.banco)} · ${abrevTipo(clean(d.tipoCuenta))} · N°${clean(d.numeroCuenta)}`; sel.appendChild(opt); } }); }
   });
   document.getElementById('cMensaje').addEventListener('input',function(){ document.getElementById('charCount').textContent=this.value.length; });
   document.getElementById('btnEnviarContacto').addEventListener('click',async function(){
-    const msgErr=document.getElementById('msg-contacto-err');
-    msgErr.innerHTML=''; let ok=true;
-    const rut=document.getElementById('cRut').value.trim();
-    const cuentaDestino=document.getElementById('cCuentaDestino').value;
-    const tipo=document.getElementById('cTipo').value;
-    const mensaje=document.getElementById('cMensaje').value.trim();
+    const msgErr=document.getElementById('msg-contacto-err'); msgErr.innerHTML=''; let ok=true;
+    const rut=document.getElementById('cRut').value.trim(), cuentaDestino=document.getElementById('cCuentaDestino').value;
+    const tipo=document.getElementById('cTipo').value, mensaje=document.getElementById('cMensaje').value.trim();
     if(!validarRut(rut)){document.getElementById('err-cRut').classList.add('show');ok=false;}
     if(!cuentaDestino){document.getElementById('err-cCuentaDestino').classList.add('show');ok=false;}
     if(!tipo){document.getElementById('err-cTipo').classList.add('show');ok=false;}
@@ -968,16 +803,10 @@
     this.textContent='Enviando…'; this.disabled=true;
     const userData=allData[cuentaDestino]||{};
     try{
-      await emailjs.send('service_pbr7qdo','template_emm0576',{
-        from_name:clean(userData.nombre||cuentaDestino), rut, usuario:cuentaDestino,
-        tipo_problema:tipo, mensaje, reply_to:userData.correo||'sin-correo@tuqr.app'
-      });
+      await emailjs.send('service_pbr7qdo','template_emm0576',{from_name:clean(userData.nombre||cuentaDestino),rut,usuario:cuentaDestino,tipo_problema:tipo,mensaje,reply_to:userData.correo||'sin-correo@tuqr.app'});
       msgErr.innerHTML='<div style="color:#0a7;font-weight:700;margin-top:10px;">✓ Mensaje enviado.</div>';
       this.textContent='Enviado ✓';
-    }catch(e){
-      msgErr.innerHTML='<div style="color:#b00;font-weight:800;margin-top:10px;">Error al enviar. Intenta de nuevo.</div>';
-      this.textContent='Enviar'; this.disabled=false;
-    }
+    }catch(e){ msgErr.innerHTML='<div style="color:#b00;font-weight:800;margin-top:10px;">Error al enviar.</div>'; this.textContent='Enviar'; this.disabled=false; }
   });
 
   init();
