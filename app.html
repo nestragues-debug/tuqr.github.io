@@ -31,41 +31,48 @@
     padding:20px 16px; gap:16px; overscroll-behavior:none; min-height:100vh;
   }
 
-  /* ── Hamburger ── */
-  .topbar{ width:100%; max-width:360px; display:flex; align-items:center; }
-  .hamburger{
-    background:none; border:none; cursor:pointer; padding:6px 8px; border-radius:10px;
-    display:flex; flex-direction:column; gap:5px; -webkit-tap-highlight-color:transparent;
+  /* ── Topbar ── */
+  .topbar{
+    width:100%; max-width:360px; display:flex; align-items:center; justify-content:flex-start;
+    padding:4px 0;
   }
-  .hamburger span{ display:block; width:22px; height:2.5px; border-radius:2px; background:var(--text); }
-  .hamburger:active span{ background:var(--primary); }
+  /* Hamburguesa destacada: fondo naranja, esquinas redondeadas */
+  .hamburger{
+    background:var(--primary); border:none; cursor:pointer;
+    padding:10px 12px; border-radius:12px;
+    display:flex; flex-direction:column; gap:5px;
+    box-shadow:0 3px 10px rgba(255,122,24,.35);
+    -webkit-tap-highlight-color:transparent; transition:filter .1s, transform .06s;
+  }
+  .hamburger span{ display:block; width:22px; height:2.5px; border-radius:2px; background:#fff; }
+  .hamburger:active{ transform:scale(.95); filter:brightness(.92); }
 
   /* ── Drawer ── */
   .drawer-overlay{
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,.45); z-index:200;
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200;
   }
   .drawer-overlay.open{ display:block; }
   .drawer{
     position:fixed; top:0; left:-260px; bottom:0; width:240px; background:#fff; z-index:201;
-    box-shadow:4px 0 24px rgba(0,0,0,.14); transition:left .22s cubic-bezier(.4,0,.2,1);
+    box-shadow:4px 0 28px rgba(0,0,0,.18); transition:left .22s cubic-bezier(.4,0,.2,1);
     display:flex; flex-direction:column;
   }
   .drawer.open{ left:0; }
   .drawer-header{
-    padding:28px 20px 20px;
+    padding:32px 20px 22px;
     background:linear-gradient(135deg,var(--primary),var(--accent));
   }
-  .drawer-logo{ width:90px; height:auto; filter:brightness(10); }
+  .drawer-logo{ width:100px; height:auto; filter:brightness(10); }
   .drawer-body{ padding:16px 8px; display:flex; flex-direction:column; gap:4px; flex:1; }
   .drawer-item{
-    display:flex; align-items:center; gap:14px; padding:14px;
-    border-radius:12px; font-size:15px; font-weight:700; color:var(--text);
-    cursor:pointer; background:none; border:none; font-family:inherit; width:100%; text-align:left;
+    display:flex; align-items:center; gap:14px; padding:15px 14px; border-radius:12px;
+    font-size:15px; font-weight:700; color:var(--text); cursor:pointer;
+    background:none; border:none; font-family:inherit; width:100%; text-align:left;
     -webkit-tap-highlight-color:transparent; transition:background .1s;
   }
-  .drawer-item:active{ background:#f7f7f7; }
-  .drawer-item .di-icon{ font-size:18px; width:28px; text-align:center; }
-  .drawer-sep{ border:none; border-top:1px solid rgba(0,0,0,.07); margin:8px 14px; }
+  .drawer-item:active{ background:#f2f2f2; }
+  .drawer-item .di-icon{ font-size:20px; width:30px; text-align:center; }
+  .drawer-sep{ border:none; border-top:1px solid rgba(0,0,0,.08); margin:8px 14px; }
   .drawer-item.danger{ color:#c00; }
 
   /* ── Brand / Card ── */
@@ -80,7 +87,7 @@
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
 
-  /* ── Encabezado QR: banco / tipo / número ── */
+  /* ── Encabezado QR ── */
   .qr-header{ text-align:center; width:100%; margin-top:4px; }
   .qr-header-banco{ font-size:17px; font-weight:800; color:var(--text); }
   .qr-header-detalle{ font-size:13px; font-weight:800; color:var(--muted); margin-top:2px; }
@@ -136,7 +143,7 @@
   .cdi-numero{ font-size:13px; font-weight:700; color:var(--text); }
   .cdi-badge{ font-size:11px; font-weight:700; color:var(--primary); margin-top:2px; }
 
-  /* ── Form nueva cuenta ── */
+  /* ── Form ── */
   .r-label{ font-weight:700; font-size:13px; color:var(--muted); margin-bottom:5px; display:block; }
   .r-input{
     width:100%; padding:12px; font-size:15px; font-family:inherit;
@@ -165,7 +172,7 @@
     width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
     box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent;
-    transition:transform .06s ease, filter .06s ease;
+    transition:transform .06s, filter .06s;
   }
   .cta:active{ transform:translateY(1px); filter:brightness(.98); }
   .cta-outline{
@@ -299,6 +306,11 @@
 
 <!-- ══ Gestión cuentas destino ══ -->
 <div id="screenGestion">
+  <div class="topbar">
+    <button class="hamburger" id="btnHamburgerGestion" aria-label="Menú">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="react-title">Mis cuentas destino</div>
@@ -307,11 +319,8 @@
     <div class="cuenta-destino-list" id="listaCuentasDestino"></div>
 
     <hr class="divider"/>
-
-    <!-- Botón mostrar formulario -->
     <button class="cta-outline" id="btnMostrarFormNueva">+ Agregar cuenta destino</button>
 
-    <!-- Formulario nueva cuenta (oculto) -->
     <div id="formNuevaCuenta" style="display:none; flex-direction:column; gap:12px; width:100%;">
       <div class="r-row">
         <div>
@@ -369,7 +378,7 @@
   </div>
 </div>
 
-<!-- ══ Elegir cuenta (múltiples) ══ -->
+<!-- ══ Elegir cuenta (múltiples al reactivar) ══ -->
 <div id="screenElegirReact">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
@@ -441,8 +450,6 @@
   }
   function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
   function validarTel(t){ return /^9\d{8}$/.test(t.replace(/\s/g,'')); }
-
-  /* ── ID automático ── */
   function generarIdCuenta(rut, banco, numeroCuenta){
     return normalizarRut(rut)+'_'+banco.replace(/\s+/g,'')+'_'+numeroCuenta;
   }
@@ -555,14 +562,19 @@
   /* ── Drawer ── */
   function abrirDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
   function cerrarDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
+
   document.getElementById('btnHamburger').addEventListener('click', abrirDrawer);
+  document.getElementById('btnHamburgerGestion').addEventListener('click', abrirDrawer);
   document.getElementById('drawerOverlay').addEventListener('click', cerrarDrawer);
+
   document.getElementById('menuMisCuentas').addEventListener('click',()=>{ cerrarDrawer(); mostrarGestion(); });
+
+  // FIX: Limpiar sesión Y navegar con ?accion=cambiar para forzar screenOpciones en admin
   document.getElementById('menuCambiarUsuario').addEventListener('click',()=>{
     cerrarDrawer();
     localStorage.removeItem(STORAGE_KEY);
     usuarioActivo=null; cachedDatosText='';
-    window.location.replace('./admin.html?from=welcome');
+    window.location.replace('./admin.html?accion=cambiar');
   });
 
   /* ── Gestión ── */
@@ -588,7 +600,6 @@
           lista.appendChild(item);
         });
     }
-    // reset form
     document.getElementById('formNuevaCuenta').style.display='none';
     document.getElementById('btnMostrarFormNueva').style.display='';
     document.getElementById('newNumero').value=''; document.getElementById('newNumero').classList.remove('valid','invalid');
@@ -605,7 +616,7 @@
   });
   document.getElementById('backFromGestion').addEventListener('click',()=>{ ocultarTodo(); document.getElementById('main').style.display='flex'; });
 
-  /* ── Guardar nueva cuenta destino ── */
+  /* ── Guardar nueva cuenta ── */
   const newNumeroInput=document.getElementById('newNumero');
   newNumeroInput.addEventListener('input',function(){ this.value=this.value.replace(/\D/g,''); this.classList.toggle('valid',this.value.length>0); });
 
@@ -643,7 +654,6 @@
     const savedId=localStorage.getItem(STORAGE_KEY);
     const datosUsuario=allData[savedId]||{};
     const autoId=generarIdCuenta(datosUsuario.rut||'', bancoVal, numeroVal);
-
     if(allData[autoId]){ msgErr.innerHTML='<div class="err-inline">Ya tienes una cuenta en ese banco con ese número.</div>'; return; }
 
     this.textContent='Guardando…'; this.disabled=true;
@@ -686,15 +696,15 @@
   async function init(){
     const savedId=localStorage.getItem(STORAGE_KEY);
     if(savedId){ const ok=await mostrarApp(savedId); if(ok) return; localStorage.removeItem(STORAGE_KEY); }
-    window.location.replace('./admin.html?from=welcome');
+    window.location.replace('./admin.html?accion=cambiar');
   }
 
-  document.getElementById('backFromElegirReact').addEventListener('click',()=>{ window.location.replace('./admin.html?from=welcome'); });
+  document.getElementById('backFromElegirReact').addEventListener('click',()=>{ window.location.replace('./admin.html?accion=cambiar'); });
 
   /* ── Modal Contacto ── */
   async function abrirModalContacto(){
     document.getElementById('modalContacto').classList.add('open');
-    ['cMensaje'].forEach(i=>{ document.getElementById(i).value=''; });
+    document.getElementById('cMensaje').value='';
     document.getElementById('charCount').textContent='0';
     document.getElementById('msg-contacto-err').innerHTML='';
     document.getElementById('cTipo').value='';
