@@ -255,5 +255,14 @@
     "numeroCuenta": "19380981",
     "correo": "nestragues@gmail.com",
     "telefono": "999999999"
+  },
+  "Otraprueba": {
+    "banco": "Banco BCI",
+    "rut": "13.268.177-5",
+    "nombre": "Juan Xx",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "098722121",
+    "correo": "nestragues@gmail.com",
+    "telefono": "982897919"
   }
 }
