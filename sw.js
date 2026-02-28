@@ -1,35 +1,30 @@
-const CACHE = 'tuqr-v7';
-const PRECACHE = [
-  './admin.html',
-  './app.html',
-  './welcome.html',
+// sw.js — TuQR
+// Versión del cache. Cambiar SOLO si modificas los assets estáticos (logo, manifest).
+// Los archivos HTML NUNCA se cachean — siempre van a la red.
+const CACHE_VERSION = 'tuqr-v7';
+
+const STATIC_ASSETS = [
   './TuQRLogo.png',
   './LogoQ_transparent.png',
-  'https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js',
-  'https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap'
+  './manifest.json'
 ];
 
-self.addEventListener('install', e => {
-  e.waitUntil(
-    caches.open(CACHE).then(c => c.addAll(PRECACHE)).then(() => self.skipWaiting())
+// ── Instalación: precachear solo assets estáticos ──
+self.addEventListener('install', event => {
+  event.waitUntil(
+    caches.open(CACHE_VERSION).then(cache => cache.addAll(STATIC_ASSETS))
   );
+  self.skipWaiting();
 });
 
-self.addEventListener('activate', e => {
-  e.waitUntil(
+// ── Activación: eliminar caches viejos ──
+self.addEventListener('activate', event => {
+  event.waitUntil(
     caches.keys().then(keys =>
-      Promise.all(keys.filter(k => k !== CACHE).map(k => caches.delete(k)))
-    ).then(() => self.clients.claim())
+      Promise.all(
+        keys.filter(k => k !== CACHE_VERSION).map(k => caches.delete(k))
+      )
+    )
   );
-});
-
-self.addEventListener('fetch', e => {
-  const url = new URL(e.request.url);
-  if(url.pathname.endsWith('data.json')){
-    e.respondWith(fetch(e.request).catch(() => caches.match(e.request)));
-    return;
-  }
-  e.respondWith(
-    caches.match(e.request).then(cached => cached || fetch(e.request))
-  );
+  self.clients.claim();
 });
