@@ -1,4 +1,4 @@
-const CACHE = 'tuqr-v6';
+const CACHE = 'tuqr-v7';
 const PRECACHE = [
   './admin.html',
   './app.html',
