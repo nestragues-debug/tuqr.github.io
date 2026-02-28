@@ -217,7 +217,7 @@
   <!-- Pantalla: crear usuario -->
   <div id="screenCrear" class="card" style="display:none">
     <h1 id="screenCrearTitulo">Crear usuario</h1>
-    <label for="id">Nombre de tu cuenta destino</label>
+    <label for="id">Nombre de tu Cuenta Destino</label>
     <input id="id" placeholder="ej: JuanBCI"
            autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
     <div class="field-err" id="err-id">El nombre no puede contener espacios</div>
@@ -274,16 +274,16 @@
     <div class="help">Los datos se guardan vía Cloudflare Worker.</div>
   </div>
 
-  <!-- Pantalla: cuenta destino creada + polling -->
+  <!-- Pantalla: Cuenta Destino creada + polling -->
   <div id="screenCreado" style="display:none">
     <div class="ok-card">
       <div>
-        <div class="ok-pill">✓ Cuenta destino creada</div>
+        <div class="ok-pill">✓ Cuenta Destino creada</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
       <div class="wait-box" id="waitBox">
         <div class="spinner"></div>
-        <div class="wait-text">Activando tu cuenta destino…</div>
+        <div class="wait-text">Activando tu Cuenta Destino…</div>
         <div class="wait-sub" id="waitSub">Puede tardar hasta un minuto</div>
       </div>
       <div id="msgQRError" style="display:none; flex-direction:column; gap:10px;">
@@ -308,7 +308,7 @@
     <div class="field-err" id="err-cRut">RUT inválido</div>
     <label for="cCuentaDestino">Cuenta Destino</label>
     <select id="cCuentaDestino"><option value="">— Selecciona —</option></select>
-    <div class="field-err" id="err-cCuentaDestino">Selecciona una cuenta destino</div>
+    <div class="field-err" id="err-cCuentaDestino">Selecciona una Cuenta Destino</div>
     <label for="cTipo">Tipo de problema</label>
     <select id="cTipo">
       <option value="">— Selecciona —</option>
@@ -355,7 +355,7 @@
     window.location.replace('./app.html');
   } else if(accion === 'nueva_cuenta'){
     show('screenCrear');
-    document.getElementById('screenCrearTitulo').textContent = 'Nueva cuenta destino';
+    document.getElementById('screenCrearTitulo').textContent = 'Nueva Cuenta Destino';
   } else {
     show('screenOpciones');
   }
@@ -517,7 +517,7 @@
     if(!payload.id||!payload.nombre||!payload.rut||!payload.banco||!payload.tipoCuenta||!payload.numeroCuenta){
       msgErr.innerHTML='<div class="err">Faltan campos obligatorios.</div>'; return;
     }
-    if(!validarId(payload.id)){ msgErr.innerHTML='<div class="err">El nombre de cuenta destino no puede contener espacios.</div>'; idInput.focus(); return; }
+    if(!validarId(payload.id)){ msgErr.innerHTML='<div class="err">El nombre de Cuenta Destino no puede contener espacios.</div>'; idInput.focus(); return; }
     if(!validarRut(payload.rut)){ msgErr.innerHTML='<div class="err">El RUT no es válido.</div>'; rutInput.focus(); return; }
     if(!/^\d+$/.test(payload.numeroCuenta)){ msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; cuentaInput.focus(); return; }
     if(!validarEmail(payload.correo)){ msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>'; correoInput.focus(); return; }
@@ -526,7 +526,7 @@
     try{
       const chk=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
       const all=await chk.json();
-      if(all[payload.id]){ msgErr.innerHTML='<div class="err">La cuenta destino <strong>'+payload.id+'</strong> ya existe. Elige otro nombre.</div>'; idInput.focus(); return; }
+      if(all[payload.id]){ msgErr.innerHTML='<div class="err">La Cuenta Destino <strong>'+payload.id+'</strong> ya existe. Elige otro nombre.</div>'; idInput.focus(); return; }
     }catch(e){ msgErr.innerHTML='<div class="err">No se pudo verificar disponibilidad. Intenta de nuevo.</div>'; return; }
 
     try{
