@@ -1,5 +1,5 @@
 {
-"NicoTapp": {
+  "NicoTapp": {
     "banco": "Tapp Caja Los Andes",
     "rut": "13.268.177-5",
     "nombre": "Chivas Chivas",
@@ -33,6 +33,15 @@
     "tipoCuenta": "Cuenta Corriente",
     "numeroCuenta": "21092012",
     "correo": "nestragues@gmail.com",
+    "telefono": "999999999"
+  },
+  "NicoKlap": {
+    "banco": "Banco Consorcio",
+    "rut": "13.268.177-5",
+    "nombre": "Nicolas Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "535252552522",
+    "correo": "nicolas.estragues@klap.cl",
     "telefono": "999999999"
   }
 }
