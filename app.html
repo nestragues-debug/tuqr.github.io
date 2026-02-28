@@ -248,7 +248,7 @@
       </div>
     </div>
 
-    <button class="btn-gestion" id="btnGestion">⇄ Cambiar o crear cuenta destino</button>
+    <button class="btn-gestion" id="btnGestion">⇄ Cambiar o crear Cuenta Destino</button>
     <button class="link-contacto" id="btnContactoApp">Contacto</button>
     <button class="link-cerrar-sesion" id="btnCerrarSesion">cerrar sesión</button>
   </div>
@@ -271,10 +271,10 @@
     <div class="cuenta-destino-list" id="listaCuentasDestino"></div>
 
     <hr class="divider"/>
-    <div class="section-title">Nueva cuenta destino</div>
+    <div class="section-title">Nueva Cuenta Destino</div>
 
     <div style="width:100%">
-      <label class="r-label">Nombre de cuenta destino</label>
+      <label class="r-label">Nombre de Cuenta Destino</label>
       <input class="r-input" id="newId" placeholder="ej: JuanBCI"
              autocomplete="off" autocorrect="off" autocapitalize="off" spellcheck="false"/>
       <div class="field-err" id="err-newId">No puede contener espacios</div>
@@ -307,7 +307,7 @@
       </select>
     </div>
     <div id="msg-nueva-err"></div>
-    <button class="cta" id="btnGuardarNueva">Guardar nueva cuenta destino</button>
+    <button class="cta" id="btnGuardarNueva">Guardar nueva Cuenta Destino</button>
     <button class="link-back" id="backFromGestion">← Volver al QR</button>
   </div>
 </div>
@@ -317,12 +317,12 @@
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="ok-card">
     <div>
-      <div class="ok-pill">✓ Cuenta destino creada</div>
+      <div class="ok-pill">✓ Cuenta Destino creada</div>
       <div class="ok-nombre" id="esperaNombre"></div>
     </div>
     <div class="wait-box" id="esperaWaitBox">
       <div class="spinner"></div>
-      <div class="wait-text">Activando tu cuenta destino…</div>
+      <div class="wait-text">Activando tu Cuenta Destino…</div>
       <div class="wait-sub">Puede tardar hasta un minuto</div>
     </div>
     <div id="esperaError" style="display:none; flex-direction:column; gap:10px;">
@@ -338,7 +338,7 @@
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="react-title">Activa TuQR</div>
-    <div class="react-sub">Ingresa tu RUT y teléfono para acceder a tu cuenta destino.</div>
+    <div class="react-sub">Ingresa tu RUT y teléfono para acceder a tu Cuenta Destino.</div>
     <div style="width:100%">
       <label class="r-label">RUT</label>
       <input class="r-input" id="reactRut" placeholder="12.345.678-9" maxlength="12"/>
@@ -360,11 +360,11 @@
   </div>
 </div>
 
-<!-- ══ Elegir cuenta destino al reactivar (múltiples) ══ -->
+<!-- ══ Elegir Cuenta Destino al reactivar (múltiples) ══ -->
 <div id="screenElegirReact">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
-    <div class="react-title">Elige tu cuenta destino</div>
+    <div class="react-title">Elige tu Cuenta Destino</div>
     <div class="react-sub">Encontramos más de una. ¿Cuál quieres activar?</div>
     <div class="cuenta-destino-list" id="listaCuentasReact"></div>
     <button class="link-back" id="backFromElegirReact">← Volver</button>
@@ -383,7 +383,7 @@
     <div class="field-err" id="err-cRut">RUT inválido</div>
     <label for="cCuentaDestino">Cuenta Destino</label>
     <select id="cCuentaDestino"><option value="">— Selecciona —</option></select>
-    <div class="field-err" id="err-cCuentaDestino">Selecciona una cuenta destino</div>
+    <div class="field-err" id="err-cCuentaDestino">Selecciona una Cuenta Destino</div>
     <label for="cTipo">Tipo de problema</label>
     <select id="cTipo">
       <option value="">— Selecciona —</option>
@@ -610,7 +610,7 @@
     document.getElementById('main').style.display='flex';
   });
 
-  /* ── Guardar nueva cuenta destino → pantalla espera ── */
+  /* ── Guardar nueva Cuenta Destino → pantalla espera ── */
   const newIdInput=document.getElementById('newId');
   const newNumeroInput=document.getElementById('newNumero');
 
@@ -697,7 +697,7 @@
       if(!res.ok||!data.ok){
         const detail=data.error?' — '+data.error:' HTTP '+res.status;
         msgErr.innerHTML='<div class="err-inline">Error al guardar.'+detail+'</div>';
-        this.textContent='Guardar nueva cuenta destino'; this.disabled=false; return;
+        this.textContent='Guardar nueva Cuenta Destino'; this.disabled=false; return;
       }
       // Éxito → ir a pantalla de espera
       localStorage.setItem(STORAGE_KEY,idVal);
@@ -708,10 +708,10 @@
       document.getElementById('screenEspera').style.display='flex';
       window.scrollTo({top:0,behavior:'smooth'});
       iniciarPolling(idVal);
-      this.textContent='Guardar nueva cuenta destino'; this.disabled=false;
+      this.textContent='Guardar nueva Cuenta Destino'; this.disabled=false;
     }catch(e){
       msgErr.innerHTML='<div class="err-inline">Error de red: '+e+'</div>';
-      this.textContent='Guardar nueva cuenta destino'; this.disabled=false;
+      this.textContent='Guardar nueva Cuenta Destino'; this.disabled=false;
     }
   });
 
