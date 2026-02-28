@@ -246,5 +246,14 @@
     "numeroCuenta": "10982109831",
     "correo": "nestragues@gmail.com",
     "telefono": "982897919"
+  },
+  "NcoBestado": {
+    "banco": "Mercado Pago",
+    "rut": "23.182.071-k",
+    "nombre": "Nicolas Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "19380981",
+    "correo": "nestragues@gmail.com",
+    "telefono": "999999999"
   }
 }
