@@ -123,8 +123,8 @@
   }
   .cdi-btn:active{ background:#f2f2f2; }
   .cdi-btn-sel{ border-color:var(--primary); color:var(--primary); flex:1; }
+  .cdi-btn-opt{ flex:0 0 auto; }
   .cdi-btn-sel:active{ background:rgba(255,122,24,.07); }
-  .cdi-btn-opt{ min-width:42px; }
 
   /* Formulario nueva cuenta */
   .r-label{ font-weight:700; font-size:13px; color:var(--muted); margin-bottom:5px; display:block; }
@@ -531,6 +531,8 @@
       document.getElementById('datosMiniOk').style.display='none';
       ocultarTodo();
       document.getElementById('main').style.display='flex';
+      // Restaurar "Mis Cuentas" en drawer (visible desde Vista QR)
+      document.getElementById('menuMisCuentas').style.display='';
       return true;
     }catch(e){return false;}
   }
@@ -581,7 +583,7 @@
           item.innerHTML=`
             <div class="cdi-l1">${clean(d.banco)} · ${abrevTipo(clean(d.tipoCuenta))}</div>
             <div class="cdi-l2">N° ${clean(d.numeroCuenta)}</div>
-            <div class="cdi-actions">
+            <div class="cdi-actions" style="${esActiva?'justify-content:center':''}">
               ${!esActiva?`<button class="cdi-btn cdi-btn-sel" data-id="${id}">Seleccionar</button>`:''}
               <button class="cdi-btn cdi-btn-opt" data-id="${id}">Editar/Eliminar</button>
             </div>
@@ -589,7 +591,7 @@
           // Pinchar cuenta activa → volver al QR
           if(esActiva){
             item.style.cursor='pointer';
-            item.addEventListener('click',(e)=>{ if(e.target.closest('.cdi-btn')) return; ocultarTodo(); document.getElementById('main').style.display='flex'; });
+            item.addEventListener('click',(e)=>{ if(e.target.closest('.cdi-btn')) return; ocultarTodo(); document.getElementById('main').style.display='flex'; document.getElementById('menuMisCuentas').style.display=''; });
           } else {
             item.querySelector('.cdi-btn-sel').addEventListener('click',(e)=>{ e.stopPropagation(); localStorage.setItem(STORAGE_KEY,id); mostrarApp(id); });
           }
@@ -614,6 +616,8 @@
     }
     ocultarTodo();
     document.getElementById('screenGestion').style.display='flex';
+    // Ocultar "Mis Cuentas" del drawer cuando ya estamos ahí
+    document.getElementById('menuMisCuentas').style.display='none';
   }
 
   document.getElementById('btnMostrarFormNueva').addEventListener('click',()=>{
