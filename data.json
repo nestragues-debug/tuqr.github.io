@@ -43,5 +43,14 @@
     "numeroCuenta": "535252552522",
     "correo": "nicolas.estragues@klap.cl",
     "telefono": "999999999"
+  },
+  "papaTapp": {
+    "banco": "Banco BCI",
+    "rut": "8.231.562-4",
+    "nombre": "Marcial Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "2218815401",
+    "correo": "nicolas.estragues@klap.cl",
+    "telefono": "982897919"
   }
 }
