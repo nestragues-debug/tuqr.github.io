@@ -40,13 +40,32 @@
     content:""; position:absolute; top:0; left:0; right:0; height:8px;
     background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
   }
-  .comercio-nombre{ font-size:18px; font-weight:800; text-align:center; margin-top:4px; }
-  .banco-nombre{ font-size:13px; font-weight:600; color:var(--muted); text-align:center; margin-top:-8px; }
   .qr-box{
     background:#fff; border-radius:16px; padding:16px;
     box-shadow:0 4px 16px rgba(0,0,0,.07); display:flex; align-items:center; justify-content:center;
   }
   .qr-box canvas{ border-radius:8px; display:block; }
+
+  /* Recuadro datos mini — vista QR */
+  .datos-mini{
+    width:100%; background:#f7f7f7; border:1px solid rgba(0,0,0,.10);
+    border-radius:12px; padding:10px 12px; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; transition:background .1s;
+    display:flex; flex-direction:column; gap:5px;
+  }
+  .datos-mini:active{ background:#efefef; }
+  .datos-mini pre{
+    white-space:pre-wrap; word-break:break-word;
+    font-size:10px; line-height:1.5; font-family:inherit;
+    color:var(--muted); margin:0; user-select:all; -webkit-user-select:all;
+  }
+  .datos-mini-footer{
+    display:flex; align-items:center; justify-content:space-between; gap:6px;
+  }
+  .datos-mini-hint{ font-size:10px; color:#aaa; }
+  .datos-mini-label{ font-size:10px; font-weight:700; color:var(--primary); }
+  .datos-mini-ok{ font-size:10px; font-weight:700; color:#0a7; display:none; }
+
   .btn-gestion{
     width:100%; padding:14px; font-size:15px; font-weight:800; font-family:inherit;
     border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
@@ -59,7 +78,14 @@
     font-size:13px; font-weight:700; color:var(--primary); cursor:pointer;
     text-decoration:underline; background:none; border:none; font-family:inherit;
   }
-  #screenGestion, #screenReactivar, #screenElegirReact{
+  .link-cerrar-sesion{
+    font-size:11px; color:#aaa; cursor:pointer; background:none; border:none;
+    font-family:inherit; text-decoration:none;
+  }
+  .link-cerrar-sesion:active{ color:#888; }
+
+  /* Pantallas secundarias */
+  #screenGestion, #screenReactivar, #screenElegirReact, #screenEspera{
     width:100%; max-width:360px; display:none; flex-direction:column; align-items:center; gap:16px;
   }
   #screenGestion .card, #screenReactivar .card, #screenElegirReact .card{
@@ -73,7 +99,7 @@
   }
   .identity-label{ font-size:11px; font-weight:700; color:var(--muted); }
   .identity-value{ font-size:15px; font-weight:800; color:var(--text); }
-  .identity-sub{ font-size:11px; color:var(--muted); margin-top:2px; }
+  .identity-sub{ font-size:12px; color:var(--muted); margin-top:1px; }
   .section-title{
     font-size:13px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.5px;
   }
@@ -130,6 +156,49 @@
     font-weight:800; padding:10px 12px; border-radius:12px; font-size:13px;
     color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
+
+  /* Pantalla espera */
+  .ok-card{
+    width:100%; max-width:360px; background:var(--card); border:1px solid var(--border);
+    border-radius:var(--radius); padding:24px 20px 28px; box-shadow:var(--shadow);
+    position:relative; overflow:hidden; display:flex; flex-direction:column; gap:14px;
+  }
+  .ok-card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:8px;
+    background:linear-gradient(90deg,rgba(0,200,120,.8),rgba(0,170,100,.9));
+  }
+  .ok-pill{
+    display:inline-flex; align-items:center; gap:6px; padding:6px 14px; border-radius:999px;
+    font-size:13px; font-weight:700; color:#0a7;
+    background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18);
+  }
+  .ok-nombre{ font-size:18px; font-weight:800; margin-top:2px; }
+  .wait-box{
+    display:flex; flex-direction:column; align-items:center; gap:12px;
+    background:#f7f7f7; border-radius:14px; padding:20px 16px; text-align:center;
+  }
+  .spinner{
+    width:36px; height:36px; border-radius:50%;
+    border:4px solid rgba(255,122,24,.15); border-top-color:var(--primary);
+    animation:spin 0.9s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .wait-text{ font-size:14px; font-weight:700; color:var(--text); line-height:1.4; }
+  .wait-sub{ font-size:12px; color:var(--muted); }
+  .err-box{
+    font-size:13px; color:#b00; font-weight:600; text-align:center;
+    background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); border-radius:12px; padding:12px;
+  }
+  .cta-ir{
+    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent;
+    transition:transform .06s ease; display:block; text-align:center;
+  }
+  .cta-ir:active{ transform:translateY(1px); }
+  .cta-ir.secondary{ background:#f0f0f0; color:var(--text); box-shadow:none; margin-top:10px; }
+
+  /* Modal */
   .modal-overlay{
     display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
     z-index:1000; align-items:flex-end; justify-content:center;
@@ -163,25 +232,36 @@
 </head>
 <body>
 
-<!-- Vista QR -->
+<!-- ══ Vista QR principal ══ -->
 <div id="main" style="display:none; flex-direction:column; align-items:center; width:100%; max-width:360px; gap:16px;">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
-    <div class="comercio-nombre" id="nombreEl">Cargando…</div>
-    <div class="banco-nombre"   id="bancoEl"></div>
     <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
+
+    <!-- Recuadro datos mini copiable -->
+    <div class="datos-mini" id="datosMini" onclick="copiarDatosMini()">
+      <pre id="datosPreEl"></pre>
+      <div class="datos-mini-footer">
+        <span class="datos-mini-hint">Toca para copiar datos de transferencia</span>
+        <span class="datos-mini-label" id="datosMiniLabel">Copiar</span>
+        <span class="datos-mini-ok"   id="datosMiniOk">✓ Copiado</span>
+      </div>
+    </div>
+
     <button class="btn-gestion" id="btnGestion">⇄ Cambiar o crear cuenta destino</button>
     <button class="link-contacto" id="btnContactoApp">Contacto</button>
+    <button class="link-cerrar-sesion" id="btnCerrarSesion">cerrar sesión</button>
   </div>
 </div>
 
-<!-- Gestión: listado + nueva cuenta -->
+<!-- ══ Gestión: listado + nueva cuenta ══ -->
 <div id="screenGestion">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="react-title">Cuentas destino</div>
     <div class="react-sub">Selecciona una existente o crea una nueva.</div>
 
+    <!-- Datos identidad: Nombre + RUT -->
     <div class="identity-box">
       <div class="identity-label">Usuario</div>
       <div class="identity-value" id="identityNombre">—</div>
@@ -232,7 +312,28 @@
   </div>
 </div>
 
-<!-- Reactivar sesión -->
+<!-- ══ Espera activación nueva cuenta ══ -->
+<div id="screenEspera">
+  <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
+  <div class="ok-card">
+    <div>
+      <div class="ok-pill">✓ Cuenta destino creada</div>
+      <div class="ok-nombre" id="esperaNombre"></div>
+    </div>
+    <div class="wait-box" id="esperaWaitBox">
+      <div class="spinner"></div>
+      <div class="wait-text">Activando tu cuenta destino…</div>
+      <div class="wait-sub">Puede tardar hasta un minuto</div>
+    </div>
+    <div id="esperaError" style="display:none; flex-direction:column; gap:10px;">
+      <div class="err-box">No pudimos confirmar la activación. Intenta abriendo tu QR manualmente.</div>
+      <button class="cta-ir" id="btnEsperaIrApp">Ver mi QR →</button>
+      <button class="cta-ir secondary" id="btnEsperaReintentar">↺ Reintentar</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ Reactivar sesión ══ -->
 <div id="screenReactivar">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
@@ -247,7 +348,7 @@
       <label class="r-label">Teléfono</label>
       <div class="phone-wrap">
         <input class="phone-prefix" value="+56" readonly/>
-        <input class="r-input" id="reactTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
+        <input class="r-input" id="reactTel" placeholder="912345678" inputmode="numeric" maxlength="9"/>
       </div>
       <div class="field-err" id="err-reactTel">Número inválido</div>
     </div>
@@ -259,7 +360,7 @@
   </div>
 </div>
 
-<!-- Elegir cuenta destino al reactivar (múltiples) -->
+<!-- ══ Elegir cuenta destino al reactivar (múltiples) ══ -->
 <div id="screenElegirReact">
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
@@ -270,7 +371,7 @@
   </div>
 </div>
 
-<!-- Modal Contacto -->
+<!-- ══ Modal Contacto ══ -->
 <div class="modal-overlay" id="modalContacto">
   <div class="modal-box">
     <button class="modal-close" id="btnCerrarModal">✕</button>
@@ -330,7 +431,7 @@
     return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
   }
   function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
-  function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
+  function validarTel(t){ return /^9\d{8}$/.test(t.replace(/\s/g,'')); }
   function validarId(s){ return s.length>0 && !/\s/.test(s); }
 
   function generarQR(url){
@@ -345,8 +446,66 @@
     },100);
   }
 
+  /* ── Clipboard ── */
+  function copyText(text){
+    const payload=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
+    if(navigator.clipboard && typeof navigator.clipboard.writeText==='function'){
+      return navigator.clipboard.writeText(payload).then(()=>true).catch(()=>{
+        if(window.ClipboardItem){
+          return navigator.clipboard.write([
+            new ClipboardItem({'text/plain':Promise.resolve(new Blob([payload],{type:'text/plain'}))})
+          ]).then(()=>true).catch(()=>legacyCopy(payload));
+        }
+        return legacyCopy(payload);
+      });
+    }
+    return Promise.resolve(legacyCopy(payload));
+  }
+  function legacyCopy(text){
+    try{
+      const ta=document.createElement('textarea');
+      ta.value=text; ta.setAttribute('readonly','');
+      ta.style.cssText='position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;background:transparent;opacity:0;pointer-events:none;z-index:-1';
+      document.body.appendChild(ta); ta.focus({preventScroll:true}); ta.select(); ta.setSelectionRange(0,ta.value.length);
+      const ok=document.execCommand('copy'); document.body.removeChild(ta); return ok;
+    }catch(_){ return false; }
+  }
+
+  function formatRutDisplay(raw){
+    const r=raw.replace(/[\.\-\s]/g,'');
+    if(r.length<2) return r;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
+  }
+
+  function buildDatosText(d){
+    const lines=[
+      `Nombre: ${clean(d.nombre)}`,
+      `RUT: ${formatRutDisplay(clean(d.rut))}`,
+      `Banco: ${clean(d.banco)}`,
+      `Tipo de cuenta: ${clean(d.tipoCuenta)}`,
+      `N° de cuenta: ${clean(d.numeroCuenta)}`
+    ];
+    if(d.correo) lines.push(`Correo: ${clean(d.correo)}`);
+    return lines.join('\n');
+  }
+
   let allData={};
   let usuarioActivo=null;
+  let cachedDatosText='';
+  let miniOkTimer=null;
+
+  function copiarDatosMini(){
+    if(!cachedDatosText) return;
+    copyText(cachedDatosText).then(ok=>{
+      if(ok){
+        const label=document.getElementById('datosMiniLabel');
+        const okEl=document.getElementById('datosMiniOk');
+        label.style.display='none'; okEl.style.display='block';
+        if(miniOkTimer) clearTimeout(miniOkTimer);
+        miniOkTimer=setTimeout(()=>{ label.style.display=''; okEl.style.display='none'; },1800);
+      }
+    });
+  }
 
   async function cargarData(){
     try{
@@ -362,32 +521,59 @@
       const d=allData[id];
       if(!d) return false;
       usuarioActivo={
-        rut:            normalizarRut(d.rut||''),
-        tel:            (d.telefono||'').replace(/\D/g,''),
-        nombre:         clean(d.nombre),
-        rut_display:    clean(d.rut),
-        telefono_raw:   (d.telefono||'').replace(/\D/g,'')
+        rut:          normalizarRut(d.rut||''),
+        tel:          (d.telefono||'').replace(/\D/g,''),
+        nombre:       clean(d.nombre),
+        rut_display:  formatRutDisplay(clean(d.rut)),
+        telefono_raw: (d.telefono||'').replace(/\D/g,'')
       };
       const qrUrl=BASE_URL+'?id='+encodeURIComponent(id);
-      document.getElementById('nombreEl').textContent=clean(d.nombre);
-      document.getElementById('bancoEl').textContent=clean(d.banco)+' · '+clean(d.tipoCuenta);
       document.title='TuQR — '+clean(d.nombre);
       generarQR(qrUrl);
+
+      // Datos mini
+      cachedDatosText=buildDatosText(d);
+      document.getElementById('datosPreEl').textContent=cachedDatosText;
+      document.getElementById('datosMiniLabel').style.display='';
+      document.getElementById('datosMiniOk').style.display='none';
+
       document.getElementById('main').style.display='flex';
       document.getElementById('screenGestion').style.display='none';
       document.getElementById('screenReactivar').style.display='none';
       document.getElementById('screenElegirReact').style.display='none';
+      document.getElementById('screenEspera').style.display='none';
       return true;
     }catch(e){ return false; }
   }
+
+  /* ── Cerrar sesión ── */
+  document.getElementById('btnCerrarSesion').addEventListener('click',()=>{
+    localStorage.removeItem(STORAGE_KEY);
+    usuarioActivo=null;
+    cachedDatosText='';
+    document.getElementById('main').style.display='none';
+    // Limpiar campos reactivar
+    document.getElementById('reactRut').value='';
+    document.getElementById('reactTel').value='';
+    ['err-reactRut','err-reactTel','err-reactGeneral'].forEach(i=>{
+      const el=document.getElementById(i);
+      if(el) el.classList.remove('show');
+    });
+    ['reactRut','reactTel'].forEach(i=>{
+      const el=document.getElementById(i);
+      if(el) el.classList.remove('valid','invalid');
+    });
+    document.getElementById('screenReactivar').style.display='flex';
+  });
 
   /* ── Gestión ── */
   async function mostrarGestion(){
     await cargarData();
     const savedId=localStorage.getItem(STORAGE_KEY);
     if(usuarioActivo){
+      // Mostrar Nombre + RUT en el recuadro de identidad
       document.getElementById('identityNombre').textContent=usuarioActivo.nombre;
-      document.getElementById('identityRut').textContent=usuarioActivo.rut_display+' · +56 '+usuarioActivo.telefono_raw;
+      document.getElementById('identityRut').textContent=usuarioActivo.rut_display;
     }
     const lista=document.getElementById('listaCuentasDestino');
     lista.innerHTML='';
@@ -424,7 +610,7 @@
     document.getElementById('main').style.display='flex';
   });
 
-  /* ── Guardar nueva cuenta destino ── */
+  /* ── Guardar nueva cuenta destino → pantalla espera ── */
   const newIdInput=document.getElementById('newId');
   const newNumeroInput=document.getElementById('newNumero');
 
@@ -438,6 +624,31 @@
     this.value=this.value.replace(/\D/g,'');
     this.classList.toggle('valid',this.value.length>0);
   });
+
+  let pollTimer=null, pollCount=0;
+  function iniciarPolling(id){
+    pollCount=0; clearInterval(pollTimer); checkIdPoll(id);
+    pollTimer=setInterval(()=>checkIdPoll(id), 5000);
+  }
+  async function checkIdPoll(id){
+    pollCount++;
+    try{
+      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      if(!res.ok) throw new Error();
+      const all=await res.json();
+      if(all[id]){
+        clearInterval(pollTimer);
+        allData=all;
+        await mostrarApp(id);
+        return;
+      }
+    }catch(e){}
+    if(pollCount>=24){
+      clearInterval(pollTimer);
+      document.getElementById('esperaWaitBox').style.display='none';
+      document.getElementById('esperaError').style.display='flex';
+    }
+  }
 
   document.getElementById('btnGuardarNueva').addEventListener('click',async function(){
     const msgErr=document.getElementById('msg-nueva-err');
@@ -470,13 +681,13 @@
     const datosUsuario=allData[savedId]||{};
     const payload={
       id:idVal,
-      nombre:      clean(datosUsuario.nombre||''),
-      rut:         clean(datosUsuario.rut||''),
-      banco:       bancoVal,
-      tipoCuenta:  tipoVal,
-      numeroCuenta:numeroVal,
-      correo:      clean(datosUsuario.correo||''),
-      telefono:    usuarioActivo.telefono_raw
+      nombre:       clean(datosUsuario.nombre||''),
+      rut:          clean(datosUsuario.rut||''),
+      banco:        bancoVal,
+      tipoCuenta:   tipoVal,
+      numeroCuenta: numeroVal,
+      correo:       clean(datosUsuario.correo||''),
+      telefono:     usuarioActivo.telefono_raw
     };
     try{
       const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
@@ -488,26 +699,31 @@
         msgErr.innerHTML='<div class="err-inline">Error al guardar.'+detail+'</div>';
         this.textContent='Guardar nueva cuenta destino'; this.disabled=false; return;
       }
+      // Éxito → ir a pantalla de espera
       localStorage.setItem(STORAGE_KEY,idVal);
-      const btn=this;
-      let intentos=0;
-      const poll=setInterval(async()=>{
-        intentos++;
-        await cargarData();
-        if(allData[idVal]){
-          clearInterval(poll);
-          await mostrarApp(idVal);
-          btn.textContent='Guardar nueva cuenta destino'; btn.disabled=false;
-        } else if(intentos>=20){
-          clearInterval(poll);
-          msgErr.innerHTML='<div class="err-inline">Guardado pero la activación tardó. Vuelve al QR.</div>';
-          btn.textContent='Guardar nueva cuenta destino'; btn.disabled=false;
-        }
-      },4000);
+      document.getElementById('esperaNombre').textContent=clean(datosUsuario.nombre||idVal);
+      document.getElementById('esperaWaitBox').style.display='flex';
+      document.getElementById('esperaError').style.display='none';
+      document.getElementById('screenGestion').style.display='none';
+      document.getElementById('screenEspera').style.display='flex';
+      window.scrollTo({top:0,behavior:'smooth'});
+      iniciarPolling(idVal);
+      this.textContent='Guardar nueva cuenta destino'; this.disabled=false;
     }catch(e){
       msgErr.innerHTML='<div class="err-inline">Error de red: '+e+'</div>';
       this.textContent='Guardar nueva cuenta destino'; this.disabled=false;
     }
+  });
+
+  document.getElementById('btnEsperaIrApp').addEventListener('click',()=>{
+    const id=localStorage.getItem(STORAGE_KEY);
+    if(id) mostrarApp(id);
+  });
+  document.getElementById('btnEsperaReintentar').addEventListener('click',()=>{
+    document.getElementById('esperaWaitBox').style.display='flex';
+    document.getElementById('esperaError').style.display='none';
+    const id=localStorage.getItem(STORAGE_KEY);
+    if(id) iniciarPolling(id);
   });
 
   /* ── Init ── */
