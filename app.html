@@ -113,8 +113,8 @@
   .cdi-l1{ font-size:14px; font-weight:800; color:var(--text); }
   /* Línea 2: número */
   .cdi-l2{ font-size:13px; font-weight:600; color:var(--muted); }
-  .cdi-badge{ font-size:11px; font-weight:700; color:var(--primary); margin-top:2px; }
-  /* Acciones: botón único "···" + Seleccionar */
+  /* Acciones: Seleccionar + Editar/Eliminar */
+  .cdi-cuenta-activa-label{ font-size:13px; font-weight:800; color:var(--primary); margin-bottom:4px; }
   .cdi-actions{ display:flex; gap:8px; margin-top:8px; }
   .cdi-btn{
     padding:8px 14px; font-size:12px; font-weight:800; font-family:inherit;
@@ -241,7 +241,7 @@
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="card">
     <div class="react-title">Mis Cuentas</div>
-    <div class="react-sub">Toca una cuenta para activarla o usa ··· para editar.</div>
+    <div class="react-sub">Selecciona una cuenta o edita sus datos.</div>
     <div class="cuenta-destino-list" id="listaCuentasDestino"></div>
     <hr class="divider"/>
     <button class="cta-outline" id="btnMostrarFormNueva">+ Agregar cuenta</button>
@@ -560,19 +560,30 @@
     const lista=document.getElementById('listaCuentasDestino');
     lista.innerHTML='';
     if(usuarioActivo){
-      Object.entries(allData)
+      // Ordenar: cuenta activa siempre primero
+      const cuentas=Object.entries(allData)
         .filter(([id,d])=>normalizarRut(d.rut||'')===usuarioActivo.rut&&(d.telefono||'').replace(/\D/g,'')===usuarioActivo.tel)
-        .forEach(([id,d])=>{
+        .sort(([idA],[idB])=>{ if(idA===savedId) return -1; if(idB===savedId) return 1; return 0; });
+
+      cuentas.forEach(([id,d])=>{
           const esActiva=id===savedId;
+
+          // Label "Cuenta activa" encima del item, fuera del cuadro, solo texto negrita
+          if(esActiva){
+            const lbl=document.createElement('div');
+            lbl.className='cdi-cuenta-activa-label';
+            lbl.textContent='Cuenta activa';
+            lista.appendChild(lbl);
+          }
+
           const item=document.createElement('div');
           item.className='cuenta-destino-item'+(esActiva?' activa':' no-activa');
           item.innerHTML=`
             <div class="cdi-l1">${clean(d.banco)} · ${abrevTipo(clean(d.tipoCuenta))}</div>
             <div class="cdi-l2">N° ${clean(d.numeroCuenta)}</div>
-            ${esActiva?'<div class="cdi-badge">✓ Activa ahora</div>':''}
             <div class="cdi-actions">
               ${!esActiva?`<button class="cdi-btn cdi-btn-sel" data-id="${id}">Seleccionar</button>`:''}
-              <button class="cdi-btn cdi-btn-opt" data-id="${id}">···</button>
+              <button class="cdi-btn cdi-btn-opt" data-id="${id}">Editar/Eliminar</button>
             </div>
           `;
           // Pinchar cuenta activa → volver al QR
@@ -586,6 +597,7 @@
           lista.appendChild(item);
         });
     }
+
     // Reset form
     document.getElementById('formNuevaCuenta').style.display='none';
     document.getElementById('btnMostrarFormNueva').style.display='';
