@@ -106,5 +106,14 @@
     "numeroCuenta": "9070087603",
     "correo": "Ajj@gmail.com",
     "telefono": "993202215"
+  },
+  "157202979_BancoItaú_54548484": {
+    "banco": "Banco Itaú",
+    "rut": "15.720.297-9",
+    "nombre": "Angelina Gherardelli",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "54548484",
+    "correo": "Ajj@gmail.com",
+    "telefono": "993202215"
   }
 }
