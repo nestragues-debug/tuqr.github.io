@@ -264,5 +264,14 @@
     "numeroCuenta": "098722121",
     "correo": "nestragues@gmail.com",
     "telefono": "982897919"
+  },
+  "NicoTapp1": {
+    "banco": "Tapp Caja Los Andes",
+    "rut": "13.268.177-5",
+    "nombre": "Nicolas Estragues",
+    "tipoCuenta": "Cuenta Corriente",
+    "numeroCuenta": "21092012",
+    "correo": "nestragues@gmail.com",
+    "telefono": "999999999"
   }
 }
