@@ -79,5 +79,14 @@
     "numeroCuenta": "5845846648",
     "correo": "nestragues@gmail.com",
     "telefono": "982897919"
+  },
+  "24001985K_BancoFalabella_28120046": {
+    "banco": "Banco Falabella",
+    "rut": "24.001.985-k",
+    "nombre": "Lourdes Estragues",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "28120046",
+    "correo": "nestragues@gmail.com",
+    "telefono": "982897919"
   }
 }
