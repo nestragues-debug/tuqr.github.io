@@ -237,5 +237,14 @@
     "numeroCuenta": "68876",
     "correo": "nestragues@gmail.com",
     "telefono": "999999999"
+  },
+  "NicoTapp": {
+    "banco": "Tapp Caja Los Andes",
+    "rut": "13.268.177-5",
+    "nombre": "Chivas Chivas",
+    "tipoCuenta": "Cuenta Vista",
+    "numeroCuenta": "10982109831",
+    "correo": "nestragues@gmail.com",
+    "telefono": "982897919"
   }
 }
