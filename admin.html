@@ -94,16 +94,6 @@
     display:block; text-align:center; margin-top:18px;
     font-size:13px; font-weight:700; color:var(--primary); cursor:pointer; text-decoration:underline;
   }
-  .cuenta-destino-list{ display:flex; flex-direction:column; gap:10px; margin-top:4px; }
-  .cuenta-destino-item{
-    padding:14px 16px; border-radius:14px; cursor:pointer;
-    border:2px solid var(--border); background:#fff; display:flex; flex-direction:column; gap:2px;
-    -webkit-tap-highlight-color:transparent; transition:border-color .12s, background .12s;
-  }
-  .cuenta-destino-item:active{ background:#f7f7f7; }
-  .cuenta-destino-item:hover{ border-color:var(--primary); background:rgba(255,122,24,.04); }
-  .cuenta-destino-nombre{ font-size:15px; font-weight:800; color:var(--text); }
-  .cuenta-destino-id{ font-size:12px; font-weight:600; color:var(--muted); }
   .ok-card{
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
     padding:24px 20px 28px; box-shadow:var(--shadow); position:relative; overflow:hidden;
@@ -205,7 +195,7 @@
     <a class="link-contacto" id="btnContactoOpciones">Contacto</a>
   </div>
 
-  <!-- Pantalla: identificarse -->
+  <!-- Pantalla: identificarse → va directo a app.html con screenGestion -->
   <div id="screenActivar" class="card" style="display:none">
     <h1>Ingresar</h1>
     <p class="sub">Ingresa tu RUT y teléfono para identificarte.</p>
@@ -215,21 +205,13 @@
     <label for="actTel">Teléfono</label>
     <div class="phone-wrap">
       <input class="phone-prefix" value="+56" readonly/>
-      <input id="actTel" placeholder="912345678" inputmode="numeric" maxlength="12"/>
+      <input id="actTel" placeholder="912345678" inputmode="numeric" maxlength="9"/>
     </div>
-    <div class="field-err" id="err-actTel">Número inválido</div>
+    <div class="field-err" id="err-actTel">Número inválido (9 dígitos, empieza en 9)</div>
     <div class="field-err" id="err-actGeneral">No encontramos un usuario con esos datos.</div>
     <button class="cta" id="btnDoActivar">Continuar</button>
     <a class="link-back" id="backFromActivar">← Volver</a>
     <a class="link-contacto" id="btnContactoActivar">Contacto</a>
-  </div>
-
-  <!-- Pantalla: elegir cuenta destino cuando hay más de una -->
-  <div id="screenElegir" class="card" style="display:none">
-    <h1>Elige tu cuenta destino</h1>
-    <p class="sub">Encontramos más de una. ¿Cuál quieres usar?</p>
-    <div class="cuenta-destino-list" id="cuentaDestinoList"></div>
-    <a class="link-back" id="backFromElegir">← Volver</a>
   </div>
 
   <!-- Pantalla: crear usuario -->
@@ -279,12 +261,12 @@
     <input id="correo" placeholder="correo@dominio.cl" inputmode="email"/>
     <div class="field-err" id="err-correo">Formato inválido</div>
     <hr class="divider"/>
-    <label for="telefono">Teléfono</label>
+    <label for="telefono">Teléfono <span style="font-weight:400;font-size:12px;color:#aaa">(9 dígitos, empieza en 9)</span></label>
     <div class="phone-wrap">
       <input class="phone-prefix" value="+56" readonly/>
-      <input id="telefono" placeholder="912345678" inputmode="numeric" maxlength="12"/>
+      <input id="telefono" placeholder="912345678" inputmode="numeric" maxlength="9"/>
     </div>
-    <div class="field-err" id="err-tel">Número inválido (8-12 dígitos)</div>
+    <div class="field-err" id="err-tel">Debe tener 9 dígitos y comenzar en 9</div>
     <button class="cta" id="save">Guardar</button>
     <div id="msg-err"></div>
     <a class="link-back" id="backFromCrear">← Volver</a>
@@ -366,8 +348,7 @@
   function show(id){ document.getElementById(id).style.display=''; }
   function hide(id){ document.getElementById(id).style.display='none'; }
 
-  // ── Init: decidir qué pantalla mostrar ──
-  // Fix bug: solo rebotar a welcome si hay sesión activa Y no viene del flujo correcto
+  // ── Init ──
   if(!isStandalone && !fromWelcome && savedId && accion !== 'nueva_cuenta'){
     window.location.replace('./welcome.html');
   } else if(savedId && accion !== 'nueva_cuenta'){
@@ -383,7 +364,6 @@
   function clean(s){
     return String(s??'').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F]/g,'').trim();
   }
-
   function validarRut(rut){
     const r=rut.replace(/[\.\-\s]/g,'').toUpperCase();
     if(!/^\d{7,8}[0-9K]$/.test(r)) return false;
@@ -400,7 +380,8 @@
   }
   function normalizarRut(rut){ return rut.replace(/[\.\-\s]/g,'').toUpperCase(); }
   function validarEmail(e){ return e.length>0 && /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
-  function validarTel(t){ return /^\d{8,12}$/.test(t.replace(/\s/g,'')); }
+  // Teléfono: exactamente 9 dígitos, empieza en 9
+  function validarTel(t){ return /^9\d{8}$/.test(t.replace(/\s/g,'')); }
   function validarId(s){ return s.length>0 && !/\s/.test(s); }
 
   /* ── Polling creación ── */
@@ -426,15 +407,15 @@
 
   /* ── Navegación ── */
   document.getElementById('btnIrCrear').addEventListener('click',()=>{ hide('screenOpciones'); show('screenCrear'); });
+  // Ingresar → va a screenActivar (que al verificar redirige a app.html)
   document.getElementById('btnIrActivar').addEventListener('click',()=>{ hide('screenOpciones'); show('screenActivar'); });
   document.getElementById('backFromActivar').addEventListener('click',()=>{ hide('screenActivar'); show('screenOpciones'); });
-  document.getElementById('backFromElegir').addEventListener('click',()=>{ hide('screenElegir'); show('screenActivar'); });
   document.getElementById('backFromCrear').addEventListener('click',()=>{
     if(accion === 'nueva_cuenta') window.location.replace('./app.html');
     else { hide('screenCrear'); show('screenOpciones'); }
   });
 
-  /* ── Identificar usuario → directo al QR ── */
+  /* ── Identificar usuario → siempre va a app.html ── */
   const actRutInput = document.getElementById('actRut');
   const actTelInput = document.getElementById('actTel');
 
@@ -472,24 +453,10 @@
       );
       if(matches.length===0){
         errGen.classList.add('show'); this.textContent='Continuar'; this.disabled=false;
-      } else if(matches.length===1){
+      } else {
+        // Tiene 1 o más cuentas → guardar la primera y dejar que app.html maneje la selección en screenGestion
         localStorage.setItem(STORAGE_KEY, matches[0][0]);
         window.location.replace('./app.html');
-      } else {
-        const list=document.getElementById('cuentaDestinoList');
-        list.innerHTML='';
-        matches.forEach(([id,d])=>{
-          const item=document.createElement('div');
-          item.className='cuenta-destino-item';
-          item.innerHTML=`<div class="cuenta-destino-nombre">${clean(d.nombre)}</div><div class="cuenta-destino-id">${id} · ${clean(d.banco)}</div>`;
-          item.addEventListener('click',()=>{
-            localStorage.setItem(STORAGE_KEY, id);
-            window.location.replace('./app.html');
-          });
-          list.appendChild(item);
-        });
-        hide('screenActivar'); show('screenElegir');
-        this.textContent='Continuar'; this.disabled=false;
       }
     }catch(e){
       errGen.textContent='Error al conectar. Intenta de nuevo.';
@@ -537,7 +504,7 @@
     document.getElementById('err-tel').classList.toggle('show', this.value.length>0&&!ok);
   });
 
-  /* ── Guardar ── */
+  /* ── Guardar nuevo usuario ── */
   document.getElementById('save').addEventListener('click', async () => {
     const msgErr=document.getElementById('msg-err');
     msgErr.innerHTML='';
@@ -554,7 +521,7 @@
     if(!validarRut(payload.rut)){ msgErr.innerHTML='<div class="err">El RUT no es válido.</div>'; rutInput.focus(); return; }
     if(!/^\d+$/.test(payload.numeroCuenta)){ msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; cuentaInput.focus(); return; }
     if(!validarEmail(payload.correo)){ msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>'; correoInput.focus(); return; }
-    if(!validarTel(payload.telefono)){ msgErr.innerHTML='<div class="err">Ingresa un teléfono válido.</div>'; telInput.focus(); return; }
+    if(!validarTel(payload.telefono)){ msgErr.innerHTML='<div class="err">El teléfono debe tener 9 dígitos y comenzar en 9.</div>'; telInput.focus(); return; }
 
     try{
       const chk=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
