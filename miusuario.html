@@ -1,0 +1,336 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<meta name="theme-color" content="#ff7a18"/>
+<meta name="mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-capable" content="yes"/>
+<meta name="apple-mobile-web-app-status-bar-style" content="default"/>
+<meta name="apple-mobile-web-app-title" content="TuQR"/>
+<link rel="manifest" href="./manifest.json"/>
+<link rel="apple-touch-icon" href="./LogoQ_transparent.png"/>
+<title>Mi Usuario — TuQR</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --primary:#ff7a18; --accent:#ffd400; --bg:#f2f3f5; --card:#ffffff;
+    --text:#1a1a1a; --muted:#5a5a5a; --border:rgba(0,0,0,.08);
+    --shadow:0 10px 24px rgba(0,0,0,.08); --radius:18px;
+    --danger:#c00;
+  }
+  *{ box-sizing:border-box; }
+  body{
+    font-family:"Poppins",system-ui,sans-serif; margin:0; padding:16px 12px;
+    background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; min-height:100vh;
+  }
+  .wrap{ max-width:480px; margin:0 auto; display:flex; flex-direction:column; gap:16px; }
+  .topbar{ display:flex; align-items:center; gap:12px; }
+  .btn-back{
+    background:none; border:none; cursor:pointer; font-family:inherit;
+    font-size:22px; color:var(--muted); padding:6px; border-radius:10px;
+    -webkit-tap-highlight-color:transparent; line-height:1;
+  }
+  .btn-back:active{ color:var(--primary); }
+  .topbar-title{ font-size:16px; font-weight:800; }
+  .card{
+    background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
+    padding:24px 20px 28px; box-shadow:var(--shadow); position:relative; overflow:hidden;
+    display:flex; flex-direction:column;
+  }
+  .card::before{
+    content:""; position:absolute; top:0; left:0; right:0; height:8px;
+    background:linear-gradient(90deg,rgba(255,212,0,.95),rgba(255,122,24,.95));
+  }
+  .card-title{ font-size:18px; font-weight:800; margin:4px 0 18px; }
+  .rut-pill{
+    display:inline-flex; align-items:center; gap:10px; margin-bottom:16px;
+    padding:10px 14px; border-radius:12px; background:#f5f5f5; border:1px solid var(--border);
+  }
+  .rut-pill-label{ font-size:11px; font-weight:800; color:var(--muted); text-transform:uppercase; letter-spacing:.05em; }
+  .rut-pill-value{ font-size:15px; font-weight:800; color:var(--text); }
+  label{ font-weight:700; font-size:13px; color:var(--muted); margin-top:14px; display:block; margin-bottom:5px; }
+  input{
+    width:100%; padding:11px 12px; font-size:14px; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:12px; background:#fff; color:var(--text);
+    outline:none; transition:border-color .15s, box-shadow .15s; -webkit-appearance:none;
+  }
+  input:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
+  input.valid{ border-color:#0a7; background:#f5fbf8; }
+  input.invalid{ border-color:#e00; background:#fff8f8; }
+  .field-err{ color:#c00; font-size:12px; font-weight:600; margin-top:4px; display:none; }
+  .field-err.show{ display:block; }
+  .phone-wrap{ display:flex; gap:8px; }
+  .phone-prefix{
+    width:52px; flex-shrink:0; padding:11px 8px; font-size:13px; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
+    background:#f7f7f7; color:var(--muted); text-align:center; outline:none;
+  }
+  .phone-wrap input{ flex:1; min-width:0; }
+  .cta{
+    margin-top:22px; padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--primary);
+    box-shadow:0 6px 12px rgba(255,122,24,.22); -webkit-tap-highlight-color:transparent;
+    transition:transform .06s, filter .06s;
+  }
+  .cta:active{ transform:translateY(1px); filter:brightness(.98); }
+  .cta:disabled{ background:#ccc; box-shadow:none; cursor:not-allowed; }
+  .msg-ok{
+    margin-top:12px; padding:10px 12px; border-radius:12px; font-size:14px; font-weight:700;
+    color:#0a7; background:rgba(0,170,120,.10); border:1px solid rgba(0,170,120,.18); display:none;
+  }
+  .msg-err{
+    margin-top:12px; padding:10px 12px; border-radius:12px; font-size:14px; font-weight:800;
+    color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14); display:none;
+  }
+  /* Zona peligrosa */
+  .danger-card{
+    background:var(--card); border:1.5px solid rgba(190,0,0,.2); border-radius:var(--radius);
+    padding:20px 20px 24px; box-shadow:var(--shadow); display:flex; flex-direction:column; gap:12px;
+  }
+  .danger-title{ font-size:15px; font-weight:800; color:var(--danger); }
+  .danger-desc{ font-size:13px; color:var(--muted); line-height:1.5; }
+  .btn-danger{
+    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:2px solid var(--danger); border-radius:12px; cursor:pointer;
+    color:var(--danger); background:#fff; -webkit-tap-highlight-color:transparent; transition:background .1s;
+  }
+  .btn-danger:active{ background:rgba(190,0,0,.07); }
+  /* Modal */
+  .modal-overlay{
+    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5);
+    z-index:500; align-items:flex-end; justify-content:center;
+  }
+  .modal-overlay.open{ display:flex; }
+  .modal-box{
+    background:#fff; border-radius:24px 24px 0 0; padding:28px 20px 40px;
+    width:100%; max-width:480px;
+    box-shadow:0 -8px 32px rgba(0,0,0,.15); animation:slideUp .25s ease;
+    display:flex; flex-direction:column; gap:12px;
+  }
+  @keyframes slideUp{ from{ transform:translateY(100%); } to{ transform:translateY(0); } }
+  .modal-handle{ width:40px; height:4px; border-radius:999px; background:#ddd; margin:0 auto 8px; display:block; }
+  .modal-title{ font-size:18px; font-weight:800; color:var(--danger); }
+  .modal-desc{ font-size:13px; color:var(--muted); line-height:1.5; }
+  .btn-confirm-danger{
+    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:#fff; background:var(--danger);
+  }
+  .btn-cancel{
+    padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
+    border:0; border-radius:12px; cursor:pointer; color:var(--text); background:#f0f0f0;
+  }
+  /* Skeleton */
+  .skeleton-line{
+    height:14px; border-radius:8px; width:70%;
+    background:linear-gradient(90deg,#e8e8e8 25%,#f4f4f4 50%,#e8e8e8 75%);
+    background-size:200% 100%; animation:shimmer 1.2s infinite;
+  }
+  @keyframes shimmer{ 0%{background-position:200% 0} 100%{background-position:-200% 0} }
+  .loading-wrap{ display:flex; flex-direction:column; gap:12px; padding:8px 0; }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="topbar">
+    <button class="btn-back" id="btnBack">←</button>
+    <span class="topbar-title">Mi Usuario</span>
+  </div>
+
+  <div class="card">
+    <div class="card-title">Mis datos</div>
+
+    <div id="stateLoading" class="loading-wrap">
+      <div class="skeleton-line"></div>
+      <div class="skeleton-line" style="width:50%"></div>
+      <div class="skeleton-line" style="width:80%"></div>
+    </div>
+
+    <div id="stateNoSession" style="display:none; font-size:14px; color:var(--muted);">
+      No hay sesión activa. <a href="./admin.html" style="color:var(--primary);font-weight:700;">Ir a Inicio</a>
+    </div>
+
+    <div id="stateData" style="display:none">
+      <div class="rut-pill">
+        <div>
+          <div class="rut-pill-label">RUT</div>
+          <div class="rut-pill-value" id="displayRut"></div>
+        </div>
+        <span style="font-size:16px">🔒</span>
+      </div>
+
+      <label for="editNombre">Nombre</label>
+      <input id="editNombre" placeholder="Tu nombre completo"/>
+
+      <label for="editTel">Teléfono</label>
+      <div class="phone-wrap">
+        <input class="phone-prefix" value="+56" readonly/>
+        <input id="editTel" placeholder="912345678" inputmode="numeric" maxlength="9"/>
+      </div>
+      <div class="field-err" id="err-editTel">9 dígitos, empieza en 9</div>
+
+      <label for="editCorreo">Correo</label>
+      <input id="editCorreo" placeholder="correo@dominio.cl" inputmode="email"/>
+      <div class="field-err" id="err-editCorreo">Formato inválido</div>
+
+      <button class="cta" id="btnGuardar">Guardar cambios</button>
+      <div class="msg-ok" id="msgOk">✓ Datos actualizados correctamente.</div>
+      <div class="msg-err" id="msgErr"></div>
+    </div>
+  </div>
+
+  <div class="danger-card" id="dangerCard" style="display:none">
+    <div class="danger-title">⚠️ Zona peligrosa</div>
+    <div class="danger-desc">Eliminar tu usuario borrará todos tus datos y cuentas destino de TuQR. Esta acción no se puede deshacer.</div>
+    <button class="btn-danger" id="btnEliminar">Eliminar mi usuario</button>
+  </div>
+
+</div>
+
+<!-- Modal confirmación eliminación -->
+<div class="modal-overlay" id="modalEliminar">
+  <div class="modal-box">
+    <span class="modal-handle"></span>
+    <div class="modal-title">¿Eliminar usuario?</div>
+    <div class="modal-desc">Se eliminarán todos los registros asociados a tu RUT. <strong>Esta acción es irreversible.</strong></div>
+    <button class="btn-confirm-danger" id="btnConfirmarEliminar">Sí, eliminar mi usuario</button>
+    <button class="btn-cancel" id="btnCancelarEliminar">Cancelar</button>
+  </div>
+</div>
+
+<script>
+  const WORKER_URL  = 'https://tuqr-worker.nestragues.workers.dev/';
+  const BASE_URL    = 'https://tuqrapp.github.io/tuqr.github.io/';
+  const DATA_URL    = BASE_URL + 'data.json';
+  const STORAGE_KEY = 'tuqr_id';
+
+  function clean(s){ return String(s??'').normalize('NFC').replace(/\u00A0/g,' ').replace(/[\u200B-\u200F]/g,'').trim(); }
+  function normalizarRut(r){ return r.replace(/[\.\-\s]/g,'').toUpperCase(); }
+  function formatRut(raw){
+    const r=String(raw||'').replace(/[\.\-\s]/g,'');
+    if(r.length<2) return r;
+    return r.slice(0,-1).replace(/\B(?=(\d{3})+(?!\d))/g,'.')+'-'+r.slice(-1);
+  }
+  function validarEmail(e){ return e.length>0&&/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(e); }
+  function validarTel(t){ return /^9\d{8}$/.test(t.replace(/\s/g,'')); }
+
+  let savedId=null, allData={}, datosActuales={};
+
+  async function init(){
+    savedId=localStorage.getItem(STORAGE_KEY);
+    if(!savedId){ show('stateLoading',false); show('stateNoSession',true); return; }
+    try{
+      const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
+      allData=await res.json();
+    }catch(e){ allData={}; }
+    datosActuales=allData[savedId];
+    if(!datosActuales){ show('stateLoading',false); show('stateNoSession',true); return; }
+
+    document.getElementById('displayRut').textContent=formatRut(clean(datosActuales.rut||''));
+    document.getElementById('editNombre').value=clean(datosActuales.nombre||'');
+    document.getElementById('editTel').value=(datosActuales.telefono||'').replace(/\D/g,'');
+    document.getElementById('editCorreo').value=clean(datosActuales.correo||'');
+
+    show('stateLoading',false); show('stateData',true); show('dangerCard',true);
+  }
+
+  function show(id,visible){ document.getElementById(id).style.display=visible?'':'none'; }
+  init();
+
+  document.getElementById('btnBack').addEventListener('click',()=>{
+    window.location.href=localStorage.getItem(STORAGE_KEY)?'./app.html':'./admin.html';
+  });
+
+  document.getElementById('editTel').addEventListener('input',function(){
+    this.value=this.value.replace(/\D/g,'');
+    const ok=validarTel(this.value);
+    this.classList.toggle('valid',this.value.length>0&&ok);
+    this.classList.toggle('invalid',this.value.length>0&&!ok);
+    document.getElementById('err-editTel').classList.toggle('show',this.value.length>0&&!ok);
+  });
+  document.getElementById('editCorreo').addEventListener('blur',function(){
+    const ok=validarEmail(this.value);
+    this.classList.toggle('valid',this.value.length>0&&ok);
+    this.classList.toggle('invalid',this.value.length>0&&!ok);
+    document.getElementById('err-editCorreo').classList.toggle('show',this.value.length>0&&!ok);
+  });
+
+  document.getElementById('btnGuardar').addEventListener('click',async function(){
+    const msgOk=document.getElementById('msgOk'), msgErr=document.getElementById('msgErr');
+    msgOk.style.display='none'; msgErr.style.display='none';
+
+    const nombre   = clean(document.getElementById('editNombre').value);
+    const telefono = document.getElementById('editTel').value.replace(/\D/g,'');
+    const correo   = clean(document.getElementById('editCorreo').value);
+
+    if(!nombre){ msgErr.textContent='El nombre es obligatorio.'; msgErr.style.display=''; return; }
+    if(!validarTel(telefono)){ msgErr.textContent='Teléfono inválido.'; msgErr.style.display=''; return; }
+    if(!validarEmail(correo)){ msgErr.textContent='Correo inválido.'; msgErr.style.display=''; return; }
+
+    this.textContent='Guardando…'; this.disabled=true;
+
+    // Actualizar todos los registros del RUT con los nuevos datos personales
+    const rutNorm=normalizarRut(datosActuales.rut||'');
+    const idsRut=Object.entries(allData).filter(([,d])=>normalizarRut(d.rut||'')===rutNorm).map(([id])=>id);
+
+    let errores=0;
+    for(const idReg of idsRut){
+      const d=allData[idReg];
+      const payload={
+        id:idReg, nombre, rut:clean(d.rut||''),
+        banco:clean(d.banco||''), tipoCuenta:clean(d.tipoCuenta||''),
+        numeroCuenta:clean(d.numeroCuenta||''), correo, telefono
+      };
+      try{
+        const res=await fetch(WORKER_URL,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify(payload)});
+        const data=await res.json();
+        if(!res.ok||!data.ok) errores++;
+      }catch(e){ errores++; }
+    }
+
+    if(errores>0){
+      msgErr.textContent='Error al guardar. Intenta de nuevo.'; msgErr.style.display='';
+    } else {
+      datosActuales={...datosActuales, nombre, telefono, correo};
+      msgOk.style.display='';
+      setTimeout(()=>{ msgOk.style.display='none'; },3000);
+    }
+    this.textContent='Guardar cambios'; this.disabled=false;
+  });
+
+  // Eliminar usuario
+  document.getElementById('btnEliminar').addEventListener('click',()=>{
+    document.getElementById('modalEliminar').classList.add('open');
+  });
+  document.getElementById('btnCancelarEliminar').addEventListener('click',()=>{
+    document.getElementById('modalEliminar').classList.remove('open');
+  });
+  document.getElementById('modalEliminar').addEventListener('click',function(e){
+    if(e.target===this) this.classList.remove('open');
+  });
+  document.getElementById('btnConfirmarEliminar').addEventListener('click',async function(){
+    this.textContent='Eliminando…'; this.disabled=true;
+    const rutNorm=normalizarRut(datosActuales.rut||'');
+    const ids=Object.entries(allData).filter(([,d])=>normalizarRut(d.rut||'')===rutNorm).map(([id])=>id);
+    let errores=0;
+    for(const idEl of ids){
+      try{
+        const res=await fetch(WORKER_URL,{method:'DELETE',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:idEl})});
+        if(!res.ok) errores++;
+      }catch(e){ errores++; }
+    }
+    if(errores>0){
+      document.getElementById('modalEliminar').classList.remove('open');
+      const msgErr=document.getElementById('msgErr');
+      msgErr.textContent='Error al eliminar. Intenta de nuevo o contacta soporte.'; msgErr.style.display='';
+      this.textContent='Sí, eliminar mi usuario'; this.disabled=false; return;
+    }
+    localStorage.removeItem(STORAGE_KEY);
+    window.location.replace('./admin.html?accion=cambiar');
+  });
+</script>
+</body>
+</html>
