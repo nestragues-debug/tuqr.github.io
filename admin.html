@@ -387,6 +387,25 @@
   </div>
 </div>
 
+<!-- ══ Modal Compartir la app ══ -->
+<div class="modal-overlay" id="modalCompartir">
+  <div class="modal-box">
+    <button class="modal-close" id="btnCerrarCompartir">✕</button>
+    <span class="modal-handle"></span>
+    <div class="modal-title">Comparte la app</div>
+    <div class="compartir-seccion-label">Pídele a tu amigo que escanee el QR</div>
+    <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
+    <div class="compartir-separador">ó</div>
+    <div class="compartir-seccion-label">Copia y envía el link a tu amigo</div>
+    <div class="compartir-link-wrap">
+      <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
+      <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
+    </div>
+    <div class="compartir-copy-ok" id="compartirCopyOk">✓ Link copiado</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
 <script>
   emailjs.init('yejdBOXVs6y3d8piR');
 
@@ -722,23 +741,34 @@
       this.textContent='Enviar'; this.disabled=false;
     }
   });
+  // ── Modal Compartir la app ─────────────────────────────────────────────
+  let compartirQRHecho=false;
+  function abrirModalCompartir(){
+    document.getElementById('modalCompartir').classList.add('open');
+    if(!compartirQRHecho){
+      compartirQRHecho=true;
+      const container=document.getElementById('compartirQRContainer');
+      container.innerHTML='';
+      new QRCode(container,{text:'https://tuqrapp.github.io/tuqr.github.io/welcome.html',width:208,height:208,correctLevel:QRCode.CorrectLevel.M});
+    }
+  }
+  function copyTextSimple(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(()=>true).catch(()=>false);
+    try{ const ta=document.createElement('textarea'); ta.value=t; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); document.body.removeChild(ta); return Promise.resolve(ok); }catch(_){return Promise.resolve(false);}
+  }
+  document.getElementById('btnCerrarCompartir').addEventListener('click',()=>{ document.getElementById('modalCompartir').classList.remove('open'); });
+  document.getElementById('modalCompartir').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+  document.getElementById('compartirCopyBtn').addEventListener('click',function(){
+    copyTextSimple(document.getElementById('compartirLinkInput').value).then(()=>{
+      const ok=document.getElementById('compartirCopyOk');
+      this.textContent='✓ Copiado'; ok.style.display='block';
+      setTimeout(()=>{ this.textContent='Copiar'; ok.style.display='none'; },2000);
+    });
+  });
+  document.getElementById('menuCompartirBienvenido').addEventListener('click',()=>{ cerrarDrawer(); abrirModalCompartir(); });
+  document.getElementById('menuCompartirSub').addEventListener('click',()=>{ cerrarDrawer(); abrirModalCompartir(); });
+
 </script>
 
-<!-- ══ Modal Compartir la app ══ -->
-<div class="modal-overlay" id="modalCompartir">
-  <div class="modal-box">
-    <button class="modal-close" id="btnCerrarCompartir">✕</button>
-    <span class="modal-handle"></span>
-    <div class="modal-title">Comparte la app</div>
-    <div class="modal-sub">Envía este link a quien quieras que use TuQR.</div>
-    <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
-    <div class="compartir-link-wrap">
-      <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
-      <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
-    </div>
-    <div class="compartir-copy-ok" id="compartirCopyOk">✓ Link copiado</div>
-  </div>
-</div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
