@@ -149,7 +149,10 @@
     <span class="modal-handle"></span>
     <div style="font-size:20px;font-weight:800;margin-bottom:4px">Comparte la app</div>
     <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.4">Envía este link a quien quieras que use TuQR.</div>
+    <div class="compartir-seccion-label">Pídele a tu amigo que escanee el QR</div>
     <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
+    <div class="compartir-separador">ó</div>
+    <div class="compartir-seccion-label">Copia y envía el link a tu amigo</div>
     <div class="compartir-link-wrap">
       <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
       <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
@@ -300,7 +303,7 @@
       compartirQRHecho=true;
       const container=document.getElementById('compartirQRContainer');
       container.innerHTML='';
-      new QRCode(container,{text:'https://tuqrapp.github.io/tuqr.github.io/welcome.html',width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+      new QRCode(container,{text:'https://tuqrapp.github.io/tuqr.github.io/welcome.html',width:208,height:208,correctLevel:QRCode.CorrectLevel.M});
     }
   }
   function copyTextSimple(t){
