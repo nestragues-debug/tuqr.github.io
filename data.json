@@ -115,5 +115,14 @@
     "numeroCuenta": "54548482",
     "correo": "Ajj@gmail.com",
     "telefono": "993202215"
+  },
+  "154797491_BancoEstado_154797491": {
+    "banco": "Banco Estado",
+    "rut": "15.479.749-1",
+    "nombre": "Juan soto",
+    "tipoCuenta": "Cuenta RUT",
+    "numeroCuenta": "154797491",
+    "correo": "juan.soto1981@hotmail.com",
+    "telefono": "995919180"
   }
 }
