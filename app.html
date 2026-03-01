@@ -76,14 +76,7 @@
   .qr-box{ background:#fff; border-radius:16px; padding:16px; box-shadow:0 4px 16px rgba(0,0,0,.07); display:flex; align-items:center; justify-content:center; }
   .qr-box canvas{ border-radius:8px; display:block; }
 
-  /* Datos mini */
-  .datos-mini{ width:100%; background:#f7f7f7; border:1px solid rgba(0,0,0,.10); border-radius:12px; padding:10px 12px; cursor:pointer; -webkit-tap-highlight-color:transparent; transition:background .1s; display:flex; flex-direction:column; gap:5px; }
-  .datos-mini:active{ background:#efefef; }
-  .datos-mini pre{ white-space:pre-wrap; word-break:break-word; font-size:10px; line-height:1.5; font-family:inherit; color:var(--muted); margin:0; user-select:all; -webkit-user-select:all; }
-  .datos-mini-footer{ display:flex; align-items:center; justify-content:space-between; }
-  .datos-mini-hint{ font-size:10px; color:#aaa; }
-  .datos-mini-label{ font-size:10px; font-weight:700; color:var(--primary); }
-  .datos-mini-ok{ font-size:10px; font-weight:700; color:#0a7; display:none; }
+
 
   /* Botón volver QR */
   .btn-volver-qr{
@@ -182,30 +175,60 @@
   .btn-modal-danger{ width:100%; padding:13px; font-size:15px; font-weight:800; font-family:inherit; border:2px solid #c00; border-radius:12px; cursor:pointer; color:#c00; background:#fff; margin-top:8px; -webkit-tap-highlight-color:transparent; }
   .btn-modal-danger:active{ background:rgba(190,0,0,.07); }
   .modal-warn{ font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
+
+  /* Píldora "Puedes guardarlo como captura" */
+  .captura-pill{
+    display:inline-flex; align-items:center; gap:10px;
+    background:#fffde7; border:1.5px solid #ffd400;
+    border-radius:999px; padding:12px 22px;
+    font-size:16px; font-weight:800; color:#7a5c00;
+    width:100%; justify-content:center; text-align:center;
+    box-shadow:0 2px 8px rgba(255,212,0,.18);
+  }
+  .captura-dot{
+    width:11px; height:11px; border-radius:50%;
+    background:#ffd400; flex-shrink:0;
+    box-shadow:0 0 0 3px rgba(255,212,0,.3);
+  }
+
+  /* Modal Compartir app */
+  .compartir-qr-box{
+    display:flex; justify-content:center; margin:12px 0 8px;
+  }
+  .compartir-link-wrap{
+    display:flex; gap:8px; align-items:center; margin-top:4px;
+  }
+  .compartir-link-input{
+    flex:1; padding:10px 12px; font-size:12px; font-family:inherit;
+    border:1.5px solid rgba(0,0,0,.12); border-radius:10px;
+    background:#f7f7f7; color:var(--muted); outline:none;
+  }
+  .compartir-copy-btn{
+    padding:10px 14px; font-size:12px; font-weight:800; font-family:inherit;
+    border:1.5px solid var(--primary); border-radius:10px;
+    color:var(--primary); background:#fff; cursor:pointer;
+    -webkit-tap-highlight-color:transparent; white-space:nowrap;
+    transition:background .1s;
+  }
+  .compartir-copy-btn:active{ background:rgba(255,122,24,.07); }
+  .compartir-copy-ok{ font-size:12px; font-weight:700; color:#0a7; margin-top:6px; display:none; text-align:center; }
 </style>
 </head>
 <body>
 
 <div class="drawer-overlay" id="drawerOverlay"></div>
 
-<!-- Drawer: Mis Cuentas + Mi Usuario + Cambiar de usuario + Contacto -->
+<!-- Drawer: Mis Cuentas + Mi Usuario + Comparte la app + Cambiar de usuario + Contacto -->
 <nav class="drawer" id="drawer">
   <div class="drawer-header"><img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="drawer-body">
-    <button class="drawer-item" id="menuMisCuentas">
-      <span class="di-icon">⊞</span> Mis Cuentas
-    </button>
-    <button class="drawer-item" id="menuMiUsuario">
-      <span class="di-icon">👤</span> Mi Usuario
-    </button>
+    <button class="drawer-item" id="menuMisCuentas">Mis Cuentas</button>
+    <button class="drawer-item" id="menuMiUsuario">Mi Usuario</button>
+    <button class="drawer-item" id="menuCompartir">Comparte la app</button>
     <hr class="drawer-sep"/>
-    <button class="drawer-item danger" id="menuCambiarUsuario">
-      <span class="di-icon">⇄</span> Cambiar de usuario
-    </button>
+    <button class="drawer-item danger" id="menuCambiarUsuario">Cambiar de usuario</button>
     <hr class="drawer-sep"/>
-    <button class="drawer-item" id="menuContacto">
-      <span class="di-icon">✉️</span> Contacto
-    </button>
+    <button class="drawer-item" id="menuContacto">Contacto</button>
   </div>
 </nav>
 
@@ -221,13 +244,9 @@
       <div class="qr-header-detalle" id="qrHeaderDetalle"></div>
     </div>
     <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
-    <div class="datos-mini" id="datosMini" onclick="copiarDatosMini()">
-      <pre id="datosPreEl"></pre>
-      <div class="datos-mini-footer">
-        <span class="datos-mini-hint">Toca para copiar datos</span>
-        <span class="datos-mini-label" id="datosMiniLabel">Copiar</span>
-        <span class="datos-mini-ok" id="datosMiniOk">✓ Copiado</span>
-      </div>
+    <div class="captura-pill">
+      <span class="captura-dot"></span>
+      Puedes guardarlo como captura
     </div>
   </div>
   <button class="btn-volver-qr" id="btnVolverMisCuentas">← Mis Cuentas</button>
@@ -406,6 +425,22 @@
   </div>
 </div>
 
+<!-- ══ Modal Compartir la app ══ -->
+<div class="modal-overlay" id="modalCompartir">
+  <div class="modal-box">
+    <button class="modal-close" id="btnCerrarCompartir">✕</button>
+    <span class="modal-handle"></span>
+    <div class="modal-title">Comparte la app</div>
+    <div class="modal-sub">Envía este link a quien quieras que use TuQR.</div>
+    <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
+    <div class="compartir-link-wrap">
+      <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
+      <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
+    </div>
+    <div class="compartir-copy-ok" id="compartirCopyOk">✓ Link copiado</div>
+  </div>
+</div>
+
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script>
   emailjs.init('yejdBOXVs6y3d8piR');
@@ -448,9 +483,10 @@
   }
 
   function generarQR(url){
+    if(qrGenerado) return; // QR estático: generar solo una vez
+    qrGenerado=true;
     const canvas=document.getElementById('qrCanvas');
     const size=Math.min(300,window.innerWidth-100);
-    canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
     const tmp=document.createElement('div');
     new QRCode(tmp,{text:url,width:size,height:size,correctLevel:QRCode.CorrectLevel.M});
     setTimeout(()=>{
@@ -459,48 +495,17 @@
     },100);
   }
 
-  function copyText(text){
-    const p=text.replace(/\r\n/g,'\n').replace(/\r/g,'\n');
-    if(navigator.clipboard&&typeof navigator.clipboard.writeText==='function'){
-      return navigator.clipboard.writeText(p).then(()=>true).catch(()=>{
-        if(window.ClipboardItem) return navigator.clipboard.write([new ClipboardItem({'text/plain':new Blob([p],{type:'text/plain'})})]).then(()=>true).catch(()=>legacyCopy(p));
-        return legacyCopy(p);
-      });
-    }
-    return Promise.resolve(legacyCopy(p));
+  function copyText(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(()=>true).catch(()=>legacyCopy(t));
+    return Promise.resolve(legacyCopy(t));
   }
-  function legacyCopy(text){
-    try{
-      const ta=document.createElement('textarea');
-      ta.value=text;ta.setAttribute('readonly','');
-      ta.style.cssText='position:fixed;top:0;left:0;width:2em;height:2em;padding:0;border:none;outline:none;background:transparent;opacity:0;pointer-events:none;z-index:-1';
-      document.body.appendChild(ta);ta.focus({preventScroll:true});ta.select();ta.setSelectionRange(0,ta.value.length);
-      const ok=document.execCommand('copy');document.body.removeChild(ta);return ok;
-    }catch(_){return false;}
+  function legacyCopy(t){
+    try{ const ta=document.createElement('textarea'); ta.value=t; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); document.body.removeChild(ta); return ok; }catch(_){return false;}
   }
 
-  function buildDatosText(d){
-    const lines=[
-      `Nombre: ${clean(d.nombre)}`,`RUT: ${formatRutDisplay(clean(d.rut))}`,
-      `Banco: ${clean(d.banco)}`,`Tipo de cuenta: ${clean(d.tipoCuenta)}`,`N° de cuenta: ${clean(d.numeroCuenta)}`
-    ];
-    if(d.correo) lines.push(`Correo: ${clean(d.correo)}`);
-    return lines.join('\n');
-  }
 
-  let allData={}, usuarioActivo=null, cachedDatosText='', miniOkTimer=null;
 
-  function copiarDatosMini(){
-    if(!cachedDatosText) return;
-    copyText(cachedDatosText).then(ok=>{
-      if(ok){
-        const l=document.getElementById('datosMiniLabel'),o=document.getElementById('datosMiniOk');
-        l.style.display='none';o.style.display='block';
-        if(miniOkTimer) clearTimeout(miniOkTimer);
-        miniOkTimer=setTimeout(()=>{l.style.display='';o.style.display='none';},1800);
-      }
-    });
-  }
+  let allData={}, usuarioActivo=null, qrGenerado=false;
 
   async function cargarData(){
     try{ const res=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'}); allData=await res.json(); }
@@ -525,10 +530,6 @@
       document.title='TuQR — '+clean(d.nombre);
       document.getElementById('qrHeaderBanco').textContent=clean(d.banco);
       document.getElementById('qrHeaderDetalle').textContent=clean(d.tipoCuenta)+' · N° '+clean(d.numeroCuenta);
-      cachedDatosText=buildDatosText(d);
-      document.getElementById('datosPreEl').textContent=cachedDatosText;
-      document.getElementById('datosMiniLabel').style.display='';
-      document.getElementById('datosMiniOk').style.display='none';
       ocultarTodo();
       document.getElementById('main').style.display='flex';
       // Restaurar "Mis Cuentas" en drawer (visible desde Vista QR)
@@ -550,6 +551,7 @@
     cerrarDrawer(); localStorage.removeItem(STORAGE_KEY); usuarioActivo=null; cachedDatosText='';
     window.location.replace('./admin.html?accion=cambiar');
   });
+  document.getElementById('menuCompartir').addEventListener('click',()=>{ cerrarDrawer(); abrirModalCompartir(); });
   document.getElementById('menuContacto').addEventListener('click',()=>{ cerrarDrawer(); abrirModalContacto(); });
 
   // Flecha volver desde QR → Mis Cuentas
@@ -761,6 +763,29 @@
         else{ localStorage.removeItem(STORAGE_KEY); window.location.replace('./admin.html?accion=cambiar'); }
       } else { mostrarGestion(); }
     }catch(e){ this.textContent='Sí, eliminar'; this.disabled=false; document.getElementById('modalConfirmarEliminar').classList.remove('open'); }
+  });
+
+  // ── Modal Compartir la app ───────────────────────────────────────────────
+  let compartirQRHecho=false;
+  function abrirModalCompartir(){
+    document.getElementById('modalCompartir').classList.add('open');
+    if(!compartirQRHecho){
+      compartirQRHecho=true;
+      const WELCOME='https://tuqrapp.github.io/tuqr.github.io/welcome.html';
+      const container=document.getElementById('compartirQRContainer');
+      container.innerHTML='';
+      new QRCode(container,{text:WELCOME,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+    }
+  }
+  document.getElementById('btnCerrarCompartir').addEventListener('click',()=>{ document.getElementById('modalCompartir').classList.remove('open'); });
+  document.getElementById('modalCompartir').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+  document.getElementById('compartirCopyBtn').addEventListener('click',function(){
+    const val=document.getElementById('compartirLinkInput').value;
+    copyText(val).then(()=>{
+      const ok=document.getElementById('compartirCopyOk');
+      this.textContent='✓ Copiado'; ok.style.display='block';
+      setTimeout(()=>{ this.textContent='Copiar'; ok.style.display='none'; },2000);
+    });
   });
 
   // ── Init ──────────────────────────────────────────────────────────────────
