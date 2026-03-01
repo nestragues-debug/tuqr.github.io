@@ -176,7 +176,7 @@
   .btn-modal-danger:active{ background:rgba(190,0,0,.07); }
   .modal-warn{ font-size:12px; color:var(--muted); margin-top:6px; text-align:center; }
 
-  /* Píldora "Puedes guardarlo como captura" */
+  /* Botón guardar QR como foto */
   .captura-pill{
     display:inline-flex; align-items:center; gap:10px;
     background:#fffde7; border:1.5px solid #ffd400;
@@ -184,7 +184,11 @@
     font-size:16px; font-weight:800; color:#7a5c00;
     width:100%; justify-content:center; text-align:center;
     box-shadow:0 2px 8px rgba(255,212,0,.18);
+    cursor:pointer; font-family:inherit;
+    -webkit-tap-highlight-color:transparent;
+    transition:filter .1s, transform .06s;
   }
+  .captura-pill:active{ filter:brightness(.96); transform:scale(.98); }
   .captura-dot{
     width:11px; height:11px; border-radius:50%;
     background:#ffd400; flex-shrink:0;
@@ -192,11 +196,19 @@
   }
 
   /* Modal Compartir app */
+  .compartir-seccion-label{
+    font-size:20px; font-weight:800; color:var(--text);
+    margin:4px 0 14px; text-align:left; line-height:1.3;
+  }
+  .compartir-separador{
+    font-size:20px; font-weight:800; color:var(--muted);
+    text-align:center; margin:22px 0;
+  }
   .compartir-qr-box{
-    display:flex; justify-content:center; margin:12px 0 8px;
+    display:flex; justify-content:center; margin:0 0 4px;
   }
   .compartir-link-wrap{
-    display:flex; gap:8px; align-items:center; margin-top:4px;
+    display:flex; gap:8px; align-items:center; margin-top:10px;
   }
   .compartir-link-input{
     flex:1; padding:10px 12px; font-size:12px; font-family:inherit;
@@ -244,10 +256,10 @@
       <div class="qr-header-detalle" id="qrHeaderDetalle"></div>
     </div>
     <div class="qr-box"><canvas id="qrCanvas"></canvas></div>
-    <div class="captura-pill">
+    <button class="captura-pill" id="btnGuardarFoto">
       <span class="captura-dot"></span>
-      Puedes guardarlo como captura
-    </div>
+      Pincha para guardar este QR en tus fotos
+    </button>
   </div>
   <button class="btn-volver-qr" id="btnVolverMisCuentas">← Mis Cuentas</button>
 </div>
@@ -431,8 +443,10 @@
     <button class="modal-close" id="btnCerrarCompartir">✕</button>
     <span class="modal-handle"></span>
     <div class="modal-title">Comparte la app</div>
-    <div class="modal-sub">Envía este link a quien quieras que use TuQR.</div>
+    <div class="compartir-seccion-label">Pídele a tu amigo que escanee el QR</div>
     <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
+    <div class="compartir-separador">ó</div>
+    <div class="compartir-seccion-label">Copia y envía el link a tu amigo</div>
     <div class="compartir-link-wrap">
       <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
       <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
@@ -442,6 +456,7 @@
 </div>
 
 <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 <script>
   emailjs.init('yejdBOXVs6y3d8piR');
 
@@ -774,7 +789,7 @@
       const WELCOME='https://tuqrapp.github.io/tuqr.github.io/welcome.html';
       const container=document.getElementById('compartirQRContainer');
       container.innerHTML='';
-      new QRCode(container,{text:WELCOME,width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+      new QRCode(container,{text:WELCOME,width:208,height:208,correctLevel:QRCode.CorrectLevel.M});
     }
   }
   document.getElementById('btnCerrarCompartir').addEventListener('click',()=>{ document.getElementById('modalCompartir').classList.remove('open'); });
@@ -786,6 +801,37 @@
       this.textContent='✓ Copiado'; ok.style.display='block';
       setTimeout(()=>{ this.textContent='Copiar'; ok.style.display='none'; },2000);
     });
+  });
+
+  // ── Guardar card como foto ───────────────────────────────────────────────
+  document.getElementById('btnGuardarFoto').addEventListener('click', async function(){
+    const card = document.querySelector('#main .card');
+    if(!card) return;
+    const btn = this;
+    btn.textContent = 'Guardando…';
+    btn.disabled = true;
+    try{
+      // Forzar carga de imágenes cross-origin antes de capturar
+      const canvas = await html2canvas(card, {
+        useCORS: true,
+        allowTaint: false,
+        backgroundColor: '#ffffff',
+        scale: 2 // mayor resolución para pantallas retina
+      });
+      // Descargar como PNG
+      const link = document.createElement('a');
+      link.download = 'TuQR.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+      btn.innerHTML = '<span class="captura-dot"></span> ✓ Guardado';
+      setTimeout(()=>{
+        btn.innerHTML = '<span class="captura-dot"></span> Pincha para guardar este QR en tus fotos';
+        btn.disabled = false;
+      }, 2500);
+    }catch(e){
+      btn.innerHTML = '<span class="captura-dot"></span> Pincha para guardar este QR en tus fotos';
+      btn.disabled = false;
+    }
   });
 
   // ── Init ──────────────────────────────────────────────────────────────────
