@@ -27,23 +27,16 @@
     background:var(--bg); color:var(--text); -webkit-font-smoothing:antialiased; min-height:100vh;
   }
   .wrap{ max-width:480px; margin:0 auto; }
-
-  /* ── Topbar con hamburguesa destacada ── */
   .topbar{ display:flex; align-items:center; margin-bottom:8px; }
   .hamburger{
     background:var(--primary); border:none; cursor:pointer;
-    padding:10px 12px; border-radius:12px;
-    display:flex; flex-direction:column; gap:5px;
+    padding:10px 12px; border-radius:12px; display:flex; flex-direction:column; gap:5px;
     box-shadow:0 3px 10px rgba(255,122,24,.35);
     -webkit-tap-highlight-color:transparent; transition:filter .1s, transform .06s;
   }
   .hamburger span{ display:block; width:22px; height:2.5px; border-radius:2px; background:#fff; }
   .hamburger:active{ transform:scale(.95); filter:brightness(.92); }
-
-  /* ── Drawer ── */
-  .drawer-overlay{
-    display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200;
-  }
+  .drawer-overlay{ display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; }
   .drawer-overlay.open{ display:block; }
   .drawer{
     position:fixed; top:0; left:-260px; bottom:0; width:240px; background:#fff; z-index:201;
@@ -51,10 +44,7 @@
     display:flex; flex-direction:column;
   }
   .drawer.open{ left:0; }
-  .drawer-header{
-    padding:32px 20px 22px;
-    background:linear-gradient(135deg,var(--primary),var(--accent));
-  }
+  .drawer-header{ padding:32px 20px 22px; background:linear-gradient(135deg,var(--primary),var(--accent)); }
   .drawer-logo{ width:100px; height:auto; filter:brightness(10); }
   .drawer-body{ padding:16px 8px; display:flex; flex-direction:column; gap:4px; flex:1; }
   .drawer-item{
@@ -66,8 +56,6 @@
   .drawer-item:active{ background:#f2f2f2; }
   .drawer-item .di-icon{ font-size:20px; width:30px; text-align:center; }
   .drawer-sep{ border:none; border-top:1px solid rgba(0,0,0,.08); margin:8px 14px; }
-  .drawer-item.danger{ color:#c00; }
-
   .brand{ display:flex; justify-content:center; margin:6px 0 16px; }
   .brand img{ width:180px; height:auto; filter:drop-shadow(0 6px 10px rgba(0,0,0,.10)); }
   .card{
@@ -112,11 +100,11 @@
   .field-err.show{ display:block; }
   .phone-wrap{ display:flex; gap:8px; }
   .phone-prefix{
-    width:72px; flex-shrink:0; padding:11px 10px; font-size:14px; font-family:inherit;
+    width:52px; flex-shrink:0; padding:11px 8px; font-size:13px; font-family:inherit;
     border:1.5px solid rgba(0,0,0,.12); border-radius:12px;
     background:#f7f7f7; color:var(--muted); text-align:center; outline:none;
   }
-  .phone-wrap input{ flex:1; }
+  .phone-wrap input{ flex:1; min-width:0; }
   .row{ display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   .divider{ margin:20px 0 4px; border:none; border-top:1px dashed rgba(0,0,0,.10); }
   .cta{
@@ -129,12 +117,9 @@
   .link-back{
     display:block; text-align:center; margin-top:14px;
     font-size:13px; font-weight:700; color:var(--muted); cursor:pointer;
+    background:none; border:none; font-family:inherit; width:100%;
   }
   .link-back:active{ color:var(--primary); }
-  .link-contacto{
-    display:block; text-align:center; margin-top:18px;
-    font-size:13px; font-weight:700; color:var(--primary); cursor:pointer; text-decoration:underline;
-  }
   .ok-card{
     background:var(--card); border:1px solid var(--border); border-radius:var(--radius);
     padding:24px 20px 28px; box-shadow:var(--shadow); position:relative; overflow:hidden;
@@ -170,6 +155,11 @@
     margin-top:12px; font-weight:800; padding:10px 12px; border-radius:12px; font-size:14px;
     white-space:pre-wrap; color:#b00; background:rgba(190,0,0,.08); border:1px solid rgba(190,0,0,.14);
   }
+  .warn{
+    margin-top:12px; font-weight:600; padding:12px 14px; border-radius:12px; font-size:13px;
+    color:#7a4a00; background:rgba(255,180,0,.12); border:1px solid rgba(255,160,0,.3); line-height:1.5;
+  }
+  .warn a{ color:var(--primary); font-weight:800; text-decoration:underline; cursor:pointer; }
   .help{ margin-top:14px; font-size:12px; color:#888; line-height:1.4; text-align:center; }
   .cta-ir{
     padding:13px; width:100%; font-size:15px; font-weight:800; font-family:inherit;
@@ -204,24 +194,35 @@
   }
   textarea:focus{ border-color:var(--primary); box-shadow:0 0 0 3px rgba(255,122,24,.12); }
   .char-count{ font-size:11px; color:var(--muted); text-align:right; margin-top:3px; }
+  .compartir-qr-box{ display:flex; justify-content:center; margin:12px 0 8px; }
+  .compartir-link-wrap{ display:flex; gap:8px; align-items:center; margin-top:4px; }
+  .compartir-link-input{ flex:1; padding:10px 12px; font-size:12px; font-family:inherit; border:1.5px solid rgba(0,0,0,.12); border-radius:10px; background:#f7f7f7; color:var(--muted); outline:none; }
+  .compartir-copy-btn{ padding:10px 14px; font-size:12px; font-weight:800; font-family:inherit; border:1.5px solid var(--primary); border-radius:10px; color:var(--primary); background:#fff; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .compartir-copy-ok{ font-size:12px; font-weight:700; color:#0a7; margin-top:6px; display:none; text-align:center; }
 </style>
 </head>
 <body>
 
-<!-- Drawer overlay + panel -->
 <div class="drawer-overlay" id="drawerOverlay"></div>
-<nav class="drawer" id="drawer">
-  <div class="drawer-header">
-    <img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/>
-  </div>
+
+<!-- Drawer BIENVENIDO: solo Contacto -->
+<nav class="drawer" id="drawerBienvenido">
+  <div class="drawer-header"><img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="drawer-body">
-    <button class="drawer-item" id="menuIrApp">
-      <span class="di-icon">⊞</span> Mi QR
-    </button>
+    <button class="drawer-item" id="menuContactoBienvenido">Contacto</button>
+    <button class="drawer-item" id="menuCompartirBienvenido">Comparte la app</button>
+  </div>
+</nav>
+
+<!-- Drawer CREAR / INGRESAR: Inicio + Mi Usuario + Contacto -->
+<nav class="drawer" id="drawerSub">
+  <div class="drawer-header"><img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/></div>
+  <div class="drawer-body">
+    <button class="drawer-item" id="menuInicio">Inicio</button>
+    <button class="drawer-item" id="menuMiUsuario">Mi Usuario</button>
+    <button class="drawer-item" id="menuCompartirSub">Comparte la app</button>
     <hr class="drawer-sep"/>
-    <button class="drawer-item danger" id="menuCambiarUsuario">
-      <span class="di-icon">⇄</span> Cambiar de usuario
-    </button>
+    <button class="drawer-item" id="menuContactoSub">Contacto</button>
   </div>
 </nav>
 
@@ -233,7 +234,7 @@
   </div>
   <div class="brand"><img src="./TuQRLogo.png" alt="TuQR"/></div>
 
-  <!-- Pantalla: elegir opción -->
+  <!-- Bienvenido a TuQR -->
   <div id="screenOpciones" class="card" style="display:none">
     <h1>Bienvenido a TuQR</h1>
     <p class="sub">¿Qué quieres hacer?</p>
@@ -253,10 +254,9 @@
         </div>
       </button>
     </div>
-    <a class="link-contacto" id="btnContactoOpciones">Contacto</a>
   </div>
 
-  <!-- Pantalla: identificarse -->
+  <!-- Ingresar -->
   <div id="screenActivar" class="card" style="display:none">
     <h1>Ingresar</h1>
     <p class="sub">Ingresa tu RUT y teléfono para identificarte.</p>
@@ -271,25 +271,49 @@
     <div class="field-err" id="err-actTel">Número inválido (9 dígitos, empieza en 9)</div>
     <div class="field-err" id="err-actGeneral">No encontramos un usuario con esos datos.</div>
     <button class="cta" id="btnDoActivar">Continuar</button>
-    <a class="link-back" id="backFromActivar">← Volver</a>
-    <a class="link-contacto" id="btnContactoActivar">Contacto</a>
+    <button class="link-back" id="backFromActivar">← Volver</button>
   </div>
 
-  <!-- Pantalla: crear usuario -->
+  <!-- Crear usuario: L1 Nombre / L2 RUT+Tel / L3 Correo / L4 Banco+Tipo / L5 Número -->
   <div id="screenCrear" class="card" style="display:none">
     <h1>Crear usuario</h1>
+    <p class="sub">Tu RUT será tu identificador único.</p>
+
+    <label for="nombre">Nombre</label>
+    <input id="nombre" placeholder="Juan López"/>
+
     <div class="row">
-      <div>
-        <label for="nombre">Nombre</label>
-        <input id="nombre" placeholder="Juan López"/>
-      </div>
       <div>
         <label for="rut">RUT</label>
         <input id="rut" placeholder="12.345.678-9" maxlength="12"/>
         <div class="field-err" id="err-rut">RUT inválido</div>
       </div>
+      <div>
+        <label for="telefono">Teléfono</label>
+        <div class="phone-wrap">
+          <input class="phone-prefix" value="+56" readonly/>
+          <input id="telefono" placeholder="9XXXXXXXX" inputmode="numeric" maxlength="9"/>
+        </div>
+        <div class="field-err" id="err-tel">9 dígitos, empieza en 9</div>
+      </div>
     </div>
+
+    <label for="correo">Correo</label>
+    <input id="correo" placeholder="correo@dominio.cl" inputmode="email"/>
+    <div class="field-err" id="err-correo">Formato inválido</div>
+
     <div class="row">
+      <div>
+        <label for="banco">Banco</label>
+        <select id="banco">
+          <option value="">— Selecciona —</option>
+          <option>Banco de Chile</option><option>Banco BICE</option><option>Banco Consorcio</option>
+          <option>Banco BCI</option><option>Banco Estado</option><option>Banco Falabella</option>
+          <option>Banco Internacional</option><option>Banco Itaú</option><option>Banco Ripley</option>
+          <option>Banco Santander</option><option>Banco Security</option><option>Scotiabank</option>
+          <option>Tapp Caja Los Andes</option><option>Banco Tenpo</option><option>Mercado Pago</option>
+        </select>
+      </div>
       <div>
         <label for="tipoCuenta">Tipo de cuenta</label>
         <select id="tipoCuenta">
@@ -299,43 +323,23 @@
           <option value="Cuenta RUT">Cuenta RUT</option>
         </select>
       </div>
-      <div>
-        <label for="numeroCuenta">N° de cuenta</label>
-        <input id="numeroCuenta" placeholder="Solo números" inputmode="numeric"/>
-        <div class="field-err" id="err-cuenta">Solo números</div>
-      </div>
     </div>
-    <label for="banco">Banco</label>
-    <select id="banco">
-      <option value="">— Selecciona —</option>
-      <option>Banco de Chile</option><option>Banco BICE</option><option>Banco Consorcio</option>
-      <option>Banco BCI</option><option>Banco Estado</option><option>Banco Falabella</option>
-      <option>Banco Internacional</option><option>Banco Itaú</option><option>Banco Ripley</option>
-      <option>Banco Santander</option><option>Banco Security</option><option>Scotiabank</option>
-      <option>Tapp Caja Los Andes</option><option>Banco Tenpo</option><option>Mercado Pago</option>
-    </select>
-    <label for="correo">Correo</label>
-    <input id="correo" placeholder="correo@dominio.cl" inputmode="email"/>
-    <div class="field-err" id="err-correo">Formato inválido</div>
-    <hr class="divider"/>
-    <label for="telefono">Teléfono <span style="font-weight:400;font-size:12px;color:#aaa">(9 dígitos, empieza en 9)</span></label>
-    <div class="phone-wrap">
-      <input class="phone-prefix" value="+56" readonly/>
-      <input id="telefono" placeholder="912345678" inputmode="numeric" maxlength="9"/>
-    </div>
-    <div class="field-err" id="err-tel">Debe tener 9 dígitos y comenzar en 9</div>
-    <button class="cta" id="save">Guardar</button>
+
+    <label for="numeroCuenta">N° de cuenta</label>
+    <input id="numeroCuenta" placeholder="Solo números" inputmode="numeric"/>
+    <div class="field-err" id="err-cuenta">Solo números</div>
+
+    <button class="cta" id="save">Crear usuario</button>
     <div id="msg-err"></div>
-    <a class="link-back" id="backFromCrear">← Volver</a>
-    <a class="link-contacto" id="btnContactoCrear">Contacto</a>
+    <button class="link-back" id="backFromCrear">← Volver</button>
     <div class="help">Los datos se guardan vía Cloudflare Worker.</div>
   </div>
 
-  <!-- Pantalla: creado + polling -->
+  <!-- Creado + polling -->
   <div id="screenCreado" style="display:none">
     <div class="ok-card">
       <div>
-        <div class="ok-pill">✓ Cuenta destino creada</div>
+        <div class="ok-pill">✓ Usuario creado</div>
         <div class="ok-nombre" id="resNombre"></div>
       </div>
       <div class="wait-box" id="waitBox">
@@ -351,7 +355,7 @@
     </div>
   </div>
 
-</div><!-- /wrap -->
+</div>
 
 <!-- Modal Contacto -->
 <div class="modal-overlay" id="modalContacto">
@@ -395,47 +399,59 @@
 
   if('serviceWorker' in navigator){ navigator.serviceWorker.register('./sw.js').catch(()=>{}); }
 
-  const urlParams    = new URLSearchParams(location.search);
-  const accion       = urlParams.get('accion');  // 'cambiar' | 'nueva_cuenta' | null
-  const isStandalone = window.matchMedia('(display-mode:standalone)').matches || window.navigator.standalone===true;
+  const urlParams = new URLSearchParams(location.search);
+  const accion    = urlParams.get('accion');
 
-  function show(id){ document.getElementById(id).style.display=''; }
-  function hide(id){ document.getElementById(id).style.display='none'; }
+  // ── pantalla activa ───────────────────────────────────────────────────────
+  let pantallaActual = 'screenOpciones';
 
-  // ── INIT: lógica de redirección ──────────────────────────────────────────
-  // Si viene con ?accion=cambiar siempre mostramos opciones (venimos de logout)
-  // También borramos la sesión por si acaso no se hizo desde app.html
-  if(accion === 'cambiar'){
-    localStorage.removeItem(STORAGE_KEY);
-    show('screenOpciones');
-  } else {
-    const savedId = localStorage.getItem(STORAGE_KEY);
-    if(savedId){
-      // Tiene sesión activa → ir directo a app
-      window.location.replace('./app.html');
-    } else {
-      show('screenOpciones');
-    }
+  function mostrarPantalla(id){
+    ['screenOpciones','screenActivar','screenCrear','screenCreado'].forEach(s=>{
+      document.getElementById(s).style.display = s===id ? '' : 'none';
+    });
+    pantallaActual = id;
+    sincronizarDrawers();
   }
 
-  // ── Hamburger ─────────────────────────────────────────────────────────────
-  function abrirDrawer(){ document.getElementById('drawer').classList.add('open'); document.getElementById('drawerOverlay').classList.add('open'); }
-  function cerrarDrawer(){ document.getElementById('drawer').classList.remove('open'); document.getElementById('drawerOverlay').classList.remove('open'); }
+  function sincronizarDrawers(){
+    // Mientras screenOpciones: drawer Bienvenido; en el resto: drawer Sub
+    const esBienvenido = pantallaActual === 'screenOpciones';
+    document.getElementById('drawerBienvenido').style.display = esBienvenido ? '' : 'none';
+    document.getElementById('drawerSub').style.display        = esBienvenido ? 'none' : '';
+  }
+
+  // ── INIT ──────────────────────────────────────────────────────────────────
+  if(accion === 'cambiar'){
+    localStorage.removeItem(STORAGE_KEY);
+    mostrarPantalla('screenOpciones');
+  } else {
+    const savedId = localStorage.getItem(STORAGE_KEY);
+    if(savedId){ window.location.replace('./app.html'); }
+    else{ mostrarPantalla('screenOpciones'); }
+  }
+
+  // ── Drawer ────────────────────────────────────────────────────────────────
+  function abrirDrawer(){
+    const esBienvenido = pantallaActual === 'screenOpciones';
+    document.getElementById(esBienvenido ? 'drawerBienvenido' : 'drawerSub').classList.add('open');
+    document.getElementById('drawerOverlay').classList.add('open');
+  }
+  function cerrarDrawer(){
+    document.getElementById('drawerBienvenido').classList.remove('open');
+    document.getElementById('drawerSub').classList.remove('open');
+    document.getElementById('drawerOverlay').classList.remove('open');
+  }
+
   document.getElementById('btnHamburger').addEventListener('click', abrirDrawer);
   document.getElementById('drawerOverlay').addEventListener('click', cerrarDrawer);
 
-  document.getElementById('menuIrApp').addEventListener('click',()=>{
-    cerrarDrawer();
-    const id = localStorage.getItem(STORAGE_KEY);
-    if(id) window.location.replace('./app.html');
-    else { cerrarDrawer(); } // ya estamos en la pantalla correcta
-  });
-  document.getElementById('menuCambiarUsuario').addEventListener('click',()=>{
-    cerrarDrawer();
-    localStorage.removeItem(STORAGE_KEY);
-    // Recargar la misma página con accion=cambiar para mostrar opciones limpiamente
-    window.location.replace('./admin.html?accion=cambiar');
-  });
+  // Drawer Bienvenido
+  document.getElementById('menuContactoBienvenido').addEventListener('click',()=>{ cerrarDrawer(); abrirModalContacto(); });
+
+  // Drawer Sub (Crear / Ingresar)
+  document.getElementById('menuInicio').addEventListener('click',()=>{ cerrarDrawer(); mostrarPantalla('screenOpciones'); });
+  document.getElementById('menuMiUsuario').addEventListener('click',()=>{ cerrarDrawer(); window.location.href='./mi-usuario.html'; });
+  document.getElementById('menuContactoSub').addEventListener('click',()=>{ cerrarDrawer(); abrirModalContacto(); });
 
   // ── Utilidades ────────────────────────────────────────────────────────────
   function val(id){ return (document.getElementById(id).value||'').trim(); }
@@ -482,11 +498,11 @@
     }
   }
 
-  // ── Navegación entre pantallas ────────────────────────────────────────────
-  document.getElementById('btnIrCrear').addEventListener('click',()=>{ hide('screenOpciones'); show('screenCrear'); });
-  document.getElementById('btnIrActivar').addEventListener('click',()=>{ hide('screenOpciones'); show('screenActivar'); });
-  document.getElementById('backFromActivar').addEventListener('click',()=>{ hide('screenActivar'); show('screenOpciones'); });
-  document.getElementById('backFromCrear').addEventListener('click',()=>{ hide('screenCrear'); show('screenOpciones'); });
+  // ── Navegación ────────────────────────────────────────────────────────────
+  document.getElementById('btnIrCrear').addEventListener('click',()=>{ mostrarPantalla('screenCrear'); });
+  document.getElementById('btnIrActivar').addEventListener('click',()=>{ mostrarPantalla('screenActivar'); });
+  document.getElementById('backFromActivar').addEventListener('click',()=>{ mostrarPantalla('screenOpciones'); });
+  document.getElementById('backFromCrear').addEventListener('click',()=>{ mostrarPantalla('screenOpciones'); });
 
   // ── Ingresar ──────────────────────────────────────────────────────────────
   const actRutInput=document.getElementById('actRut');
@@ -531,11 +547,11 @@
     }
   });
 
-  // ── Crear usuario: validación ─────────────────────────────────────────────
-  const rutInput=document.getElementById('rut');
-  const cuentaInput=document.getElementById('numeroCuenta');
-  const correoInput=document.getElementById('correo');
-  const telInput=document.getElementById('telefono');
+  // ── Crear usuario ─────────────────────────────────────────────────────────
+  const rutInput     = document.getElementById('rut');
+  const cuentaInput  = document.getElementById('numeroCuenta');
+  const correoInput  = document.getElementById('correo');
+  const telInput     = document.getElementById('telefono');
 
   rutInput.addEventListener('input',function(){
     const raw=this.value.replace(/[\.\-\s]/g,'');
@@ -564,29 +580,50 @@
     document.getElementById('err-tel').classList.toggle('show',this.value.length>0&&!ok);
   });
 
-  // ── Guardar nuevo usuario ─────────────────────────────────────────────────
   document.getElementById('save').addEventListener('click',async()=>{
     const msgErr=document.getElementById('msg-err');
     msgErr.innerHTML='';
-    const nombre=clean(val('nombre')), rut=clean(val('rut')), banco=clean(val('banco'));
-    const tipoCuenta=clean(val('tipoCuenta')), numeroCuenta=clean(val('numeroCuenta'));
-    const correo=clean(val('correo')), telefono=val('telefono').replace(/\D/g,'');
+
+    const nombre       = clean(val('nombre'));
+    const rut          = clean(val('rut'));
+    const telefono     = val('telefono').replace(/\D/g,'');
+    const correo       = clean(val('correo'));
+    const banco        = clean(val('banco'));
+    const tipoCuenta   = clean(val('tipoCuenta'));
+    const numeroCuenta = clean(val('numeroCuenta'));
 
     if(!nombre||!rut||!banco||!tipoCuenta||!numeroCuenta){
       msgErr.innerHTML='<div class="err">Faltan campos obligatorios.</div>'; return;
     }
     if(!validarRut(rut)){ msgErr.innerHTML='<div class="err">El RUT no es válido.</div>'; rutInput.focus(); return; }
-    if(!/^\d+$/.test(numeroCuenta)){ msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; cuentaInput.focus(); return; }
-    if(!validarEmail(correo)){ msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>'; correoInput.focus(); return; }
     if(!validarTel(telefono)){ msgErr.innerHTML='<div class="err">El teléfono debe tener 9 dígitos y comenzar en 9.</div>'; telInput.focus(); return; }
+    if(!validarEmail(correo)){ msgErr.innerHTML='<div class="err">Ingresa un correo válido.</div>'; correoInput.focus(); return; }
+    if(!/^\d+$/.test(numeroCuenta)){ msgErr.innerHTML='<div class="err">El número de cuenta debe ser solo dígitos.</div>'; cuentaInput.focus(); return; }
 
-    const autoId=generarIdCuenta(rut, banco, numeroCuenta);
+    // ID cuenta destino = RUT_Banco_Numero
+    const autoId = generarIdCuenta(rut, banco, numeroCuenta);
+    const rutNorm = normalizarRut(rut);
 
+    let all = {};
     try{
       const chk=await fetch(DATA_URL+'?ts='+Date.now(),{cache:'no-store'});
-      const all=await chk.json();
-      if(all[autoId]){ msgErr.innerHTML='<div class="err">Ya existe una cuenta con ese banco y número de cuenta para ese RUT.</div>'; return; }
-    }catch(e){ msgErr.innerHTML='<div class="err">No se pudo verificar disponibilidad. Intenta de nuevo.</div>'; return; }
+      all=await chk.json();
+    }catch(e){
+      msgErr.innerHTML='<div class="err">No se pudo verificar disponibilidad. Intenta de nuevo.</div>'; return;
+    }
+
+    // ¿Ya existe algún registro con ese RUT? → avisar
+    const rutExiste = Object.values(all).some(d => normalizarRut(d.rut||'') === rutNorm);
+    if(rutExiste){
+      msgErr.innerHTML=`<div class="warn">⚠️ Ya existe un usuario con ese RUT.<br>
+        Si es tu cuenta, <a id="linkIrInicio">ve a Inicio e Ingresa</a> con tu RUT y teléfono.</div>`;
+      document.getElementById('linkIrInicio').addEventListener('click',()=>{ msgErr.innerHTML=''; mostrarPantalla('screenOpciones'); });
+      return;
+    }
+
+    if(all[autoId]){
+      msgErr.innerHTML='<div class="err">Ya existe una cuenta con ese banco y número de cuenta para ese RUT.</div>'; return;
+    }
 
     const payload={ id:autoId, nombre, rut, banco, tipoCuenta, numeroCuenta, correo, telefono };
 
@@ -602,7 +639,7 @@
       document.getElementById('resNombre').textContent=nombre;
       document.getElementById('waitBox').style.display='flex';
       document.getElementById('msgQRError').style.display='none';
-      hide('screenCrear'); show('screenCreado');
+      mostrarPantalla('screenCreado');
       window.scrollTo({top:0,behavior:'smooth'});
       iniciarPolling(autoId);
     }catch(e){ msgErr.innerHTML='<div class="err">Fallo de red: '+e+'</div>'; }
@@ -638,9 +675,7 @@
   function cerrarModal(){ document.getElementById('modalContacto').classList.remove('open'); }
   document.getElementById('btnCerrarModal').addEventListener('click',cerrarModal);
   document.getElementById('modalContacto').addEventListener('click',function(e){ if(e.target===this) cerrarModal(); });
-  ['btnContactoOpciones','btnContactoActivar','btnContactoCrear'].forEach(id=>{
-    const el=document.getElementById(id); if(el) el.addEventListener('click',abrirModalContacto);
-  });
+
   document.getElementById('cRut').addEventListener('input',async function(){
     const raw=this.value.replace(/[\.\-\s]/g,'');
     if(raw.length>=2) this.value=formatearRut(raw);
@@ -688,5 +723,22 @@
     }
   });
 </script>
+
+<!-- ══ Modal Compartir la app ══ -->
+<div class="modal-overlay" id="modalCompartir">
+  <div class="modal-box">
+    <button class="modal-close" id="btnCerrarCompartir">✕</button>
+    <span class="modal-handle"></span>
+    <div class="modal-title">Comparte la app</div>
+    <div class="modal-sub">Envía este link a quien quieras que use TuQR.</div>
+    <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
+    <div class="compartir-link-wrap">
+      <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
+      <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
+    </div>
+    <div class="compartir-copy-ok" id="compartirCopyOk">✓ Link copiado</div>
+  </div>
+</div>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
