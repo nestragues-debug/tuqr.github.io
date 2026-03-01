@@ -197,11 +197,11 @@
 
   /* Modal Compartir app */
   .compartir-seccion-label{
-    font-size:20px; font-weight:800; color:var(--text);
+    font-size:20px; font-weight:400; color:var(--text);
     margin:4px 0 14px; text-align:left; line-height:1.3;
   }
   .compartir-separador{
-    font-size:20px; font-weight:800; color:var(--muted);
+    font-size:20px; font-weight:800; color:var(--text);
     text-align:center; margin:22px 0;
   }
   .compartir-qr-box{
@@ -442,10 +442,10 @@
   <div class="modal-box">
     <button class="modal-close" id="btnCerrarCompartir">✕</button>
     <span class="modal-handle"></span>
-    <div class="modal-title">Comparte la app</div>
+    <div class="modal-title" style="color:var(--primary);text-align:center;margin-bottom:24px">Comparte la app</div>
     <div class="compartir-seccion-label">Pídele a tu amigo que escanee el QR</div>
     <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
-    <div class="compartir-separador">ó</div>
+    <div class="compartir-separador">o</div>
     <div class="compartir-seccion-label">Copia y envía el link a tu amigo</div>
     <div class="compartir-link-wrap">
       <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
@@ -808,30 +808,40 @@
     const card = document.querySelector('#main .card');
     if(!card) return;
     const btn = this;
-    btn.textContent = 'Guardando…';
+    btn.innerHTML = '<span class="captura-dot"></span> Generando…';
     btn.disabled = true;
     try{
-      // Forzar carga de imágenes cross-origin antes de capturar
       const canvas = await html2canvas(card, {
         useCORS: true,
         allowTaint: false,
         backgroundColor: '#ffffff',
-        scale: 2 // mayor resolución para pantallas retina
+        scale: 2
       });
-      // Descargar como PNG
-      const link = document.createElement('a');
-      link.download = 'TuQR.png';
-      link.href = canvas.toDataURL('image/png');
-      link.click();
-      btn.innerHTML = '<span class="captura-dot"></span> ✓ Guardado';
-      setTimeout(()=>{
-        btn.innerHTML = '<span class="captura-dot"></span> Pincha para guardar este QR en tus fotos';
-        btn.disabled = false;
-      }, 2500);
+      // Convertir canvas a blob manteniendo la cadena async del tap (necesario para iOS Share)
+      const blob = await new Promise(res => canvas.toBlob(res, 'image/png'));
+      if(!blob) throw new Error('blob null');
+      const file = new File([blob], 'TuQR.png', { type: 'image/png' });
+      // Web Share API con archivo — en iOS abre el sheet de compartir → Guardar en Fotos
+      if(navigator.share && navigator.canShare && navigator.canShare({ files: [file] })){
+        await navigator.share({ files: [file], title: 'TuQR' });
+        btn.innerHTML = '<span class="captura-dot"></span> ✓ Listo';
+      } else {
+        // Fallback (escritorio / navegadores sin Share API)
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = 'TuQR.png';
+        document.body.appendChild(a); a.click();
+        document.body.removeChild(a);
+        setTimeout(() => URL.revokeObjectURL(url), 1000);
+        btn.innerHTML = '<span class="captura-dot"></span> ✓ Descargado';
+      }
     }catch(e){
+      // El usuario canceló el sheet de compartir — no es error
+    }
+    setTimeout(()=>{
       btn.innerHTML = '<span class="captura-dot"></span> Pincha para guardar este QR en tus fotos';
       btn.disabled = false;
-    }
+    }, 1500);
   });
 
   // ── Init ──────────────────────────────────────────────────────────────────
