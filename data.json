@@ -1,13 +1,4 @@
 {
-  "NicoTapp": {
-    "banco": "Tapp Caja Los Andes",
-    "rut": "13.268.177-5",
-    "nombre": "Chao amigo",
-    "tipoCuenta": "Cuenta Vista",
-    "numeroCuenta": "99999999999999",
-    "correo": "nestragues@gmail.com",
-    "telefono": "982897919"
-  },
   "NcoBestado": {
     "banco": "Mercado Pago",
     "rut": "23.182.071-k",
