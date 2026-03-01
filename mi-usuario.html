@@ -118,6 +118,11 @@
   .char-count{ font-size:11px; color:var(--muted); text-align:right; margin-top:3px; }
   .field-err-modal{ color:#c00; font-size:12px; font-weight:600; margin-top:4px; display:none; }
   .field-err-modal.show{ display:block; }
+  .compartir-qr-box{ display:flex; justify-content:center; margin:12px 0 8px; }
+  .compartir-link-wrap{ display:flex; gap:8px; align-items:center; margin-top:4px; }
+  .compartir-link-input{ flex:1; padding:10px 12px; font-size:12px; font-family:inherit; border:1.5px solid rgba(0,0,0,.12); border-radius:10px; background:#f7f7f7; color:var(--muted); outline:none; }
+  .compartir-copy-btn{ padding:10px 14px; font-size:12px; font-weight:800; font-family:inherit; border:1.5px solid var(--primary); border-radius:10px; color:var(--primary); background:#fff; cursor:pointer; -webkit-tap-highlight-color:transparent; }
+  .compartir-copy-ok{ font-size:12px; font-weight:700; color:#0a7; margin-top:6px; display:none; text-align:center; }
 </style>
 </head>
 <body>
@@ -128,19 +133,30 @@
 <nav class="drawer" id="drawer">
   <div class="drawer-header"><img class="drawer-logo" src="./TuQRLogo.png" alt="TuQR"/></div>
   <div class="drawer-body">
-    <button class="drawer-item" id="menuMisCuentas">
-      <span class="di-icon">⊞</span> Mis Cuentas
-    </button>
+    <button class="drawer-item" id="menuMisCuentas">Mis Cuentas</button>
+    <button class="drawer-item" id="menuCompartir">Comparte la app</button>
     <hr class="drawer-sep"/>
-    <button class="drawer-item danger" id="menuCambiarUsuario">
-      <span class="di-icon">⇄</span> Cambiar de usuario
-    </button>
+    <button class="drawer-item danger" id="menuCambiarUsuario">Cambiar de usuario</button>
     <hr class="drawer-sep"/>
-    <button class="drawer-item" id="menuContacto">
-      <span class="di-icon">✉️</span> Contacto
-    </button>
+    <button class="drawer-item" id="menuContacto">Contacto</button>
   </div>
 </nav>
+
+<!-- ══ Modal Compartir la app ══ -->
+<div class="modal-overlay" id="modalCompartir">
+  <div class="modal-box" style="gap:0">
+    <button style="position:absolute;top:16px;right:20px;font-size:22px;cursor:pointer;color:var(--muted);background:none;border:none;font-family:inherit" id="btnCerrarCompartir">✕</button>
+    <span class="modal-handle"></span>
+    <div style="font-size:20px;font-weight:800;margin-bottom:4px">Comparte la app</div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:16px;line-height:1.4">Envía este link a quien quieras que use TuQR.</div>
+    <div class="compartir-qr-box"><div id="compartirQRContainer"></div></div>
+    <div class="compartir-link-wrap">
+      <input class="compartir-link-input" id="compartirLinkInput" readonly value="https://tuqrapp.github.io/tuqr.github.io/welcome.html"/>
+      <button class="compartir-copy-btn" id="compartirCopyBtn">Copiar</button>
+    </div>
+    <div class="compartir-copy-ok" id="compartirCopyOk">✓ Link copiado</div>
+  </div>
+</div>
 
 <!-- Modal Contacto -->
 <div class="modal-overlay" id="modalContacto">
@@ -275,6 +291,32 @@
 
   document.getElementById('btnHamburger').addEventListener('click', abrirDrawer);
   document.getElementById('drawerOverlay').addEventListener('click', cerrarDrawer);
+
+  // ── Modal Compartir ────────────────────────────────────────────────────────
+  let compartirQRHecho=false;
+  function abrirModalCompartir(){
+    document.getElementById('modalCompartir').classList.add('open');
+    if(!compartirQRHecho){
+      compartirQRHecho=true;
+      const container=document.getElementById('compartirQRContainer');
+      container.innerHTML='';
+      new QRCode(container,{text:'https://tuqrapp.github.io/tuqr.github.io/welcome.html',width:160,height:160,correctLevel:QRCode.CorrectLevel.M});
+    }
+  }
+  function copyTextSimple(t){
+    if(navigator.clipboard&&navigator.clipboard.writeText) return navigator.clipboard.writeText(t).then(()=>true).catch(()=>false);
+    try{ const ta=document.createElement('textarea'); ta.value=t; ta.style.cssText='position:fixed;opacity:0'; document.body.appendChild(ta); ta.select(); const ok=document.execCommand('copy'); document.body.removeChild(ta); return Promise.resolve(ok); }catch(_){return Promise.resolve(false);}
+  }
+  document.getElementById('btnCerrarCompartir').addEventListener('click',()=>{ document.getElementById('modalCompartir').classList.remove('open'); });
+  document.getElementById('modalCompartir').addEventListener('click',function(e){ if(e.target===this) this.classList.remove('open'); });
+  document.getElementById('compartirCopyBtn').addEventListener('click',function(){
+    copyTextSimple(document.getElementById('compartirLinkInput').value).then(()=>{
+      const ok=document.getElementById('compartirCopyOk');
+      this.textContent='✓ Copiado'; ok.style.display='block';
+      setTimeout(()=>{ this.textContent='Copiar'; ok.style.display='none'; },2000);
+    });
+  });
+  document.getElementById('menuCompartir').addEventListener('click',()=>{ cerrarDrawer(); abrirModalCompartir(); });
   document.getElementById('menuMisCuentas').addEventListener('click',()=>{ cerrarDrawer(); window.location.href='./app.html'; });
   document.getElementById('menuCambiarUsuario').addEventListener('click',()=>{ cerrarDrawer(); localStorage.removeItem(STORAGE_KEY); window.location.replace('./admin.html?accion=cambiar'); });
   document.getElementById('menuContacto').addEventListener('click',()=>{ cerrarDrawer(); abrirModalContacto(); });
@@ -432,5 +474,6 @@
     }catch(e){ msgErr.innerHTML='<div style="color:#b00;font-weight:800;margin-top:10px;">Error al enviar.</div>'; this.textContent='Enviar'; this.disabled=false; }
   });
 </script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </body>
 </html>
